@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
@@ -9,6 +9,9 @@ import configuration from './config/configuration.js';
 import { envValidationSchema } from './config/env.validation.js';
 import { HealthController } from './health.controller.js';
 import { PrismaModule } from './prisma/prisma.module.js';
+import { ClsModule } from 'nestjs-cls';
+import { JwtModule } from '@nestjs/jwt';
+import { TenantMiddleware } from './common/middleware/tenant.middleware.js';
 
 /**
  * Root application module.
@@ -146,6 +149,30 @@ import { PrismaModule } from './prisma/prisma.module.js';
       }),
     }),
     PrismaModule,
+    // ── 5. CLS (Continuation Local Storage) ──────────────────────────────────
+    // Wraps every request in AsyncLocalStorage context.
+    // Stores tenantId, userId, userRole — accessible anywhere without
+    // REQUEST-scoped providers (which would tank performance).
+    ClsModule.forRoot({
+      global: true,
+      middleware: {
+        mount: true, // auto-mounts on all routes
+        generateId: true,
+        idGenerator: () => crypto.randomUUID(),
+      },
+    }),
+
+    // ── 6. JWT (for TenantMiddleware token decode) ────────────────────────────
+    // Registered here for decode-only use in middleware.
+    // Full JWT verification lives in JwtStrategy (Phase 2).
+    JwtModule.registerAsync({
+      global: true,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('jwt.secret'),
+      }),
+    }),
   ],
 
   controllers: [
@@ -164,4 +191,8 @@ import { PrismaModule } from './prisma/prisma.module.js';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(TenantMiddleware).forRoutes('*'); // all routes — middleware is a no-op if no token present
+  }
+}
