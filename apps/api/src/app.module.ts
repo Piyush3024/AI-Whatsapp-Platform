@@ -5,9 +5,10 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import { LoggerModule } from 'nestjs-pino';
 import { IncomingMessage } from 'http';
-import configuration from './config/configuration';
-import { envValidationSchema } from './config/env.validation';
-import { HealthController } from './health.controller';
+import configuration from './config/configuration.js';
+import { envValidationSchema } from './config/env.validation.js';
+import { HealthController } from './health.controller.js';
+import { PrismaModule } from './prisma/prisma.module.js';
 
 /**
  * Root application module.
@@ -144,6 +145,7 @@ import { HealthController } from './health.controller';
         ),
       }),
     }),
+    PrismaModule,
   ],
 
   controllers: [

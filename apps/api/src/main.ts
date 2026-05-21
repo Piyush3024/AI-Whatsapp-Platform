@@ -8,7 +8,7 @@ import {
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import fastifyHelmet from '@fastify/helmet';
 import fastifyCompress from '@fastify/compress';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 /**
  * Bootstraps the NestJS application with Fastify adapter.
