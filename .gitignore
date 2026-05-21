@@ -36,3 +36,19 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Docker override
+docker-compose.override.yml
+
+# Prisma
+prisma/migrations/
