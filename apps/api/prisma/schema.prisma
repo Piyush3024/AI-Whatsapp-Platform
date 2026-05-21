@@ -1,0 +1,727 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  extensions = [uuidOssp(map: "uuid-ossp"), pgvector(map: "vector")]
+}
+
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum TenantStatus {
+  TRIAL
+  ACTIVE
+  SUSPENDED
+  CHURNED
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  STAFF
+}
+
+enum UserStatus {
+  ACTIVE
+  INVITED
+  DISABLED
+}
+
+enum ConversationState {
+  IDLE
+  GREETING
+  COLLECTING_SERVICE
+  COLLECTING_DATE
+  COLLECTING_TIME
+  CONFIRMING_BOOKING
+  BOOKING_CONFIRMED
+  HUMAN_HANDOFF
+}
+
+enum MessageStatus {
+  QUEUED
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+enum MessageType {
+  TEXT
+  TEMPLATE
+  INTERACTIVE
+  MEDIA
+  SYSTEM
+}
+
+enum DocumentStatus {
+  ACTIVE
+  ARCHIVED
+  PROCESSING
+  FAILED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  NO_SHOW
+  COMPLETED
+}
+
+enum BookingSource {
+  WHATSAPP
+  DASHBOARD
+  MANUAL
+}
+
+enum ReminderRuleType {
+  PRE_APPOINTMENT_24H
+  PRE_APPOINTMENT_2H
+  POST_APPOINTMENT_4H
+  RE_BOOKING_30D
+  PAYMENT_1D
+}
+
+enum ScheduledReminderStatus {
+  PENDING
+  SENT
+  FAILED
+  CANCELLED
+}
+
+enum CustomerOptInStatus {
+  OPTED_IN
+  OPTED_OUT
+  PENDING
+}
+
+enum TemplateApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum InvoiceStatus {
+  DRAFT
+  PENDING
+  PAID
+  VOID
+}
+
+enum UsageEventType {
+  MESSAGE_INBOUND
+  MESSAGE_OUTBOUND
+  AI_CALL
+  BOOKING_CREATED
+}
+
+enum AuditAction {
+  CREATED
+  UPDATED
+  DELETED
+  LOGIN
+  LOGOUT
+  INVITED
+  PLAN_CHANGED
+  WHATSAPP_CONNECTED
+  DOCUMENT_UPLOADED
+}
+
+// ============================================
+// PUBLIC SCHEMA — SHARED TABLES
+// ============================================
+
+model Tenant {
+  id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  slug      String       @unique
+  status    TenantStatus @default(TRIAL)
+  settings  Json         @default("{}")
+  createdAt DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime     @updatedAt @db.Timestamptz(6)
+  deletedAt DateTime?    @db.Timestamptz(6)
+
+  @@index([slug])
+  @@index([status])
+  @@map("tenants")
+}
+
+model User {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String    @unique
+  phone        String?
+  passwordHash String
+  name         String
+  createdAt    DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt    DateTime? @db.Timestamptz(6)
+
+  @@index([email])
+  @@map("users")
+}
+
+model TenantMember {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @db.Uuid
+  userId    String     @db.Uuid
+  role      UserRole   @default(STAFF)
+  status    UserStatus @default(ACTIVE)
+  createdAt DateTime   @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime   @updatedAt @db.Timestamptz(6)
+  deletedAt DateTime?  @db.Timestamptz(6)
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+  @@index([userId])
+  @@map("tenant_members")
+}
+
+model RefreshToken {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String    @db.Uuid
+  tenantId  String    @db.Uuid
+  token     String    @unique
+  expiresAt DateTime  @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
+
+  @@index([userId])
+  @@index([token])
+  @@map("refresh_tokens")
+}
+
+model Invitation {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String     @db.Uuid
+  email     String
+  role      UserRole   @default(STAFF)
+  token     String     @unique
+  status    UserStatus @default(INVITED)
+  expiresAt DateTime   @db.Timestamptz(6)
+  createdAt DateTime   @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime   @updatedAt @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@index([token])
+  @@map("invitations")
+}
+
+model Plan {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String    @unique
+  price     Int
+  currency  String    @default("NPR")
+  limits    Json      @default("{}")
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
+
+  @@map("plans")
+}
+
+model Subscription {
+  id                   String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId             String    @db.Uuid
+  planId               String    @db.Uuid
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  status               String
+  currentPeriodStart   DateTime  @db.Timestamptz(6)
+  currentPeriodEnd     DateTime  @db.Timestamptz(6)
+  createdAt            DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt            DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt            DateTime? @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@index([stripeCustomerId])
+  @@map("subscriptions")
+}
+
+model Invoice {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String        @db.Uuid
+  subscriptionId  String        @db.Uuid
+  stripeInvoiceId String?
+  totalAmount     Int
+  currency        String        @default("NPR")
+  status          InvoiceStatus @default(DRAFT)
+  dueDate         DateTime      @db.Timestamptz(6)
+  createdAt       DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime      @updatedAt @db.Timestamptz(6)
+  deletedAt       DateTime?     @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@map("invoices")
+}
+
+model InvoiceLineItem {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  invoiceId   String    @db.Uuid
+  type        String
+  description String
+  quantity    Int
+  unitAmount  Int
+  totalAmount Int
+  metadata    Json?
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt   DateTime? @db.Timestamptz(6)
+
+  @@index([invoiceId])
+  @@map("invoice_line_items")
+}
+
+model SystemAIPromptTemplate {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  businessType String
+  persona      String
+  systemPrompt String
+  version      Int       @default(1)
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt    DateTime? @db.Timestamptz(6)
+
+  @@map("system_ai_prompt_templates")
+}
+
+model SystemMessageTemplate {
+  id             String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String                 @unique
+  category       String
+  body           String
+  variables      Json                   @default("[]")
+  approvalStatus TemplateApprovalStatus @default(PENDING)
+  createdAt      DateTime               @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime               @updatedAt @db.Timestamptz(6)
+  deletedAt      DateTime?              @db.Timestamptz(6)
+
+  @@map("system_message_templates")
+}
+
+model SystemReminderRule {
+  id           String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type         ReminderRuleType @unique
+  name         String
+  timingOffset Int
+  timingUnit   String
+  defaultBody  String
+  createdAt    DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime         @updatedAt @db.Timestamptz(6)
+  deletedAt    DateTime?        @db.Timestamptz(6)
+
+  @@map("system_reminder_rules")
+}
+
+// ============================================
+// TENANT-SCOPED TABLES
+// ============================================
+
+model Location {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @db.Uuid
+  name      String
+  address   String?
+  phone     String?
+  isDefault Boolean   @default(false)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@map("locations")
+}
+
+model LocationBusinessHour {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @db.Uuid
+  locationId String    @db.Uuid
+  dayOfWeek  DayOfWeek
+  openTime   String
+  closeTime  String
+  isOpen     Boolean   @default(true)
+  createdAt  DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt  DateTime? @db.Timestamptz(6)
+
+  @@unique([locationId, dayOfWeek])
+  @@index([tenantId])
+  @@map("location_business_hours")
+}
+
+model WhatsAppNumber {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String    @db.Uuid
+  locationId         String?   @db.Uuid
+  phoneNumber        String
+  whatsappBusinessId String?
+  displayName        String
+  isActive           Boolean   @default(true)
+  createdAt          DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt          DateTime? @db.Timestamptz(6)
+
+  @@unique([phoneNumber])
+  @@index([tenantId])
+  @@map("whatsapp_numbers")
+}
+
+model Customer {
+  id          String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String              @db.Uuid
+  name        String?
+  phone       String
+  whatsappId  String?
+  optInStatus CustomerOptInStatus @default(PENDING)
+  notes       String?
+  tags        Json?               @default("[]")
+  createdAt   DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime            @updatedAt @db.Timestamptz(6)
+  deletedAt   DateTime?           @db.Timestamptz(6)
+
+  @@unique([tenantId, phone])
+  @@index([tenantId])
+  @@index([tenantId, whatsappId])
+  @@map("customers")
+}
+
+model Conversation {
+  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String            @db.Uuid
+  customerId       String            @db.Uuid
+  whatsappNumberId String            @db.Uuid
+  state            ConversationState @default(IDLE)
+  assignedStaffId  String?           @db.Uuid
+  metadata         Json?             @default("{}")
+  createdAt        DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime          @updatedAt @db.Timestamptz(6)
+  deletedAt        DateTime?         @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@index([tenantId, customerId])
+  @@index([tenantId, state])
+  @@map("conversations")
+}
+
+model Message {
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String        @db.Uuid
+  conversationId String        @db.Uuid
+  messageType    MessageType
+  direction      String
+  content        String?
+  metadata       Json?         @default("{}")
+  status         MessageStatus @default(QUEUED)
+  metaMessageId  String?       @unique
+  createdAt      DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime      @updatedAt @db.Timestamptz(6)
+  deletedAt      DateTime?     @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@index([tenantId, conversationId])
+  @@index([tenantId, createdAt])
+  @@map("messages")
+}
+
+model Staff {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @db.Uuid
+  userId     String?   @db.Uuid
+  locationId String?   @db.Uuid
+  name       String
+  phone      String?
+  email      String?
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt  DateTime? @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@map("staff")
+}
+
+model StaffSchedule {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String    @db.Uuid
+  staffId    String    @db.Uuid
+  dayOfWeek  DayOfWeek
+  startTime  String
+  endTime    String
+  isWorking  Boolean   @default(true)
+  createdAt  DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt  DateTime? @db.Timestamptz(6)
+
+  @@unique([staffId, dayOfWeek])
+  @@index([tenantId])
+  @@map("staff_schedules")
+}
+
+model StaffScheduleOverride {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @db.Uuid
+  staffId   String    @db.Uuid
+  date      DateTime  @db.Date
+  isWorking Boolean   @default(false)
+  startTime String?
+  endTime   String?
+  reason    String?
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
+
+  @@unique([staffId, date])
+  @@index([tenantId])
+  @@map("staff_schedule_overrides")
+}
+
+model Service {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String    @db.Uuid
+  locationId  String?   @db.Uuid
+  name        String
+  description String?
+  duration    Int
+  price       Int
+  currency    String    @default("NPR")
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt   DateTime? @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@map("services")
+}
+
+model Booking {
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String        @db.Uuid
+  customerId     String        @db.Uuid
+  staffId        String?       @db.Uuid
+  locationId     String?       @db.Uuid
+  conversationId String?       @db.Uuid
+  startTime      DateTime      @db.Timestamptz(6)
+  endTime        DateTime      @db.Timestamptz(6)
+  status         BookingStatus @default(PENDING)
+  source         BookingSource @default(WHATSAPP)
+  notes          String?
+  totalAmount    Int?
+  currency       String        @default("NPR")
+  createdAt      DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime      @updatedAt @db.Timestamptz(6)
+  deletedAt      DateTime?     @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@index([tenantId, customerId])
+  @@index([tenantId, staffId])
+  @@index([tenantId, startTime])
+  @@index([tenantId, status])
+  @@map("bookings")
+}
+
+model BookingService {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @db.Uuid
+  bookingId String    @db.Uuid
+  serviceId String    @db.Uuid
+  price     Int
+  duration  Int
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
+
+  @@unique([bookingId, serviceId])
+  @@index([tenantId])
+  @@map("booking_services")
+}
+
+model TenantReminderRule {
+  id                  String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId            String           @db.Uuid
+  systemRuleId        String?          @db.Uuid
+  type                ReminderRuleType
+  isEnabled           Boolean          @default(true)
+  timingOffset        Int?
+  timingUnit          String?
+  customBody          String?
+  createdAt           DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime         @updatedAt @db.Timestamptz(6)
+  deletedAt           DateTime?        @db.Timestamptz(6)
+
+  @@unique([tenantId, type])
+  @@index([tenantId])
+  @@map("tenant_reminder_rules")
+}
+
+model ScheduledReminder {
+  id         String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String                  @db.Uuid
+  bookingId  String                  @db.Uuid
+  ruleType   ReminderRuleType
+  scheduledAt DateTime               @db.Timestamptz(6)
+  sentAt     DateTime?               @db.Timestamptz(6)
+  status     ScheduledReminderStatus @default(PENDING)
+  error      String?
+  createdAt  DateTime                @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime                @updatedAt @db.Timestamptz(6)
+  deletedAt  DateTime?               @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, scheduledAt])
+  @@map("scheduled_reminders")
+}
+
+model TenantAIPrompt {
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String    @db.Uuid
+  systemPromptBaseId String?   @db.Uuid
+  persona            String
+  systemPrompt       String
+  version            Int       @default(1)
+  isActive           Boolean   @default(true)
+  createdAt          DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt          DateTime? @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@index([tenantId, isActive])
+  @@map("tenant_ai_prompts")
+}
+
+model KnowledgeBaseDocument {
+  id        String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String         @db.Uuid
+  title     String
+  fileUrl   String
+  version   Int            @default(1)
+  status    DocumentStatus @default(PROCESSING)
+  createdAt DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime       @updatedAt @db.Timestamptz(6)
+  deletedAt DateTime?      @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@map("knowledge_base_documents")
+}
+
+model KnowledgeBaseChunk {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String   @db.Uuid
+  documentId String   @db.Uuid
+  content    String
+  chunkIndex Int
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@index([tenantId, documentId])
+  @@index([tenantId, isActive])
+  @@map("knowledge_base_chunks")
+}
+
+model UsageEvent {
+  id        String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String         @db.Uuid
+  type      UsageEventType
+  quantity  Int            @default(1)
+  metadata  Json?          @default("{}")
+  createdAt DateTime       @default(now()) @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@index([tenantId, type])
+  @@index([tenantId, createdAt])
+  @@map("usage_events")
+}
+
+model DailyUsageAggregate {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String   @db.Uuid
+  date           DateTime @db.Date
+  messagesIn     Int      @default(0)
+  messagesOut    Int      @default(0)
+  aiCalls        Int      @default(0)
+  bookingsCreated Int     @default(0)
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @db.Timestamptz(6)
+
+  @@unique([tenantId, date])
+  @@index([tenantId])
+  @@map("daily_usage_aggregates")
+}
+
+model AuditLog {
+  id         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String?     @db.Uuid
+  userId     String?     @db.Uuid
+  action     AuditAction
+  resource   String
+  resourceId String?
+  metadata   Json?       @default("{}")
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime    @default(now()) @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@index([tenantId, action])
+  @@index([tenantId, createdAt])
+  @@map("audit_logs")
+}
+
+model TenantMessageTemplate {
+  id             String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId       String                 @db.Uuid
+  systemTemplateId String?              @db.Uuid
+  name           String
+  category       String
+  body           String
+  variables      Json                   @default("[]")
+  approvalStatus TemplateApprovalStatus @default(PENDING)
+  metaTemplateId String?
+  createdAt      DateTime               @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime               @updatedAt @db.Timestamptz(6)
+  deletedAt      DateTime?              @db.Timestamptz(6)
+
+  @@index([tenantId])
+  @@map("tenant_message_templates")
+}
+
+model NotificationPreference {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String   @db.Uuid
+  userId    String   @db.Uuid
+  type      String
+  email     Boolean  @default(true)
+  whatsapp  Boolean  @default(false)
+  inApp     Boolean  @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@unique([tenantId, userId, type])
+  @@index([tenantId])
+  @@map("notification_preferences")
+}
