@@ -14,6 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { TenantMiddleware } from './common/middleware/tenant.middleware.js';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard.js';
 import { RolesGuard } from './common/guards/roles.guard.js';
+import { AuthModule } from './modules/auth/auth.module.js';
 
 /**
  * Root application module.
@@ -175,6 +176,7 @@ import { RolesGuard } from './common/guards/roles.guard.js';
         secret: config.get<string>('jwt.secret'),
       }),
     }),
+    AuthModule,
   ],
 
   controllers: [
