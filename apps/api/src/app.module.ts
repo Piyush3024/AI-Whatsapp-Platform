@@ -12,6 +12,8 @@ import { PrismaModule } from './prisma/prisma.module.js';
 import { ClsModule } from 'nestjs-cls';
 import { JwtModule } from '@nestjs/jwt';
 import { TenantMiddleware } from './common/middleware/tenant.middleware.js';
+import { JwtAuthGuard } from './common/guards/jwt-auth.guard.js';
+import { RolesGuard } from './common/guards/roles.guard.js';
 
 /**
  * Root application module.
@@ -189,6 +191,8 @@ import { TenantMiddleware } from './common/middleware/tenant.middleware.js';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
   ],
 })
 export class AppModule implements NestModule {

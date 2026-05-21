@@ -9,6 +9,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import fastifyHelmet from '@fastify/helmet';
 import fastifyCompress from '@fastify/compress';
 import { AppModule } from './app.module.js';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter.js';
+import { TransformInterceptor } from './common/interceptors/transform.interceptor.js';
 
 /**
  * Bootstraps the NestJS application with Fastify adapter.
@@ -170,6 +172,9 @@ async function bootstrap(): Promise<void> {
   // Allows Prisma connections and BullMQ workers to drain before the process
   // exits. Critical for zero-downtime deployments in Kubernetes / Docker.
   app.enableShutdownHooks();
+
+  app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalInterceptors(new TransformInterceptor());
 
   // ─── Start Listening ──────────────────────────────────────────────────────
   // '0.0.0.0' is required for Docker — '127.0.0.1' would be unreachable from host.

@@ -83,26 +83,6 @@ export class PrismaService
     this.logger.log('Database connection closed', 'PrismaService');
   }
 
-  // /**
-  //  * Set PostgreSQL RLS tenant context for the current transaction.
-  //  * Called by TenantMiddleware at the start of every authenticated request.
-  //  * true = LOCAL scope — resets automatically when transaction ends.
-  //  */
-  // async setTenantContext(tenantId: string): Promise<void> {
-  //   await this.$executeRaw`
-  //     SELECT set_config('app.current_tenant_id', ${tenantId}, true)
-  //   `;
-  // }
-
-  // /**
-  //  * Clear tenant context for system/admin operations that bypass RLS.
-  //  */
-  // async clearTenantContext(): Promise<void> {
-  //   await this.$executeRaw`
-  //     SELECT set_config('app.current_tenant_id', '', true)
-  //   `;
-  // }
-
   /**
    * Builds the soft-delete extended client.
    * All find*, count operations automatically exclude soft-deleted rows.
