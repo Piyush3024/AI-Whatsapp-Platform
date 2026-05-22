@@ -12,7 +12,6 @@ import type { RegisterDto } from './dto/register.dto.js';
 import type { LoginDto } from './dto/login.dto.js';
 import type { JwtPayload } from './strategies/jwt.strategy.js';
 import { UserRole } from '../../generated/prisma/client.js';
-import type { SignOptions } from 'jsonwebtoken';
 
 /**
  * Token response ka shape — login/register/refresh sab yahi return karte hain.
@@ -86,36 +85,34 @@ export class AuthService {
     // Teen tables mein insert — ek bhi fail hua toh sab rollback.
     // Note: baseClient.$transaction use karo — RLS context set nahi hai
     // abhi kyunki ye registration hai (no tenant yet).
-    const { tenant, user } = await (this.prisma as any).$transaction(
-      async (tx: any) => {
-        const tenant = await tx.tenant.create({
-          data: {
-            name: dto.businessName,
-            slug,
-            status: 'TRIAL',
-          },
-        });
+    const { tenant, user } = await this.prisma.$transaction(async (tx) => {
+      const tenant = await tx.tenant.create({
+        data: {
+          name: dto.businessName,
+          slug,
+          status: 'TRIAL',
+        },
+      });
 
-        const user = await tx.user.create({
-          data: {
-            name: dto.name,
-            email: dto.email.toLowerCase(),
-            passwordHash,
-          },
-        });
+      const user = await tx.user.create({
+        data: {
+          name: dto.name,
+          email: dto.email.toLowerCase(),
+          passwordHash,
+        },
+      });
 
-        await tx.tenantMember.create({
-          data: {
-            tenantId: tenant.id,
-            userId: user.id,
-            role: UserRole.OWNER,
-            status: 'ACTIVE',
-          },
-        });
+      await tx.tenantMember.create({
+        data: {
+          tenantId: tenant.id,
+          userId: user.id,
+          role: UserRole.OWNER,
+          status: 'ACTIVE',
+        },
+      });
 
-        return { tenant, user };
-      },
-    );
+      return { tenant, user };
+    });
 
     this.logger.log(
       `New tenant registered: ${tenant.slug} (userId: ${user.id})`,
@@ -144,7 +141,7 @@ export class AuthService {
     // ── Step 1: User dhundho ──────────────────────────────────────────────
     // findUnique soft-delete filter bypass karta hai — deletedAt wale users
     // ko bhi check karna hai (show specific error nahi karna security ke liye)
-    const user = await (this.prisma as any).user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { email: dto.email.toLowerCase() },
     });
 
@@ -154,11 +151,11 @@ export class AuthService {
       user && (await bcrypt.compare(dto.password, user.passwordHash));
 
     if (!user || !isPasswordValid) {
-      throw new UnauthorizedException('Email ya password galat hai.');
+      throw new UnauthorizedException('Wrong Credentials.');
     }
 
     // ── Step 3: Active tenant membership check ────────────────────────────
-    const member = await (this.prisma as any).tenantMember.findFirst({
+    const member = await this.prisma.tenantMember.findFirst({
       where: {
         userId: user.id,
         status: 'ACTIVE',
@@ -201,7 +198,7 @@ export class AuthService {
     email: string,
   ): Promise<AuthTokens> {
     // Purane tokens delete karo is user ke liye (rotation)
-    await (this.prisma as any).refreshToken.deleteMany({
+    await this.prisma.refreshToken.deleteMany({
       where: {
         userId,
         tenantId,
@@ -220,7 +217,7 @@ export class AuthService {
    * mil sakta refresh token ke bina.
    */
   async logout(userId: string, tenantId: string): Promise<void> {
-    await (this.prisma as any).refreshToken.deleteMany({
+    await this.prisma.refreshToken.deleteMany({
       where: { userId, tenantId },
     });
 
@@ -248,7 +245,7 @@ export class AuthService {
       select: { role: true, status: true },
     });
 
-    const tenant = await (this.prisma as any).tenant.findUnique({
+    const tenant = await this.prisma.tenant.findUnique({
       where: { id: tenantId },
       select: { id: true, name: true, slug: true, status: true },
     });
@@ -262,37 +259,37 @@ export class AuthService {
    * Access token + Refresh token generate karta hai aur refresh token
    * DB mein store karta hai.
    */
+
   private async _generateAndStoreTokens(
     payload: JwtPayload,
   ): Promise<AuthTokens> {
-    const accessExpiresIn = (this.config.get<string>('jwt.expiresIn') ??
-      '15m') as SignOptions['expiresIn'];
-
-    const refreshExpiresIn = (this.config.get<string>('jwt.refreshExpiresIn') ??
-      '7d') as SignOptions['expiresIn'];
+    // ConfigService.get() string | undefined return karta hai
+    // Nullish coalescing guarantee karta hai ke string mil jayega
+    const accessExpiresIn: string =
+      this.config.get<string>('jwt.expiresIn') ?? '15m';
+    const refreshExpiresIn: string =
+      this.config.get<string>('jwt.refreshExpiresIn') ?? '7d';
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwt.signAsync(
         { ...payload },
         {
           secret: this.config.get<string>('jwt.secret'),
-          expiresIn: accessExpiresIn,
+          expiresIn: this._parseExpiryToSeconds(accessExpiresIn),
         },
       ),
       this.jwt.signAsync(
         { ...payload },
         {
           secret: this.config.get<string>('jwt.refreshSecret'),
-          expiresIn: refreshExpiresIn,
+          expiresIn: this._parseExpiryToSeconds(refreshExpiresIn),
         },
       ),
     ]);
 
-    const expiresAt = this._parseExpiry(
-      this.config.get<string>('jwt.refreshExpiresIn') ?? '7d',
-    );
+    const expiresAt = this._parseExpiry(refreshExpiresIn);
 
-    await (this.prisma as any).refreshToken.create({
+    await this.prisma.db.refreshToken.create({
       data: {
         userId: payload.sub,
         tenantId: payload.tenantId,
@@ -301,9 +298,7 @@ export class AuthService {
       },
     });
 
-    const expiresInSeconds = this._parseExpiryToSeconds(
-      this.config.get<string>('jwt.expiresIn') ?? '15m',
-    );
+    const expiresInSeconds = this._parseExpiryToSeconds(accessExpiresIn);
 
     return { accessToken, refreshToken, expiresIn: expiresInSeconds };
   }
@@ -324,7 +319,7 @@ export class AuthService {
       .slice(0, 50); // max length
 
     // Check karo slug available hai ya nahi
-    const existing = await (this.prisma as any).tenant.findUnique({
+    const existing = await this.prisma.tenant.findUnique({
       where: { slug: baseSlug },
     });
 
@@ -334,7 +329,7 @@ export class AuthService {
     let suffix = 1;
     while (true) {
       const candidate = `${baseSlug}-${suffix}`;
-      const conflict = await (this.prisma as any).tenant.findUnique({
+      const conflict = await this.prisma.tenant.findUnique({
         where: { slug: candidate },
       });
       if (!conflict) return candidate;

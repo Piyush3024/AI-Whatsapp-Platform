@@ -17,6 +17,7 @@ import { RolesGuard } from './common/guards/roles.guard.js';
 import { AuthModule } from './modules/auth/auth.module.js';
 import { BullModule } from '@nestjs/bullmq';
 import { WhatsAppModule } from './modules/whatsapp/whatsapp.module.js';
+import { TenantModule } from './modules/tenant/tenant.module.js';
 
 /**
  * Root application module.
@@ -149,7 +150,7 @@ import { WhatsAppModule } from './modules/whatsapp/whatsapp.module.js';
           },
         ],
         storage: new ThrottlerStorageRedisService(
-          config.get<string>('redis.url')!,
+          config.get<string>('redis.url'),
         ),
       }),
     }),
@@ -199,6 +200,7 @@ import { WhatsAppModule } from './modules/whatsapp/whatsapp.module.js';
       },
     }),
     WhatsAppModule,
+    TenantModule,
   ],
 
   controllers: [

@@ -71,7 +71,7 @@ export class AuthController {
     status: 200,
     description: 'Login successful — access + refresh tokens milenge',
   })
-  @ApiResponse({ status: 401, description: 'Email ya password galat hai' })
+  @ApiResponse({ status: 401, description: 'Wrong Credentials' })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
