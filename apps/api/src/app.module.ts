@@ -15,6 +15,8 @@ import { TenantMiddleware } from './common/middleware/tenant.middleware.js';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard.js';
 import { RolesGuard } from './common/guards/roles.guard.js';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { BullModule } from '@nestjs/bullmq';
+import { WhatsAppModule } from './modules/whatsapp/whatsapp.module.js';
 
 /**
  * Root application module.
@@ -177,6 +179,26 @@ import { AuthModule } from './modules/auth/auth.module.js';
       }),
     }),
     AuthModule,
+    // BullMQ global Redis connection
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        // REDIS_URL = "redis://localhost:6379" — host/port parse karo
+        const redisUrl = new URL(
+          config.get<string>('redis.url') ?? 'redis://localhost:6379',
+        );
+        return {
+          connection: {
+            host: redisUrl.hostname,
+            port: parseInt(redisUrl.port ?? '6379', 10),
+            // Password agar ho toh
+            ...(redisUrl.password && { password: redisUrl.password }),
+          },
+        };
+      },
+    }),
+    WhatsAppModule,
   ],
 
   controllers: [

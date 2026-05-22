@@ -46,6 +46,7 @@ async function bootstrap(): Promise<void> {
     {
       // Disable NestJS built-in logger; nestjs-pino takes over after init.
       bufferLogs: true,
+      rawBody: true,
     },
   );
 
