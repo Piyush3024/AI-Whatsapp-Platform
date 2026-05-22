@@ -81,6 +81,11 @@ export async function withTenantContext<T>(
   });
 }
 
+// Transaction client type — processors mein use hoga
+export type TenantTxClient = Parameters<
+  Parameters<typeof withTenantContext>[1]
+>[0];
+
 // ============================================================
 // CONNECT / DISCONNECT
 // ============================================================

@@ -17,7 +17,9 @@
 // ============================================================
 
 import "../config/env.js"; // Validate env first — before anything else
-
+import { processInboundMessage } from "../processors/whatsapp-inbound.processor.js";
+import type { InboundMessageJob } from "../types/job-payloads.js";
+import { closeQueues } from "../lib/queues.js";
 import { Worker } from "bullmq";
 import { redisConnection, checkRedisHealth, closeRedis } from "../lib/redis.js";
 import { connectPrisma, disconnectPrisma } from "../lib/prisma.js";
@@ -66,13 +68,14 @@ function createWorkers(): Worker[] {
   };
 
   // whatsapp-inbound worker
-  const inboundWorker = new Worker(QUEUE_NAMES.WHATSAPP_INBOUND, placeholder, {
-    connection: redisConnection,
-    concurrency: 10, // 10 concurrent inbound messages
-    // Retry config — 3 attempts, exponential backoff starting 2s
-    // Note: retry config is set on Queue when adding jobs (API side)
-    // Worker just processes — retry is queue-level config
-  });
+  const inboundWorker = new Worker<InboundMessageJob>(
+    QUEUE_NAMES.WHATSAPP_INBOUND,
+    processInboundMessage,
+    {
+      connection: redisConnection,
+      concurrency: 10,
+    },
+  );
 
   // ai-reply worker — lower concurrency (OpenAI rate limits)
   const aiReplyWorker = new Worker(QUEUE_NAMES.AI_REPLY, placeholder, {
@@ -177,10 +180,13 @@ async function gracefulShutdown(signal: string): Promise<void> {
     await Promise.all(workers.map((w) => w.close()));
     logger.info("All workers closed");
 
-    // Step 2: Disconnect Prisma
+    // Step 2: Close outbound queues
+    await closeQueues();
+
+    // Step 3: Disconnect Prisma
     await disconnectPrisma();
 
-    // Step 3: Close Redis
+    // Step 4: Close Redis
     await closeRedis();
 
     logger.info("Graceful shutdown complete");
