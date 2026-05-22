@@ -1,14 +1,11 @@
 import type { Job } from "bullmq";
 import OpenAI from "openai";
-import { createJobLogger } from "../../lib/logger.js";
-import { withTenantContext } from "../../lib/prisma.js";
-import { outboundQueue } from "../../lib/queues.js";
+import { createJobLogger } from "../lib/logger.js";
+import { withTenantContext } from "../lib/prisma.js";
+import { outboundQueue } from "../lib/queues.js";
 import { generateEmbedding } from "./embeddings.processor.js";
-import { env } from "../../config/env.js";
-import type {
-  AiReplyJob,
-  OutboundMessageJob,
-} from "../../types/job-payloads.js";
+import { env } from "../config/env.js";
+import type { AiReplyJob, OutboundMessageJob } from "../types/job-payloads.js";
 
 // ============================================================
 // AI REPLY PROCESSOR

@@ -21,10 +21,10 @@
   },
   "include": [
     "src/**/*",
-    "lib/**/*",
-    "config/**/*",
-    "constants/**/*",
-    "types/**/*",
+    "src/lib/**/*",
+    "src/config/**/*",
+    "src/constants/**/*",
+    "src/types/**/*",
     "*.ts"
   ],
   "exclude": ["node_modules", "dist", "src/generated"]

@@ -1,11 +1,8 @@
 import type { Job } from "bullmq";
-import { createJobLogger } from "../../lib/logger.js";
-import { withTenantContext, type TenantTxClient } from "../../lib/prisma.js";
-import { aiReplyQueue } from "../../lib/queues.js";
-import type {
-  InboundMessageJob,
-  AiReplyJob,
-} from "../../types/job-payloads.js";
+import { createJobLogger } from "../lib/logger.js";
+import { withTenantContext, type TenantTxClient } from "../lib/prisma.js";
+import { aiReplyQueue } from "../lib/queues.js";
+import type { InboundMessageJob, AiReplyJob } from "../types/job-payloads.js";
 
 // ============================================================
 // WHATSAPP INBOUND PROCESSOR

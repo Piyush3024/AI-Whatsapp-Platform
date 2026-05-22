@@ -16,7 +16,7 @@
 // 5. process.exit(0)
 // ============================================================
 
-import "../config/env.js"; // Validate env first — before anything else
+import "./config/env.js"; // Validate env first — before anything else
 import { processInboundMessage } from "./processors/whatsapp-inbound.processor.js";
 import { processAiReply } from "./processors/ai-reply.processor.js";
 import { processEmbedding } from "./processors/embeddings.processor.js";
@@ -24,13 +24,15 @@ import type {
   InboundMessageJob,
   AiReplyJob,
   EmbeddingJob,
-} from "../types/job-payloads.js";
-import { closeQueues } from "../lib/queues.js";
+} from "./types/job-payloads.js";
+import { processOutboundMessage } from "./processors/whatsapp-outbound.processor.js";
+import type { OutboundMessageJob } from "./types/job-payloads.js";
+import { closeQueues } from "./lib/queues.js";
 import { Worker } from "bullmq";
-import { redisConnection, checkRedisHealth, closeRedis } from "../lib/redis.js";
-import { connectPrisma, disconnectPrisma } from "../lib/prisma.js";
-import { logger } from "../lib/logger.js";
-import { QUEUE_NAMES } from "../constants/queues.js";
+import { redisConnection, checkRedisHealth, closeRedis } from "./lib/redis.js";
+import { connectPrisma, disconnectPrisma } from "./lib/prisma.js";
+import { logger } from "./lib/logger.js";
+import { QUEUE_NAMES } from "./constants/queues.js";
 
 // ============================================================
 // UNHANDLED ERROR HANDLERS
@@ -84,7 +86,6 @@ function createWorkers(): Worker[] {
   );
 
   // ai-reply worker — lower concurrency (OpenAI rate limits)
-  // ai-reply worker — lower concurrency (OpenAI rate limits)
   const aiReplyWorker = new Worker<AiReplyJob>(
     QUEUE_NAMES.AI_REPLY,
     processAiReply,
@@ -95,9 +96,9 @@ function createWorkers(): Worker[] {
   );
 
   // whatsapp-outbound worker
-  const outboundWorker = new Worker(
+  const outboundWorker = new Worker<OutboundMessageJob>(
     QUEUE_NAMES.WHATSAPP_OUTBOUND,
-    placeholder,
+    processOutboundMessage,
     {
       connection: redisConnection,
       concurrency: 10,

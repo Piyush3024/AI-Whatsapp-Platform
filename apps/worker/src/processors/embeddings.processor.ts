@@ -1,9 +1,9 @@
 import type { Job } from "bullmq";
-import { createJobLogger } from "../../lib/logger.js";
-import { withTenantContext } from "../../lib/prisma.js";
+import { createJobLogger } from "../lib/logger.js";
+import { withTenantContext } from "../lib/prisma.js";
 // import { withTenantContext, prisma } from '../../lib/prisma.js';
-import { env } from "../../config/env.js";
-import type { EmbeddingJob } from "../../types/job-payloads.js";
+import { env } from "../config/env.js";
+import type { EmbeddingJob } from "../types/job-payloads.js";
 import OpenAI from "openai";
 
 // ============================================================
