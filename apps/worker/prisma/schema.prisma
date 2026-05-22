@@ -631,15 +631,16 @@ model KnowledgeBaseDocument {
 }
 
 model KnowledgeBaseChunk {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId   String   @db.Uuid
-  documentId String   @db.Uuid
+  id         String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String                      @db.Uuid
+  documentId String                      @db.Uuid
   content    String
   chunkIndex Int
-  isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt  DateTime @updatedAt @db.Timestamptz(6)
-
+  embedding  Unsupported("vector(1536)")?
+  isActive   Boolean                     @default(true)
+  createdAt  DateTime                    @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime                    @updatedAt @db.Timestamptz(6)
+  
   @@index([tenantId])
   @@index([tenantId, documentId])
   @@index([tenantId, isActive])
