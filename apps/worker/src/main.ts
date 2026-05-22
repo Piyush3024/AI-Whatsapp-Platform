@@ -17,8 +17,14 @@
 // ============================================================
 
 import "../config/env.js"; // Validate env first — before anything else
-import { processInboundMessage } from "../processors/whatsapp-inbound.processor.js";
-import type { InboundMessageJob } from "../types/job-payloads.js";
+import { processInboundMessage } from "./processors/whatsapp-inbound.processor.js";
+import { processAiReply } from "./processors/ai-reply.processor.js";
+import { processEmbedding } from "./processors/embeddings.processor.js";
+import type {
+  InboundMessageJob,
+  AiReplyJob,
+  EmbeddingJob,
+} from "../types/job-payloads.js";
 import { closeQueues } from "../lib/queues.js";
 import { Worker } from "bullmq";
 import { redisConnection, checkRedisHealth, closeRedis } from "../lib/redis.js";
@@ -78,10 +84,15 @@ function createWorkers(): Worker[] {
   );
 
   // ai-reply worker — lower concurrency (OpenAI rate limits)
-  const aiReplyWorker = new Worker(QUEUE_NAMES.AI_REPLY, placeholder, {
-    connection: redisConnection,
-    concurrency: 5,
-  });
+  // ai-reply worker — lower concurrency (OpenAI rate limits)
+  const aiReplyWorker = new Worker<AiReplyJob>(
+    QUEUE_NAMES.AI_REPLY,
+    processAiReply,
+    {
+      connection: redisConnection,
+      concurrency: 5,
+    },
+  );
 
   // whatsapp-outbound worker
   const outboundWorker = new Worker(
@@ -106,10 +117,15 @@ function createWorkers(): Worker[] {
   });
 
   // embeddings worker — heavy CPU/IO, low concurrency
-  const embeddingsWorker = new Worker(QUEUE_NAMES.EMBEDDINGS, placeholder, {
-    connection: redisConnection,
-    concurrency: 2,
-  });
+  // embeddings worker — heavy CPU/IO, low concurrency
+  const embeddingsWorker = new Worker<EmbeddingJob>(
+    QUEUE_NAMES.EMBEDDINGS,
+    processEmbedding,
+    {
+      connection: redisConnection,
+      concurrency: 2,
+    },
+  );
 
   // analytics worker
   const analyticsWorker = new Worker(QUEUE_NAMES.ANALYTICS, placeholder, {

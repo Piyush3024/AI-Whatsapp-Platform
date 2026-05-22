@@ -10,10 +10,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider   = "postgresql"
   extensions = [uuidOssp(map: "uuid-ossp"), pgvector(map: "vector")]
 }
-
 
 // ============================================
 // ENUMS
@@ -464,16 +463,16 @@ model Staff {
 }
 
 model StaffSchedule {
-  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId   String    @db.Uuid
-  staffId    String    @db.Uuid
-  dayOfWeek  DayOfWeek
-  startTime  String
-  endTime    String
-  isWorking  Boolean   @default(true)
-  createdAt  DateTime  @default(now()) @db.Timestamptz(6)
-  updatedAt  DateTime  @updatedAt @db.Timestamptz(6)
-  deletedAt  DateTime? @db.Timestamptz(6)
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @db.Uuid
+  staffId   String    @db.Uuid
+  dayOfWeek DayOfWeek
+  startTime String
+  endTime   String
+  isWorking Boolean   @default(true)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
 
   @@unique([staffId, dayOfWeek])
   @@index([tenantId])
@@ -559,17 +558,17 @@ model BookingService {
 }
 
 model TenantReminderRule {
-  id                  String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId            String           @db.Uuid
-  systemRuleId        String?          @db.Uuid
-  type                ReminderRuleType
-  isEnabled           Boolean          @default(true)
-  timingOffset        Int?
-  timingUnit          String?
-  customBody          String?
-  createdAt           DateTime         @default(now()) @db.Timestamptz(6)
-  updatedAt           DateTime         @updatedAt @db.Timestamptz(6)
-  deletedAt           DateTime?        @db.Timestamptz(6)
+  id           String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId     String           @db.Uuid
+  systemRuleId String?          @db.Uuid
+  type         ReminderRuleType
+  isEnabled    Boolean          @default(true)
+  timingOffset Int?
+  timingUnit   String?
+  customBody   String?
+  createdAt    DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime         @updatedAt @db.Timestamptz(6)
+  deletedAt    DateTime?        @db.Timestamptz(6)
 
   @@unique([tenantId, type])
   @@index([tenantId])
@@ -577,17 +576,17 @@ model TenantReminderRule {
 }
 
 model ScheduledReminder {
-  id         String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId   String                  @db.Uuid
-  bookingId  String                  @db.Uuid
-  ruleType   ReminderRuleType
-  scheduledAt DateTime               @db.Timestamptz(6)
-  sentAt     DateTime?               @db.Timestamptz(6)
-  status     ScheduledReminderStatus @default(PENDING)
-  error      String?
-  createdAt  DateTime                @default(now()) @db.Timestamptz(6)
-  updatedAt  DateTime                @updatedAt @db.Timestamptz(6)
-  deletedAt  DateTime?               @db.Timestamptz(6)
+  id          String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String                  @db.Uuid
+  bookingId   String                  @db.Uuid
+  ruleType    ReminderRuleType
+  scheduledAt DateTime                @db.Timestamptz(6)
+  sentAt      DateTime?               @db.Timestamptz(6)
+  status      ScheduledReminderStatus @default(PENDING)
+  error       String?
+  createdAt   DateTime                @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime                @updatedAt @db.Timestamptz(6)
+  deletedAt   DateTime?               @db.Timestamptz(6)
 
   @@index([tenantId])
   @@index([tenantId, status])
@@ -629,14 +628,15 @@ model KnowledgeBaseDocument {
 }
 
 model KnowledgeBaseChunk {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId   String   @db.Uuid
-  documentId String   @db.Uuid
+  id         String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String                       @db.Uuid
+  documentId String                       @db.Uuid
   content    String
   chunkIndex Int
-  isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt  DateTime @updatedAt @db.Timestamptz(6)
+  embedding  Unsupported("vector(1536)")?
+  isActive   Boolean                      @default(true)
+  createdAt  DateTime                     @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime                     @updatedAt @db.Timestamptz(6)
 
   @@index([tenantId])
   @@index([tenantId, documentId])
@@ -659,15 +659,15 @@ model UsageEvent {
 }
 
 model DailyUsageAggregate {
-  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId       String   @db.Uuid
-  date           DateTime @db.Date
-  messagesIn     Int      @default(0)
-  messagesOut    Int      @default(0)
-  aiCalls        Int      @default(0)
-  bookingsCreated Int     @default(0)
-  createdAt      DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt      DateTime @updatedAt @db.Timestamptz(6)
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId        String   @db.Uuid
+  date            DateTime @db.Date
+  messagesIn      Int      @default(0)
+  messagesOut     Int      @default(0)
+  aiCalls         Int      @default(0)
+  bookingsCreated Int      @default(0)
+  createdAt       DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @db.Timestamptz(6)
 
   @@unique([tenantId, date])
   @@index([tenantId])
@@ -693,18 +693,18 @@ model AuditLog {
 }
 
 model TenantMessageTemplate {
-  id             String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId       String                 @db.Uuid
-  systemTemplateId String?              @db.Uuid
-  name           String
-  category       String
-  body           String
-  variables      Json                   @default("[]")
-  approvalStatus TemplateApprovalStatus @default(PENDING)
-  metaTemplateId String?
-  createdAt      DateTime               @default(now()) @db.Timestamptz(6)
-  updatedAt      DateTime               @updatedAt @db.Timestamptz(6)
-  deletedAt      DateTime?              @db.Timestamptz(6)
+  id               String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String                 @db.Uuid
+  systemTemplateId String?                @db.Uuid
+  name             String
+  category         String
+  body             String
+  variables        Json                   @default("[]")
+  approvalStatus   TemplateApprovalStatus @default(PENDING)
+  metaTemplateId   String?
+  createdAt        DateTime               @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime               @updatedAt @db.Timestamptz(6)
+  deletedAt        DateTime?              @db.Timestamptz(6)
 
   @@index([tenantId])
   @@map("tenant_message_templates")
