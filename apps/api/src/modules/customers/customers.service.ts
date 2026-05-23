@@ -53,7 +53,7 @@ export class CustomersService {
     } = query;
 
     const skip = (page - 1) * limit;
-    // const tenantId = this.getTenantId();
+    // const tenantId = this.prisma.getTenantId();
 
     // Build where clause
     const where: Record<string, unknown> = {};
@@ -121,7 +121,7 @@ export class CustomersService {
    * Find a single customer by ID.
    */
   async findOne(id: string): Promise<CustomerResponse> {
-    const tenantId = this.getTenantId();
+    const tenantId = this.prisma.getTenantId();
 
     const customer = await this.prisma.db.customer.findFirst({
       where: {
@@ -157,7 +157,7 @@ export class CustomersService {
    * Create a new customer.
    */
   async create(dto: CreateCustomerDto): Promise<CustomerResponse> {
-    const tenantId = this.getTenantId();
+    const tenantId = this.prisma.getTenantId();
 
     // Normalize phone (remove spaces, ensure E.164)
     const normalizedPhone = this.normalizePhone(dto.phone);
@@ -213,7 +213,7 @@ export class CustomersService {
    * Update an existing customer.
    */
   async update(id: string, dto: UpdateCustomerDto): Promise<CustomerResponse> {
-    const tenantId = this.getTenantId();
+    const tenantId = this.prisma.getTenantId();
 
     // First check if customer exists
     const existing = await this.prisma.db.customer.findFirst({
@@ -293,7 +293,7 @@ export class CustomersService {
    * Soft delete a customer.
    */
   async remove(id: string): Promise<void> {
-    const tenantId = this.getTenantId();
+    const tenantId = this.prisma.getTenantId();
 
     const customer = await this.prisma.db.customer.findFirst({
       where: { id, tenantId },
@@ -319,7 +319,7 @@ export class CustomersService {
    * Get customer statistics for dashboard.
    */
   async getStats(): Promise<CustomerStatsResponse> {
-    const tenantId = this.getTenantId();
+    const tenantId = this.prisma.getTenantId();
 
     // Calculate date boundaries
     const now = new Date();
@@ -378,7 +378,7 @@ export class CustomersService {
     customerId: string,
     query: { page?: number; limit?: number },
   ): Promise<PaginatedCustomerResponse> {
-    const tenantId = this.getTenantId();
+    const tenantId = this.prisma.getTenantId();
     const page = query.page ?? 1;
     const limit = query.limit ?? 20;
     const skip = (page - 1) * limit;
@@ -432,20 +432,6 @@ export class CustomersService {
         totalPages: Math.ceil(total / limit),
       },
     };
-  }
-
-  /**
-   * Retrieve current tenant ID from request context.
-   */
-  private getTenantId(): string {
-    const tenantId = this.cls.get<string>('tenantId');
-    if (!tenantId) {
-      throw new BadRequestException({
-        errorCode: 'TENANT_CONTEXT_MISSING',
-        message: 'Tenant context is missing',
-      });
-    }
-    return tenantId;
   }
 
   /**

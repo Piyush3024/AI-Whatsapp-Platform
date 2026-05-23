@@ -84,6 +84,20 @@ export class PrismaService
   }
 
   /**
+   * Get current tenant ID from CLS context.
+   * Use this in services when you need the tenantId for custom queries.
+   */
+  getTenantId(): string {
+    const tenantId = this.cls.get<string>('tenantId');
+    if (!tenantId) {
+      throw new Error(
+        'Tenant context not set. Ensure TenantMiddleware is applied.',
+      );
+    }
+    return tenantId;
+  }
+
+  /**
    * Builds the soft-delete extended client.
    * All find*, count operations automatically exclude soft-deleted rows.
    * delete/deleteMany are converted to soft deletes.

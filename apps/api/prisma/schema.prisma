@@ -350,6 +350,9 @@ model Location {
   updatedAt DateTime  @updatedAt @db.Timestamptz(6)
   deletedAt DateTime? @db.Timestamptz(6)
 
+  bookings       Booking[]
+
+
   @@index([tenantId])
   @@map("locations")
 }
@@ -401,6 +404,9 @@ model Customer {
   createdAt   DateTime            @default(now()) @db.Timestamptz(6)
   updatedAt   DateTime            @updatedAt @db.Timestamptz(6)
   deletedAt   DateTime?           @db.Timestamptz(6)
+
+  bookings       Booking[]
+
 
   @@unique([tenantId, phone])
   @@index([tenantId])
@@ -462,6 +468,9 @@ model Staff {
   updatedAt  DateTime  @updatedAt @db.Timestamptz(6)
   deletedAt  DateTime? @db.Timestamptz(6)
 
+  bookings       Booking[]
+
+
   @@index([tenantId])
   @@map("staff")
 }
@@ -515,6 +524,9 @@ model Service {
   updatedAt   DateTime  @updatedAt @db.Timestamptz(6)
   deletedAt   DateTime? @db.Timestamptz(6)
 
+  bookingServices BookingService[]
+
+
   @@index([tenantId])
   @@map("services")
 }
@@ -537,6 +549,12 @@ model Booking {
   updatedAt      DateTime      @updatedAt @db.Timestamptz(6)
   deletedAt      DateTime?     @db.Timestamptz(6)
 
+  customer       Customer        @relation(fields: [customerId], references: [id])
+  staff          Staff?          @relation(fields: [staffId], references: [id])
+  location       Location?       @relation(fields: [locationId], references: [id])
+  services       BookingService[]
+
+
   @@index([tenantId])
   @@index([tenantId, customerId])
   @@index([tenantId, staffId])
@@ -555,6 +573,10 @@ model BookingService {
   createdAt DateTime  @default(now()) @db.Timestamptz(6)
   updatedAt DateTime  @updatedAt @db.Timestamptz(6)
   deletedAt DateTime? @db.Timestamptz(6)
+
+  booking        Booking         @relation(fields: [bookingId], references: [id])
+  service        Service         @relation(fields: [serviceId], references: [id])
+
 
   @@unique([bookingId, serviceId])
   @@index([tenantId])

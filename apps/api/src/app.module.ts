@@ -21,6 +21,7 @@ import { TenantModule } from './modules/tenant/tenant.module.js';
 import { StaffModule } from './modules/staff/staff.module.js';
 import { ServicesModule } from './modules/services/services.module.js';
 import { CustomersModule } from './modules/customers/customers.module.js';
+import { BookingsModule } from './modules/bookings/bookings.module.js';
 
 @Module({
   imports: [
@@ -149,6 +150,7 @@ import { CustomersModule } from './modules/customers/customers.module.js';
     StaffModule,
     ServicesModule,
     CustomersModule,
+    BookingsModule,
   ],
 
   controllers: [HealthController],
