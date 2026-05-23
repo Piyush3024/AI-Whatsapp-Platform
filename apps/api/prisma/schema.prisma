@@ -393,6 +393,7 @@ model Customer {
   tenantId    String              @db.Uuid
   name        String?
   phone       String
+  email       String?
   whatsappId  String?
   optInStatus CustomerOptInStatus @default(PENDING)
   notes       String?

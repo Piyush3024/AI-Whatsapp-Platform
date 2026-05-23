@@ -18,6 +18,8 @@ import { AuthModule } from './modules/auth/auth.module.js';
 import { BullModule } from '@nestjs/bullmq';
 import { WhatsAppModule } from './modules/whatsapp/whatsapp.module.js';
 import { TenantModule } from './modules/tenant/tenant.module.js';
+import { StaffModule } from './modules/staff/staff.module.js';
+import { ServicesModule } from './modules/services/services.module.js';
 
 /**
  * Root application module.
@@ -201,6 +203,8 @@ import { TenantModule } from './modules/tenant/tenant.module.js';
     }),
     WhatsAppModule,
     TenantModule,
+    StaffModule,
+    ServicesModule,
   ],
 
   controllers: [
