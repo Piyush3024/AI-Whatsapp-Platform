@@ -7,7 +7,16 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:generate": "pnpm --filter @whatsapp-ai/db generate",
+    "db:migrate:dev": "pnpm --filter @whatsapp-ai/db migrate:dev",
+    "db:migrate:deploy": "pnpm --filter @whatsapp-ai/db migrate:deploy",
+    "db:studio": "pnpm --filter @whatsapp-ai/db studio",
+    "db:clean": "pnpm --filter @whatsapp-ai/db clean",
+    "build:db": "pnpm --filter @whatsapp-ai/db generate"
+  },
+  "dependencies": {
+    "@whatsapp-ai/db": "workspace:*"
   },
   "devDependencies": {
     "husky": "^9.1.7",

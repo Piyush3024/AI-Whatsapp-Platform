@@ -11,7 +11,7 @@ import { PrismaService } from '../../prisma/prisma.service.js';
 import type { RegisterDto } from './dto/register.dto.js';
 import type { LoginDto } from './dto/login.dto.js';
 import type { JwtPayload } from './strategies/jwt.strategy.js';
-import { UserRole } from '../../generated/prisma/client.js';
+import { UserRole } from '@whatsapp-ai/db/generated/prisma';
 
 /**
  * Token response ka shape — login/register/refresh sab yahi return karte hain.

@@ -12,10 +12,7 @@ import {
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  BookingStatus,
-  BookingSource,
-} from '../../../generated/prisma/client.js';
+import { BookingStatus, BookingSource } from '@whatsapp-ai/db/generated/prisma';
 
 /**
  * Enum for sortable fields

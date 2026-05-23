@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Prisma } from '../../../generated/prisma/client.js';
+import { Prisma } from '@whatsapp-ai/db/generated/prisma';
 import {
   IsObject,
   IsOptional,

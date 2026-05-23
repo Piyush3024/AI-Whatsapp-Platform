@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { ClsService } from 'nestjs-cls';
 import { PrismaService } from '../../prisma/prisma.service.js';
-import { CustomerOptInStatus } from '../../generated/prisma/client.js';
+import { CustomerOptInStatus } from '@whatsapp-ai/db/generated/prisma';
 import {
   CreateCustomerDto,
   UpdateCustomerDto,

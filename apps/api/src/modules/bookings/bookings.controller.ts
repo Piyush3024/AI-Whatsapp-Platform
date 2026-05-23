@@ -29,7 +29,7 @@ import {
   CalendarQueryDto,
 } from './dto/index.js';
 import { Roles } from '../../common/decorators/roles.decorator.js';
-import { UserRole } from '../../generated/prisma/client.js';
+import { UserRole } from '@whatsapp-ai/db/generated/prisma';
 
 @ApiTags('Bookings')
 @ApiBearerAuth()

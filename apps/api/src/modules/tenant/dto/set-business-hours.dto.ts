@@ -9,7 +9,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { DayOfWeek } from '../../../generated/prisma/client.js';
+import { DayOfWeek } from '@whatsapp-ai/db/generated/prisma';
 
 /**
  * Ek din ka business hours — HH:MM format.

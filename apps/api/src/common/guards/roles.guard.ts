@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { UserRole } from '../../generated/prisma/client.js';
+import { UserRole } from '@whatsapp-ai/db/generated/prisma';
 import { ROLES_KEY } from '../decorators/roles.decorator.js';
 
 /**

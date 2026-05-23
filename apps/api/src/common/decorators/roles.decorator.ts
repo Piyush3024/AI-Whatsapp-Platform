@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { UserRole } from '../../generated/prisma/client.js';
+import { UserRole } from '@whatsapp-ai/db/generated/prisma';
 
 /**
  * ROLES_KEY — metadata key jo RolesGuard read karta hai.

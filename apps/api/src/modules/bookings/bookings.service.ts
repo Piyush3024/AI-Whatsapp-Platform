@@ -21,7 +21,7 @@ import {
   Staff,
   Service,
   Booking,
-} from '../../generated/prisma/client.js';
+} from '@whatsapp-ai/db/generated/prisma';
 
 /**
  * Booking service for managing bookings.

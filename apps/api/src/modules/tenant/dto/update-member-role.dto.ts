@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum } from 'class-validator';
-import { UserRole } from '../../../generated/prisma/client.js';
+import { UserRole } from '@whatsapp-ai/db/generated/prisma';
 
 /**
  * UpdateMemberRoleDto — Tenant member ka role change karne ke liye.

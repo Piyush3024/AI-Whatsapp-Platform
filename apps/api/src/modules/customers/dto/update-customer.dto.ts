@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { CustomerOptInStatus } from '../../../generated/prisma/client.js';
+import { CustomerOptInStatus } from '@whatsapp-ai/db/generated/prisma';
 
 /**
  * DTO for updating an existing customer.

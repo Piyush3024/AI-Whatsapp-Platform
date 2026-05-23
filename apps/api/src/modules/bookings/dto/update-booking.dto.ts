@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { BookingStatus } from '../../../generated/prisma/client.js';
+import { BookingStatus } from '@whatsapp-ai/db/generated/prisma';
 
 /**
  * DTO for updating an existing booking.

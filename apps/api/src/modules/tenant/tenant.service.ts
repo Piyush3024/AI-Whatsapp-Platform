@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service.js';
-import { UserRole } from '../../generated/prisma/client.js';
+import { UserRole } from '@whatsapp-ai/db/generated/prisma';
 import type { UpdateTenantDto } from './dto/update-tenant.dto.js';
 import type { UpdateMemberRoleDto } from './dto/update-member-role.dto.js';
 import type { CreateLocationDto } from './dto/create-location.dto.js';

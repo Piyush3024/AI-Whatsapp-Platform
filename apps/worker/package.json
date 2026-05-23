@@ -19,7 +19,8 @@
     "openai": "^4.100.0",
     "pg": "^8.21.0",
     "pino": "^9.6.0",
-    "zod": "^3.24.0"
+    "zod": "^3.24.0",
+    "@whatsapp-ai/db": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",

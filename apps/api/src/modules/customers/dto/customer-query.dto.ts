@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { CustomerOptInStatus } from '../../../generated/prisma/client.js';
+import { CustomerOptInStatus } from '@whatsapp-ai/db/generated/prisma';
 
 /**
  * Enum for sortable fields

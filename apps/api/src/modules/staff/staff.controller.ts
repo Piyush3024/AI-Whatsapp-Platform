@@ -27,7 +27,7 @@ import { CreateScheduleOverrideDto } from './dto/create-schedule-override.dto.js
 import { CurrentUser } from '../../common/decorators/current-user.decorator.js';
 import { Roles } from '../../common/decorators/roles.decorator.js';
 import type { CurrentUserPayload } from '../../common/decorators/current-user.decorator.js';
-import { UserRole } from '../../generated/prisma/client.js';
+import { UserRole } from '@whatsapp-ai/db/generated/prisma';
 
 /**
  * StaffController — /api/v1/staff/*

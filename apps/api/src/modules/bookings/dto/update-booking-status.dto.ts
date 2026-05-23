@@ -1,6 +1,6 @@
 import { IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { BookingStatus } from '../../../generated/prisma/client.js';
+import { BookingStatus } from '@whatsapp-ai/db/generated/prisma';
 
 /**
  * DTO for updating booking status only.

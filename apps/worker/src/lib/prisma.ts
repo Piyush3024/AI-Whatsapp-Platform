@@ -1,4 +1,5 @@
-import { PrismaClient } from "../generated/prisma/client.js";
+import { PrismaClient } from "@whatsapp-ai/db/generated/prisma";
+
 import { PrismaPg } from "@prisma/adapter-pg";
 import { env } from "../config/env.js";
 import { logger } from "./logger.js";
@@ -21,7 +22,11 @@ const adapter = new PrismaPg({
   connectionString: env.DATABASE_URL,
 });
 
-// Base client with soft-delete extension
+// Base client with soft-delete extension.
+// Cast to PrismaClient after $extends to avoid the "inferred type cannot be named"
+// TypeScript error that leaks internal Prisma namespace paths into .d.ts files.
+// The extension only wraps existing methods (findMany/findFirst/findUnique),
+// so casting back to PrismaClient loses no public API.
 const basePrisma = new PrismaClient({
   adapter,
   log:
@@ -50,9 +55,10 @@ const basePrisma = new PrismaClient({
       },
     },
   },
-});
+}) as unknown as PrismaClient;
 
-export type ExtendedPrismaClient = typeof basePrisma;
+// PrismaClient is the portable, named type — safe to export and reference elsewhere.
+export type ExtendedPrismaClient = PrismaClient;
 
 // ============================================================
 // withTenantContext — MANDATORY wrapper for all DB operations

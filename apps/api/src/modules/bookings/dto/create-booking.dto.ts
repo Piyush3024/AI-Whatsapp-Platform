@@ -12,7 +12,7 @@ import {
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { BookingSource } from '../../../generated/prisma/client.js';
+import { BookingSource } from '@whatsapp-ai/db/generated/prisma';
 
 /**
  * DTO for creating a new booking.

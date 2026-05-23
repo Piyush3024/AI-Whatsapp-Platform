@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { CustomerOptInStatus } from '../../../generated/prisma/client.js';
+import { CustomerOptInStatus } from '@whatsapp-ai/db/generated/prisma';
 // import { v4 as isValidUUID } from 'uuid';
 
 /**
