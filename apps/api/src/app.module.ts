@@ -20,29 +20,10 @@ import { WhatsAppModule } from './modules/whatsapp/whatsapp.module.js';
 import { TenantModule } from './modules/tenant/tenant.module.js';
 import { StaffModule } from './modules/staff/staff.module.js';
 import { ServicesModule } from './modules/services/services.module.js';
+import { CustomersModule } from './modules/customers/customers.module.js';
 
-/**
- * Root application module.
- *
- * Responsibility: wire up ONLY global infrastructure concerns.
- * Business modules (auth, whatsapp, ai, billing…) are imported here
- * as they are built in later phases.
- *
- * Global infrastructure registered here:
- *  1. ConfigModule  — env loading, Joi validation, typed config factory
- *  2. LoggerModule  — Pino structured logging (JSON prod / pretty dev)
- *  3. ThrottlerModule — Redis-backed rate limiting (works across all pods)
- *  4. ThrottlerGuard  — applied globally via APP_GUARD
- *  5. HealthController — /health endpoint for orchestration probes
- */
 @Module({
   imports: [
-    // ── 1. Config ────────────────────────────────────────────────────────────
-    // isGlobal: true  → no need to import ConfigModule in every feature module.
-    // cache: true     → process.env reads are cached after first access (perf).
-    // validationSchema → Joi validates every env var at startup; app won't boot
-    //                    if a required var is missing or has wrong type/format.
-    // load            → typed config factory; access via ConfigService.get<T>('key').
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
@@ -50,23 +31,11 @@ import { ServicesModule } from './modules/services/services.module.js';
       load: [configuration],
       validationSchema: envValidationSchema,
       validationOptions: {
-        // 'strip' removes unknown keys from process.env (keeps it clean).
-        // 'abortEarly: false' collects ALL validation errors in one shot.
         allowUnknown: true,
         abortEarly: false,
       },
     }),
 
-    // ── 2. Logger (nestjs-pino) ───────────────────────────────────────────────
-    // forRootAsync lets us read NODE_ENV from ConfigService at startup.
-    //
-    // Production  → raw JSON to stdout (ingested by Datadog / CloudWatch / ELK).
-    // Development → pino-pretty: human-readable, colourised, single-line.
-    //
-    // autoLogging: true  → every HTTP request/response is logged automatically
-    //                       with method, url, statusCode, responseTime, reqId.
-    // redact         → strips secrets from log output (never log auth headers).
-    // genReqId       → uses x-request-id header if present, otherwise uuid v4.
     LoggerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -75,7 +44,6 @@ import { ServicesModule } from './modules/services/services.module.js';
         return {
           pinoHttp: {
             level: isDev ? 'debug' : 'info',
-            // Redact sensitive fields — they will appear as [Redacted] in logs.
             redact: {
               paths: [
                 'req.headers.authorization',
@@ -86,10 +54,8 @@ import { ServicesModule } from './modules/services/services.module.js';
               ],
               censor: '[Redacted]',
             },
-            // Attach a unique request ID to every log within that request's scope.
             genReqId: (req: IncomingMessage) =>
               (req.headers['x-request-id'] as string) ?? crypto.randomUUID(),
-            // Serializers shape what ends up in the log object.
             serializers: {
               req: (req: {
                 method: string;
@@ -100,15 +66,12 @@ import { ServicesModule } from './modules/services/services.module.js';
                 id: req.id,
                 method: req.method,
                 url: req.url,
-                // Never log full headers in prod — too verbose & risky.
                 userAgent: req.headers['user-agent'],
               }),
               res: (res: { statusCode: number }) => ({
                 statusCode: res.statusCode,
               }),
             },
-            // Development: pretty-print with colours and timestamps.
-            // Production: no transport = raw JSON to stdout (fastest).
             ...(isDev && {
               transport: {
                 target: 'pino-pretty',
@@ -125,16 +88,6 @@ import { ServicesModule } from './modules/services/services.module.js';
       },
     }),
 
-    // ── 3. Rate Limiting (Redis-backed) ───────────────────────────────────────
-    // CRITICAL: The default in-memory store is PER-PROCESS.
-    // In a multi-pod / Docker setup, each pod has its own counter —
-    // a client can bypass limits by rotating across pods.
-    // Redis store shares counters across ALL instances.
-    //
-    // Two throttle tiers:
-    //  'default' — 120 req/min  for normal API usage.
-    //  'strict'  — 10 req/min   applied via @Throttle({ strict: ... })
-    //              on sensitive endpoints (login, register, webhook verify).
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -147,8 +100,8 @@ import { ServicesModule } from './modules/services/services.module.js';
           },
           {
             name: 'strict',
-            ttl: 60_000, // 1 minute
-            limit: 10, // 10 req/min — for auth / sensitive routes
+            ttl: 60_000,
+            limit: 10,
           },
         ],
         storage: new ThrottlerStorageRedisService(
@@ -157,22 +110,15 @@ import { ServicesModule } from './modules/services/services.module.js';
       }),
     }),
     PrismaModule,
-    // ── 5. CLS (Continuation Local Storage) ──────────────────────────────────
-    // Wraps every request in AsyncLocalStorage context.
-    // Stores tenantId, userId, userRole — accessible anywhere without
-    // REQUEST-scoped providers (which would tank performance).
     ClsModule.forRoot({
       global: true,
       middleware: {
-        mount: true, // auto-mounts on all routes
+        mount: true,
         generateId: true,
         idGenerator: () => crypto.randomUUID(),
       },
     }),
 
-    // ── 6. JWT (for TenantMiddleware token decode) ────────────────────────────
-    // Registered here for decode-only use in middleware.
-    // Full JWT verification lives in JwtStrategy (Phase 2).
     JwtModule.registerAsync({
       global: true,
       imports: [ConfigModule],
@@ -182,12 +128,10 @@ import { ServicesModule } from './modules/services/services.module.js';
       }),
     }),
     AuthModule,
-    // BullMQ global Redis connection
     BullModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        // REDIS_URL = "redis://localhost:6379" — host/port parse karo
         const redisUrl = new URL(
           config.get<string>('redis.url') ?? 'redis://localhost:6379',
         );
@@ -195,7 +139,6 @@ import { ServicesModule } from './modules/services/services.module.js';
           connection: {
             host: redisUrl.hostname,
             port: parseInt(redisUrl.port ?? '6379', 10),
-            // Password agar ho toh
             ...(redisUrl.password && { password: redisUrl.password }),
           },
         };
@@ -205,18 +148,12 @@ import { ServicesModule } from './modules/services/services.module.js';
     TenantModule,
     StaffModule,
     ServicesModule,
+    CustomersModule,
   ],
 
-  controllers: [
-    // /health — excluded from /api prefix in main.ts for orchestration probes.
-    HealthController,
-  ],
+  controllers: [HealthController],
 
   providers: [
-    // ── 4. Global Throttler Guard ─────────────────────────────────────────────
-    // Registering via APP_GUARD means EVERY endpoint is rate-limited by default.
-    // Use @SkipThrottle() on controllers/routes that should be exempt.
-    // Use @Throttle({ strict: { ... } }) to override per-route.
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
@@ -227,6 +164,6 @@ import { ServicesModule } from './modules/services/services.module.js';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(TenantMiddleware).forRoutes('*'); // all routes — middleware is a no-op if no token present
+    consumer.apply(TenantMiddleware).forRoutes('*');
   }
 }

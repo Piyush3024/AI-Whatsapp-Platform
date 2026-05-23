@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { ClsService } from 'nestjs-cls';
+// import { ClsService } from 'nestjs-cls';
 
 /**
  * Authenticated user ka shape — JWT payload se aata hai.
