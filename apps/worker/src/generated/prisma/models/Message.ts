@@ -238,6 +238,10 @@ export type MessageWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<"Message"> | Date | string;
   deletedAt?: Prisma.DateTimeNullableFilter<"Message"> | Date | string | null;
+  conversation?: Prisma.XOR<
+    Prisma.ConversationScalarRelationFilter,
+    Prisma.ConversationWhereInput
+  >;
 };
 
 export type MessageOrderByWithRelationInput = {
@@ -253,6 +257,7 @@ export type MessageOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
+  conversation?: Prisma.ConversationOrderByWithRelationInput;
 };
 
 export type MessageWhereUniqueInput = Prisma.AtLeast<
@@ -272,6 +277,10 @@ export type MessageWhereUniqueInput = Prisma.AtLeast<
     createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Message"> | Date | string;
     deletedAt?: Prisma.DateTimeNullableFilter<"Message"> | Date | string | null;
+    conversation?: Prisma.XOR<
+      Prisma.ConversationScalarRelationFilter,
+      Prisma.ConversationWhereInput
+    >;
   },
   "id" | "metaMessageId"
 >;
@@ -333,7 +342,6 @@ export type MessageScalarWhereWithAggregatesInput = {
 export type MessageCreateInput = {
   id?: string;
   tenantId: string;
-  conversationId: string;
   messageType: $Enums.MessageType;
   direction: string;
   content?: string | null;
@@ -343,6 +351,7 @@ export type MessageCreateInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
+  conversation: Prisma.ConversationCreateNestedOneWithoutMessagesInput;
 };
 
 export type MessageUncheckedCreateInput = {
@@ -363,7 +372,6 @@ export type MessageUncheckedCreateInput = {
 export type MessageUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
-  conversationId?: Prisma.StringFieldUpdateOperationsInput | string;
   messageType?:
     | Prisma.EnumMessageTypeFieldUpdateOperationsInput
     | $Enums.MessageType;
@@ -384,6 +392,7 @@ export type MessageUpdateInput = {
     | Date
     | string
     | null;
+  conversation?: Prisma.ConversationUpdateOneRequiredWithoutMessagesNestedInput;
 };
 
 export type MessageUncheckedUpdateInput = {
@@ -430,7 +439,6 @@ export type MessageCreateManyInput = {
 export type MessageUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
-  conversationId?: Prisma.StringFieldUpdateOperationsInput | string;
   messageType?:
     | Prisma.EnumMessageTypeFieldUpdateOperationsInput
     | $Enums.MessageType;
@@ -479,6 +487,16 @@ export type MessageUncheckedUpdateManyInput = {
     | null;
 };
 
+export type MessageListRelationFilter = {
+  every?: Prisma.MessageWhereInput;
+  some?: Prisma.MessageWhereInput;
+  none?: Prisma.MessageWhereInput;
+};
+
+export type MessageOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder;
+};
+
 export type MessageCountOrderByAggregateInput = {
   id?: Prisma.SortOrder;
   tenantId?: Prisma.SortOrder;
@@ -522,12 +540,284 @@ export type MessageMinOrderByAggregateInput = {
   deletedAt?: Prisma.SortOrder;
 };
 
+export type MessageCreateNestedManyWithoutConversationInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.MessageCreateWithoutConversationInput,
+        Prisma.MessageUncheckedCreateWithoutConversationInput
+      >
+    | Prisma.MessageCreateWithoutConversationInput[]
+    | Prisma.MessageUncheckedCreateWithoutConversationInput[];
+  connectOrCreate?:
+    | Prisma.MessageCreateOrConnectWithoutConversationInput
+    | Prisma.MessageCreateOrConnectWithoutConversationInput[];
+  createMany?: Prisma.MessageCreateManyConversationInputEnvelope;
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[];
+};
+
+export type MessageUncheckedCreateNestedManyWithoutConversationInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.MessageCreateWithoutConversationInput,
+        Prisma.MessageUncheckedCreateWithoutConversationInput
+      >
+    | Prisma.MessageCreateWithoutConversationInput[]
+    | Prisma.MessageUncheckedCreateWithoutConversationInput[];
+  connectOrCreate?:
+    | Prisma.MessageCreateOrConnectWithoutConversationInput
+    | Prisma.MessageCreateOrConnectWithoutConversationInput[];
+  createMany?: Prisma.MessageCreateManyConversationInputEnvelope;
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[];
+};
+
+export type MessageUpdateManyWithoutConversationNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.MessageCreateWithoutConversationInput,
+        Prisma.MessageUncheckedCreateWithoutConversationInput
+      >
+    | Prisma.MessageCreateWithoutConversationInput[]
+    | Prisma.MessageUncheckedCreateWithoutConversationInput[];
+  connectOrCreate?:
+    | Prisma.MessageCreateOrConnectWithoutConversationInput
+    | Prisma.MessageCreateOrConnectWithoutConversationInput[];
+  upsert?:
+    | Prisma.MessageUpsertWithWhereUniqueWithoutConversationInput
+    | Prisma.MessageUpsertWithWhereUniqueWithoutConversationInput[];
+  createMany?: Prisma.MessageCreateManyConversationInputEnvelope;
+  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[];
+  disconnect?:
+    | Prisma.MessageWhereUniqueInput
+    | Prisma.MessageWhereUniqueInput[];
+  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[];
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[];
+  update?:
+    | Prisma.MessageUpdateWithWhereUniqueWithoutConversationInput
+    | Prisma.MessageUpdateWithWhereUniqueWithoutConversationInput[];
+  updateMany?:
+    | Prisma.MessageUpdateManyWithWhereWithoutConversationInput
+    | Prisma.MessageUpdateManyWithWhereWithoutConversationInput[];
+  deleteMany?:
+    | Prisma.MessageScalarWhereInput
+    | Prisma.MessageScalarWhereInput[];
+};
+
+export type MessageUncheckedUpdateManyWithoutConversationNestedInput = {
+  create?:
+    | Prisma.XOR<
+        Prisma.MessageCreateWithoutConversationInput,
+        Prisma.MessageUncheckedCreateWithoutConversationInput
+      >
+    | Prisma.MessageCreateWithoutConversationInput[]
+    | Prisma.MessageUncheckedCreateWithoutConversationInput[];
+  connectOrCreate?:
+    | Prisma.MessageCreateOrConnectWithoutConversationInput
+    | Prisma.MessageCreateOrConnectWithoutConversationInput[];
+  upsert?:
+    | Prisma.MessageUpsertWithWhereUniqueWithoutConversationInput
+    | Prisma.MessageUpsertWithWhereUniqueWithoutConversationInput[];
+  createMany?: Prisma.MessageCreateManyConversationInputEnvelope;
+  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[];
+  disconnect?:
+    | Prisma.MessageWhereUniqueInput
+    | Prisma.MessageWhereUniqueInput[];
+  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[];
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[];
+  update?:
+    | Prisma.MessageUpdateWithWhereUniqueWithoutConversationInput
+    | Prisma.MessageUpdateWithWhereUniqueWithoutConversationInput[];
+  updateMany?:
+    | Prisma.MessageUpdateManyWithWhereWithoutConversationInput
+    | Prisma.MessageUpdateManyWithWhereWithoutConversationInput[];
+  deleteMany?:
+    | Prisma.MessageScalarWhereInput
+    | Prisma.MessageScalarWhereInput[];
+};
+
 export type EnumMessageTypeFieldUpdateOperationsInput = {
   set?: $Enums.MessageType;
 };
 
 export type EnumMessageStatusFieldUpdateOperationsInput = {
   set?: $Enums.MessageStatus;
+};
+
+export type MessageCreateWithoutConversationInput = {
+  id?: string;
+  tenantId: string;
+  messageType: $Enums.MessageType;
+  direction: string;
+  content?: string | null;
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
+  status?: $Enums.MessageStatus;
+  metaMessageId?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  deletedAt?: Date | string | null;
+};
+
+export type MessageUncheckedCreateWithoutConversationInput = {
+  id?: string;
+  tenantId: string;
+  messageType: $Enums.MessageType;
+  direction: string;
+  content?: string | null;
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
+  status?: $Enums.MessageStatus;
+  metaMessageId?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  deletedAt?: Date | string | null;
+};
+
+export type MessageCreateOrConnectWithoutConversationInput = {
+  where: Prisma.MessageWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.MessageCreateWithoutConversationInput,
+    Prisma.MessageUncheckedCreateWithoutConversationInput
+  >;
+};
+
+export type MessageCreateManyConversationInputEnvelope = {
+  data:
+    | Prisma.MessageCreateManyConversationInput
+    | Prisma.MessageCreateManyConversationInput[];
+  skipDuplicates?: boolean;
+};
+
+export type MessageUpsertWithWhereUniqueWithoutConversationInput = {
+  where: Prisma.MessageWhereUniqueInput;
+  update: Prisma.XOR<
+    Prisma.MessageUpdateWithoutConversationInput,
+    Prisma.MessageUncheckedUpdateWithoutConversationInput
+  >;
+  create: Prisma.XOR<
+    Prisma.MessageCreateWithoutConversationInput,
+    Prisma.MessageUncheckedCreateWithoutConversationInput
+  >;
+};
+
+export type MessageUpdateWithWhereUniqueWithoutConversationInput = {
+  where: Prisma.MessageWhereUniqueInput;
+  data: Prisma.XOR<
+    Prisma.MessageUpdateWithoutConversationInput,
+    Prisma.MessageUncheckedUpdateWithoutConversationInput
+  >;
+};
+
+export type MessageUpdateManyWithWhereWithoutConversationInput = {
+  where: Prisma.MessageScalarWhereInput;
+  data: Prisma.XOR<
+    Prisma.MessageUpdateManyMutationInput,
+    Prisma.MessageUncheckedUpdateManyWithoutConversationInput
+  >;
+};
+
+export type MessageScalarWhereInput = {
+  AND?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[];
+  OR?: Prisma.MessageScalarWhereInput[];
+  NOT?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[];
+  id?: Prisma.UuidFilter<"Message"> | string;
+  tenantId?: Prisma.UuidFilter<"Message"> | string;
+  conversationId?: Prisma.UuidFilter<"Message"> | string;
+  messageType?: Prisma.EnumMessageTypeFilter<"Message"> | $Enums.MessageType;
+  direction?: Prisma.StringFilter<"Message"> | string;
+  content?: Prisma.StringNullableFilter<"Message"> | string | null;
+  metadata?: Prisma.JsonNullableFilter<"Message">;
+  status?: Prisma.EnumMessageStatusFilter<"Message"> | $Enums.MessageStatus;
+  metaMessageId?: Prisma.StringNullableFilter<"Message"> | string | null;
+  createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string;
+  updatedAt?: Prisma.DateTimeFilter<"Message"> | Date | string;
+  deletedAt?: Prisma.DateTimeNullableFilter<"Message"> | Date | string | null;
+};
+
+export type MessageCreateManyConversationInput = {
+  id?: string;
+  tenantId: string;
+  messageType: $Enums.MessageType;
+  direction: string;
+  content?: string | null;
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
+  status?: $Enums.MessageStatus;
+  metaMessageId?: string | null;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  deletedAt?: Date | string | null;
+};
+
+export type MessageUpdateWithoutConversationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
+  messageType?:
+    | Prisma.EnumMessageTypeFieldUpdateOperationsInput
+    | $Enums.MessageType;
+  direction?: Prisma.StringFieldUpdateOperationsInput | string;
+  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
+  status?:
+    | Prisma.EnumMessageStatusFieldUpdateOperationsInput
+    | $Enums.MessageStatus;
+  metaMessageId?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+};
+
+export type MessageUncheckedUpdateWithoutConversationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
+  messageType?:
+    | Prisma.EnumMessageTypeFieldUpdateOperationsInput
+    | $Enums.MessageType;
+  direction?: Prisma.StringFieldUpdateOperationsInput | string;
+  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
+  status?:
+    | Prisma.EnumMessageStatusFieldUpdateOperationsInput
+    | $Enums.MessageStatus;
+  metaMessageId?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+};
+
+export type MessageUncheckedUpdateManyWithoutConversationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
+  messageType?:
+    | Prisma.EnumMessageTypeFieldUpdateOperationsInput
+    | $Enums.MessageType;
+  direction?: Prisma.StringFieldUpdateOperationsInput | string;
+  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
+  status?:
+    | Prisma.EnumMessageStatusFieldUpdateOperationsInput
+    | $Enums.MessageStatus;
+  metaMessageId?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
 };
 
 export type MessageSelect<
@@ -547,6 +837,7 @@ export type MessageSelect<
     createdAt?: boolean;
     updatedAt?: boolean;
     deletedAt?: boolean;
+    conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>;
   },
   ExtArgs["result"]["message"]
 >;
@@ -568,6 +859,7 @@ export type MessageSelectCreateManyAndReturn<
     createdAt?: boolean;
     updatedAt?: boolean;
     deletedAt?: boolean;
+    conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>;
   },
   ExtArgs["result"]["message"]
 >;
@@ -589,6 +881,7 @@ export type MessageSelectUpdateManyAndReturn<
     createdAt?: boolean;
     updatedAt?: boolean;
     deletedAt?: boolean;
+    conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>;
   },
   ExtArgs["result"]["message"]
 >;
@@ -626,13 +919,33 @@ export type MessageOmit<
   | "deletedAt",
   ExtArgs["result"]["message"]
 >;
+export type MessageInclude<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>;
+};
+export type MessageIncludeCreateManyAndReturn<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>;
+};
+export type MessageIncludeUpdateManyAndReturn<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>;
+};
 
 export type $MessagePayload<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
   name: "Message";
-  objects: {};
+  objects: {
+    conversation: Prisma.$ConversationPayload<ExtArgs>;
+  };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
       id: string;
@@ -1197,6 +1510,20 @@ export interface Prisma__MessageClient<
   GlobalOmitOptions = {},
 > extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise";
+  conversation<T extends Prisma.ConversationDefaultArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.ConversationDefaultArgs<ExtArgs>>,
+  ): Prisma.Prisma__ConversationClient<
+    | runtime.Types.Result.GetResult<
+        Prisma.$ConversationPayload<ExtArgs>,
+        T,
+        "findUniqueOrThrow",
+        GlobalOmitOptions
+      >
+    | Null,
+    Null,
+    ExtArgs,
+    GlobalOmitOptions
+  >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1270,6 +1597,10 @@ export type MessageFindUniqueArgs<
    */
   omit?: Prisma.MessageOmit<ExtArgs> | null;
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null;
+  /**
    * Filter, which Message to fetch.
    */
   where: Prisma.MessageWhereUniqueInput;
@@ -1291,6 +1622,10 @@ export type MessageFindUniqueOrThrowArgs<
    */
   omit?: Prisma.MessageOmit<ExtArgs> | null;
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null;
+  /**
    * Filter, which Message to fetch.
    */
   where: Prisma.MessageWhereUniqueInput;
@@ -1311,6 +1646,10 @@ export type MessageFindFirstArgs<
    * Omit specific fields from the Message
    */
   omit?: Prisma.MessageOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null;
   /**
    * Filter, which Message to fetch.
    */
@@ -1365,6 +1704,10 @@ export type MessageFindFirstOrThrowArgs<
    */
   omit?: Prisma.MessageOmit<ExtArgs> | null;
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null;
+  /**
    * Filter, which Message to fetch.
    */
   where?: Prisma.MessageWhereInput;
@@ -1417,6 +1760,10 @@ export type MessageFindManyArgs<
    * Omit specific fields from the Message
    */
   omit?: Prisma.MessageOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null;
   /**
    * Filter, which Messages to fetch.
    */
@@ -1471,6 +1818,10 @@ export type MessageCreateArgs<
    */
   omit?: Prisma.MessageOmit<ExtArgs> | null;
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null;
+  /**
    * The data needed to create a Message.
    */
   data: Prisma.XOR<
@@ -1513,6 +1864,10 @@ export type MessageCreateManyAndReturnArgs<
    */
   data: Prisma.MessageCreateManyInput | Prisma.MessageCreateManyInput[];
   skipDuplicates?: boolean;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageIncludeCreateManyAndReturn<ExtArgs> | null;
 };
 
 /**
@@ -1530,6 +1885,10 @@ export type MessageUpdateArgs<
    * Omit specific fields from the Message
    */
   omit?: Prisma.MessageOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null;
   /**
    * The data needed to update a Message.
    */
@@ -1597,6 +1956,10 @@ export type MessageUpdateManyAndReturnArgs<
    * Limit how many Messages to update.
    */
   limit?: number;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageIncludeUpdateManyAndReturn<ExtArgs> | null;
 };
 
 /**
@@ -1614,6 +1977,10 @@ export type MessageUpsertArgs<
    * Omit specific fields from the Message
    */
   omit?: Prisma.MessageOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null;
   /**
    * The filter to search for the Message to update in case it exists.
    */
@@ -1649,6 +2016,10 @@ export type MessageDeleteArgs<
    * Omit specific fields from the Message
    */
   omit?: Prisma.MessageOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null;
   /**
    * Filter which Message to delete.
    */
@@ -1687,4 +2058,8 @@ export type MessageDefaultArgs<
    * Omit specific fields from the Message
    */
   omit?: Prisma.MessageOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null;
 };
