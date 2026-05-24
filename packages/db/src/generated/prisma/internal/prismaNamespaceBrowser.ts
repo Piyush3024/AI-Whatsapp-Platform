@@ -552,9 +552,15 @@ export const KnowledgeBaseDocumentScalarFieldEnum = {
   id: "id",
   tenantId: "tenantId",
   title: "title",
+  fileName: "fileName",
+  fileSize: "fileSize",
+  fileType: "fileType",
   fileUrl: "fileUrl",
+  storagePath: "storagePath",
+  checksum: "checksum",
   version: "version",
   status: "status",
+  metadata: "metadata",
   createdAt: "createdAt",
   updatedAt: "updatedAt",
   deletedAt: "deletedAt",
@@ -569,9 +575,10 @@ export const KnowledgeBaseChunkScalarFieldEnum = {
   documentId: "documentId",
   content: "content",
   chunkIndex: "chunkIndex",
+  metadata: "metadata",
+  tokenCount: "tokenCount",
   isActive: "isActive",
   createdAt: "createdAt",
-  updatedAt: "updatedAt",
 } as const;
 
 export type KnowledgeBaseChunkScalarFieldEnum =

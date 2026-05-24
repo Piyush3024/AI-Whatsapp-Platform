@@ -28,10 +28,12 @@ export type AggregateKnowledgeBaseChunk = {
 
 export type KnowledgeBaseChunkAvgAggregateOutputType = {
   chunkIndex: number | null;
+  tokenCount: number | null;
 };
 
 export type KnowledgeBaseChunkSumAggregateOutputType = {
   chunkIndex: number | null;
+  tokenCount: number | null;
 };
 
 export type KnowledgeBaseChunkMinAggregateOutputType = {
@@ -40,9 +42,9 @@ export type KnowledgeBaseChunkMinAggregateOutputType = {
   documentId: string | null;
   content: string | null;
   chunkIndex: number | null;
+  tokenCount: number | null;
   isActive: boolean | null;
   createdAt: Date | null;
-  updatedAt: Date | null;
 };
 
 export type KnowledgeBaseChunkMaxAggregateOutputType = {
@@ -51,9 +53,9 @@ export type KnowledgeBaseChunkMaxAggregateOutputType = {
   documentId: string | null;
   content: string | null;
   chunkIndex: number | null;
+  tokenCount: number | null;
   isActive: boolean | null;
   createdAt: Date | null;
-  updatedAt: Date | null;
 };
 
 export type KnowledgeBaseChunkCountAggregateOutputType = {
@@ -62,18 +64,21 @@ export type KnowledgeBaseChunkCountAggregateOutputType = {
   documentId: number;
   content: number;
   chunkIndex: number;
+  metadata: number;
+  tokenCount: number;
   isActive: number;
   createdAt: number;
-  updatedAt: number;
   _all: number;
 };
 
 export type KnowledgeBaseChunkAvgAggregateInputType = {
   chunkIndex?: true;
+  tokenCount?: true;
 };
 
 export type KnowledgeBaseChunkSumAggregateInputType = {
   chunkIndex?: true;
+  tokenCount?: true;
 };
 
 export type KnowledgeBaseChunkMinAggregateInputType = {
@@ -82,9 +87,9 @@ export type KnowledgeBaseChunkMinAggregateInputType = {
   documentId?: true;
   content?: true;
   chunkIndex?: true;
+  tokenCount?: true;
   isActive?: true;
   createdAt?: true;
-  updatedAt?: true;
 };
 
 export type KnowledgeBaseChunkMaxAggregateInputType = {
@@ -93,9 +98,9 @@ export type KnowledgeBaseChunkMaxAggregateInputType = {
   documentId?: true;
   content?: true;
   chunkIndex?: true;
+  tokenCount?: true;
   isActive?: true;
   createdAt?: true;
-  updatedAt?: true;
 };
 
 export type KnowledgeBaseChunkCountAggregateInputType = {
@@ -104,9 +109,10 @@ export type KnowledgeBaseChunkCountAggregateInputType = {
   documentId?: true;
   content?: true;
   chunkIndex?: true;
+  metadata?: true;
+  tokenCount?: true;
   isActive?: true;
   createdAt?: true;
-  updatedAt?: true;
   _all?: true;
 };
 
@@ -215,9 +221,10 @@ export type KnowledgeBaseChunkGroupByOutputType = {
   documentId: string;
   content: string;
   chunkIndex: number;
+  metadata: runtime.JsonValue;
+  tokenCount: number | null;
   isActive: boolean;
   createdAt: Date;
-  updatedAt: Date;
   _count: KnowledgeBaseChunkCountAggregateOutputType | null;
   _avg: KnowledgeBaseChunkAvgAggregateOutputType | null;
   _sum: KnowledgeBaseChunkSumAggregateOutputType | null;
@@ -253,9 +260,10 @@ export type KnowledgeBaseChunkWhereInput = {
   documentId?: Prisma.UuidFilter<"KnowledgeBaseChunk"> | string;
   content?: Prisma.StringFilter<"KnowledgeBaseChunk"> | string;
   chunkIndex?: Prisma.IntFilter<"KnowledgeBaseChunk"> | number;
+  metadata?: Prisma.JsonFilter<"KnowledgeBaseChunk">;
+  tokenCount?: Prisma.IntNullableFilter<"KnowledgeBaseChunk"> | number | null;
   isActive?: Prisma.BoolFilter<"KnowledgeBaseChunk"> | boolean;
   createdAt?: Prisma.DateTimeFilter<"KnowledgeBaseChunk"> | Date | string;
-  updatedAt?: Prisma.DateTimeFilter<"KnowledgeBaseChunk"> | Date | string;
   tenant?: Prisma.XOR<
     Prisma.TenantScalarRelationFilter,
     Prisma.TenantWhereInput
@@ -272,9 +280,10 @@ export type KnowledgeBaseChunkOrderByWithRelationInput = {
   documentId?: Prisma.SortOrder;
   content?: Prisma.SortOrder;
   chunkIndex?: Prisma.SortOrder;
+  metadata?: Prisma.SortOrder;
+  tokenCount?: Prisma.SortOrderInput | Prisma.SortOrder;
   isActive?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
-  updatedAt?: Prisma.SortOrder;
   tenant?: Prisma.TenantOrderByWithRelationInput;
   document?: Prisma.KnowledgeBaseDocumentOrderByWithRelationInput;
 };
@@ -293,9 +302,10 @@ export type KnowledgeBaseChunkWhereUniqueInput = Prisma.AtLeast<
     documentId?: Prisma.UuidFilter<"KnowledgeBaseChunk"> | string;
     content?: Prisma.StringFilter<"KnowledgeBaseChunk"> | string;
     chunkIndex?: Prisma.IntFilter<"KnowledgeBaseChunk"> | number;
+    metadata?: Prisma.JsonFilter<"KnowledgeBaseChunk">;
+    tokenCount?: Prisma.IntNullableFilter<"KnowledgeBaseChunk"> | number | null;
     isActive?: Prisma.BoolFilter<"KnowledgeBaseChunk"> | boolean;
     createdAt?: Prisma.DateTimeFilter<"KnowledgeBaseChunk"> | Date | string;
-    updatedAt?: Prisma.DateTimeFilter<"KnowledgeBaseChunk"> | Date | string;
     tenant?: Prisma.XOR<
       Prisma.TenantScalarRelationFilter,
       Prisma.TenantWhereInput
@@ -314,9 +324,10 @@ export type KnowledgeBaseChunkOrderByWithAggregationInput = {
   documentId?: Prisma.SortOrder;
   content?: Prisma.SortOrder;
   chunkIndex?: Prisma.SortOrder;
+  metadata?: Prisma.SortOrder;
+  tokenCount?: Prisma.SortOrderInput | Prisma.SortOrder;
   isActive?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
-  updatedAt?: Prisma.SortOrder;
   _count?: Prisma.KnowledgeBaseChunkCountOrderByAggregateInput;
   _avg?: Prisma.KnowledgeBaseChunkAvgOrderByAggregateInput;
   _max?: Prisma.KnowledgeBaseChunkMaxOrderByAggregateInput;
@@ -337,46 +348,26 @@ export type KnowledgeBaseChunkScalarWhereWithAggregatesInput = {
   documentId?: Prisma.UuidWithAggregatesFilter<"KnowledgeBaseChunk"> | string;
   content?: Prisma.StringWithAggregatesFilter<"KnowledgeBaseChunk"> | string;
   chunkIndex?: Prisma.IntWithAggregatesFilter<"KnowledgeBaseChunk"> | number;
+  metadata?: Prisma.JsonWithAggregatesFilter<"KnowledgeBaseChunk">;
+  tokenCount?:
+    | Prisma.IntNullableWithAggregatesFilter<"KnowledgeBaseChunk">
+    | number
+    | null;
   isActive?: Prisma.BoolWithAggregatesFilter<"KnowledgeBaseChunk"> | boolean;
   createdAt?:
     | Prisma.DateTimeWithAggregatesFilter<"KnowledgeBaseChunk">
     | Date
     | string;
-  updatedAt?:
-    | Prisma.DateTimeWithAggregatesFilter<"KnowledgeBaseChunk">
-    | Date
-    | string;
-};
-
-export type KnowledgeBaseChunkCreateInput = {
-  id?: string;
-  content: string;
-  chunkIndex: number;
-  isActive?: boolean;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
-  tenant: Prisma.TenantCreateNestedOneWithoutKnowledgeBaseChunksInput;
-  document: Prisma.KnowledgeBaseDocumentCreateNestedOneWithoutChunksInput;
-};
-
-export type KnowledgeBaseChunkUncheckedCreateInput = {
-  id?: string;
-  tenantId: string;
-  documentId: string;
-  content: string;
-  chunkIndex: number;
-  isActive?: boolean;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
 };
 
 export type KnowledgeBaseChunkUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   content?: Prisma.StringFieldUpdateOperationsInput | string;
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  tokenCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   tenant?: Prisma.TenantUpdateOneRequiredWithoutKnowledgeBaseChunksNestedInput;
   document?: Prisma.KnowledgeBaseDocumentUpdateOneRequiredWithoutChunksNestedInput;
 };
@@ -387,29 +378,20 @@ export type KnowledgeBaseChunkUncheckedUpdateInput = {
   documentId?: Prisma.StringFieldUpdateOperationsInput | string;
   content?: Prisma.StringFieldUpdateOperationsInput | string;
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  tokenCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-};
-
-export type KnowledgeBaseChunkCreateManyInput = {
-  id?: string;
-  tenantId: string;
-  documentId: string;
-  content: string;
-  chunkIndex: number;
-  isActive?: boolean;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
 };
 
 export type KnowledgeBaseChunkUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   content?: Prisma.StringFieldUpdateOperationsInput | string;
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  tokenCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
 export type KnowledgeBaseChunkUncheckedUpdateManyInput = {
@@ -418,9 +400,10 @@ export type KnowledgeBaseChunkUncheckedUpdateManyInput = {
   documentId?: Prisma.StringFieldUpdateOperationsInput | string;
   content?: Prisma.StringFieldUpdateOperationsInput | string;
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  tokenCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
 export type KnowledgeBaseChunkListRelationFilter = {
@@ -439,13 +422,15 @@ export type KnowledgeBaseChunkCountOrderByAggregateInput = {
   documentId?: Prisma.SortOrder;
   content?: Prisma.SortOrder;
   chunkIndex?: Prisma.SortOrder;
+  metadata?: Prisma.SortOrder;
+  tokenCount?: Prisma.SortOrder;
   isActive?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
-  updatedAt?: Prisma.SortOrder;
 };
 
 export type KnowledgeBaseChunkAvgOrderByAggregateInput = {
   chunkIndex?: Prisma.SortOrder;
+  tokenCount?: Prisma.SortOrder;
 };
 
 export type KnowledgeBaseChunkMaxOrderByAggregateInput = {
@@ -454,9 +439,9 @@ export type KnowledgeBaseChunkMaxOrderByAggregateInput = {
   documentId?: Prisma.SortOrder;
   content?: Prisma.SortOrder;
   chunkIndex?: Prisma.SortOrder;
+  tokenCount?: Prisma.SortOrder;
   isActive?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
-  updatedAt?: Prisma.SortOrder;
 };
 
 export type KnowledgeBaseChunkMinOrderByAggregateInput = {
@@ -465,64 +450,29 @@ export type KnowledgeBaseChunkMinOrderByAggregateInput = {
   documentId?: Prisma.SortOrder;
   content?: Prisma.SortOrder;
   chunkIndex?: Prisma.SortOrder;
+  tokenCount?: Prisma.SortOrder;
   isActive?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
-  updatedAt?: Prisma.SortOrder;
 };
 
 export type KnowledgeBaseChunkSumOrderByAggregateInput = {
   chunkIndex?: Prisma.SortOrder;
+  tokenCount?: Prisma.SortOrder;
 };
 
 export type KnowledgeBaseChunkCreateNestedManyWithoutTenantInput = {
-  create?:
-    | Prisma.XOR<
-        Prisma.KnowledgeBaseChunkCreateWithoutTenantInput,
-        Prisma.KnowledgeBaseChunkUncheckedCreateWithoutTenantInput
-      >
-    | Prisma.KnowledgeBaseChunkCreateWithoutTenantInput[]
-    | Prisma.KnowledgeBaseChunkUncheckedCreateWithoutTenantInput[];
-  connectOrCreate?:
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutTenantInput
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutTenantInput[];
-  createMany?: Prisma.KnowledgeBaseChunkCreateManyTenantInputEnvelope;
   connect?:
     | Prisma.KnowledgeBaseChunkWhereUniqueInput
     | Prisma.KnowledgeBaseChunkWhereUniqueInput[];
 };
 
 export type KnowledgeBaseChunkUncheckedCreateNestedManyWithoutTenantInput = {
-  create?:
-    | Prisma.XOR<
-        Prisma.KnowledgeBaseChunkCreateWithoutTenantInput,
-        Prisma.KnowledgeBaseChunkUncheckedCreateWithoutTenantInput
-      >
-    | Prisma.KnowledgeBaseChunkCreateWithoutTenantInput[]
-    | Prisma.KnowledgeBaseChunkUncheckedCreateWithoutTenantInput[];
-  connectOrCreate?:
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutTenantInput
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutTenantInput[];
-  createMany?: Prisma.KnowledgeBaseChunkCreateManyTenantInputEnvelope;
   connect?:
     | Prisma.KnowledgeBaseChunkWhereUniqueInput
     | Prisma.KnowledgeBaseChunkWhereUniqueInput[];
 };
 
 export type KnowledgeBaseChunkUpdateManyWithoutTenantNestedInput = {
-  create?:
-    | Prisma.XOR<
-        Prisma.KnowledgeBaseChunkCreateWithoutTenantInput,
-        Prisma.KnowledgeBaseChunkUncheckedCreateWithoutTenantInput
-      >
-    | Prisma.KnowledgeBaseChunkCreateWithoutTenantInput[]
-    | Prisma.KnowledgeBaseChunkUncheckedCreateWithoutTenantInput[];
-  connectOrCreate?:
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutTenantInput
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutTenantInput[];
-  upsert?:
-    | Prisma.KnowledgeBaseChunkUpsertWithWhereUniqueWithoutTenantInput
-    | Prisma.KnowledgeBaseChunkUpsertWithWhereUniqueWithoutTenantInput[];
-  createMany?: Prisma.KnowledgeBaseChunkCreateManyTenantInputEnvelope;
   set?:
     | Prisma.KnowledgeBaseChunkWhereUniqueInput
     | Prisma.KnowledgeBaseChunkWhereUniqueInput[];
@@ -547,20 +497,6 @@ export type KnowledgeBaseChunkUpdateManyWithoutTenantNestedInput = {
 };
 
 export type KnowledgeBaseChunkUncheckedUpdateManyWithoutTenantNestedInput = {
-  create?:
-    | Prisma.XOR<
-        Prisma.KnowledgeBaseChunkCreateWithoutTenantInput,
-        Prisma.KnowledgeBaseChunkUncheckedCreateWithoutTenantInput
-      >
-    | Prisma.KnowledgeBaseChunkCreateWithoutTenantInput[]
-    | Prisma.KnowledgeBaseChunkUncheckedCreateWithoutTenantInput[];
-  connectOrCreate?:
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutTenantInput
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutTenantInput[];
-  upsert?:
-    | Prisma.KnowledgeBaseChunkUpsertWithWhereUniqueWithoutTenantInput
-    | Prisma.KnowledgeBaseChunkUpsertWithWhereUniqueWithoutTenantInput[];
-  createMany?: Prisma.KnowledgeBaseChunkCreateManyTenantInputEnvelope;
   set?:
     | Prisma.KnowledgeBaseChunkWhereUniqueInput
     | Prisma.KnowledgeBaseChunkWhereUniqueInput[];
@@ -585,54 +521,18 @@ export type KnowledgeBaseChunkUncheckedUpdateManyWithoutTenantNestedInput = {
 };
 
 export type KnowledgeBaseChunkCreateNestedManyWithoutDocumentInput = {
-  create?:
-    | Prisma.XOR<
-        Prisma.KnowledgeBaseChunkCreateWithoutDocumentInput,
-        Prisma.KnowledgeBaseChunkUncheckedCreateWithoutDocumentInput
-      >
-    | Prisma.KnowledgeBaseChunkCreateWithoutDocumentInput[]
-    | Prisma.KnowledgeBaseChunkUncheckedCreateWithoutDocumentInput[];
-  connectOrCreate?:
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutDocumentInput
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutDocumentInput[];
-  createMany?: Prisma.KnowledgeBaseChunkCreateManyDocumentInputEnvelope;
   connect?:
     | Prisma.KnowledgeBaseChunkWhereUniqueInput
     | Prisma.KnowledgeBaseChunkWhereUniqueInput[];
 };
 
 export type KnowledgeBaseChunkUncheckedCreateNestedManyWithoutDocumentInput = {
-  create?:
-    | Prisma.XOR<
-        Prisma.KnowledgeBaseChunkCreateWithoutDocumentInput,
-        Prisma.KnowledgeBaseChunkUncheckedCreateWithoutDocumentInput
-      >
-    | Prisma.KnowledgeBaseChunkCreateWithoutDocumentInput[]
-    | Prisma.KnowledgeBaseChunkUncheckedCreateWithoutDocumentInput[];
-  connectOrCreate?:
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutDocumentInput
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutDocumentInput[];
-  createMany?: Prisma.KnowledgeBaseChunkCreateManyDocumentInputEnvelope;
   connect?:
     | Prisma.KnowledgeBaseChunkWhereUniqueInput
     | Prisma.KnowledgeBaseChunkWhereUniqueInput[];
 };
 
 export type KnowledgeBaseChunkUpdateManyWithoutDocumentNestedInput = {
-  create?:
-    | Prisma.XOR<
-        Prisma.KnowledgeBaseChunkCreateWithoutDocumentInput,
-        Prisma.KnowledgeBaseChunkUncheckedCreateWithoutDocumentInput
-      >
-    | Prisma.KnowledgeBaseChunkCreateWithoutDocumentInput[]
-    | Prisma.KnowledgeBaseChunkUncheckedCreateWithoutDocumentInput[];
-  connectOrCreate?:
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutDocumentInput
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutDocumentInput[];
-  upsert?:
-    | Prisma.KnowledgeBaseChunkUpsertWithWhereUniqueWithoutDocumentInput
-    | Prisma.KnowledgeBaseChunkUpsertWithWhereUniqueWithoutDocumentInput[];
-  createMany?: Prisma.KnowledgeBaseChunkCreateManyDocumentInputEnvelope;
   set?:
     | Prisma.KnowledgeBaseChunkWhereUniqueInput
     | Prisma.KnowledgeBaseChunkWhereUniqueInput[];
@@ -657,20 +557,6 @@ export type KnowledgeBaseChunkUpdateManyWithoutDocumentNestedInput = {
 };
 
 export type KnowledgeBaseChunkUncheckedUpdateManyWithoutDocumentNestedInput = {
-  create?:
-    | Prisma.XOR<
-        Prisma.KnowledgeBaseChunkCreateWithoutDocumentInput,
-        Prisma.KnowledgeBaseChunkUncheckedCreateWithoutDocumentInput
-      >
-    | Prisma.KnowledgeBaseChunkCreateWithoutDocumentInput[]
-    | Prisma.KnowledgeBaseChunkUncheckedCreateWithoutDocumentInput[];
-  connectOrCreate?:
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutDocumentInput
-    | Prisma.KnowledgeBaseChunkCreateOrConnectWithoutDocumentInput[];
-  upsert?:
-    | Prisma.KnowledgeBaseChunkUpsertWithWhereUniqueWithoutDocumentInput
-    | Prisma.KnowledgeBaseChunkUpsertWithWhereUniqueWithoutDocumentInput[];
-  createMany?: Prisma.KnowledgeBaseChunkCreateManyDocumentInputEnvelope;
   set?:
     | Prisma.KnowledgeBaseChunkWhereUniqueInput
     | Prisma.KnowledgeBaseChunkWhereUniqueInput[];
@@ -692,53 +578,6 @@ export type KnowledgeBaseChunkUncheckedUpdateManyWithoutDocumentNestedInput = {
   deleteMany?:
     | Prisma.KnowledgeBaseChunkScalarWhereInput
     | Prisma.KnowledgeBaseChunkScalarWhereInput[];
-};
-
-export type KnowledgeBaseChunkCreateWithoutTenantInput = {
-  id?: string;
-  content: string;
-  chunkIndex: number;
-  isActive?: boolean;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
-  document: Prisma.KnowledgeBaseDocumentCreateNestedOneWithoutChunksInput;
-};
-
-export type KnowledgeBaseChunkUncheckedCreateWithoutTenantInput = {
-  id?: string;
-  documentId: string;
-  content: string;
-  chunkIndex: number;
-  isActive?: boolean;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
-};
-
-export type KnowledgeBaseChunkCreateOrConnectWithoutTenantInput = {
-  where: Prisma.KnowledgeBaseChunkWhereUniqueInput;
-  create: Prisma.XOR<
-    Prisma.KnowledgeBaseChunkCreateWithoutTenantInput,
-    Prisma.KnowledgeBaseChunkUncheckedCreateWithoutTenantInput
-  >;
-};
-
-export type KnowledgeBaseChunkCreateManyTenantInputEnvelope = {
-  data:
-    | Prisma.KnowledgeBaseChunkCreateManyTenantInput
-    | Prisma.KnowledgeBaseChunkCreateManyTenantInput[];
-  skipDuplicates?: boolean;
-};
-
-export type KnowledgeBaseChunkUpsertWithWhereUniqueWithoutTenantInput = {
-  where: Prisma.KnowledgeBaseChunkWhereUniqueInput;
-  update: Prisma.XOR<
-    Prisma.KnowledgeBaseChunkUpdateWithoutTenantInput,
-    Prisma.KnowledgeBaseChunkUncheckedUpdateWithoutTenantInput
-  >;
-  create: Prisma.XOR<
-    Prisma.KnowledgeBaseChunkCreateWithoutTenantInput,
-    Prisma.KnowledgeBaseChunkUncheckedCreateWithoutTenantInput
-  >;
 };
 
 export type KnowledgeBaseChunkUpdateWithWhereUniqueWithoutTenantInput = {
@@ -770,56 +609,10 @@ export type KnowledgeBaseChunkScalarWhereInput = {
   documentId?: Prisma.UuidFilter<"KnowledgeBaseChunk"> | string;
   content?: Prisma.StringFilter<"KnowledgeBaseChunk"> | string;
   chunkIndex?: Prisma.IntFilter<"KnowledgeBaseChunk"> | number;
+  metadata?: Prisma.JsonFilter<"KnowledgeBaseChunk">;
+  tokenCount?: Prisma.IntNullableFilter<"KnowledgeBaseChunk"> | number | null;
   isActive?: Prisma.BoolFilter<"KnowledgeBaseChunk"> | boolean;
   createdAt?: Prisma.DateTimeFilter<"KnowledgeBaseChunk"> | Date | string;
-  updatedAt?: Prisma.DateTimeFilter<"KnowledgeBaseChunk"> | Date | string;
-};
-
-export type KnowledgeBaseChunkCreateWithoutDocumentInput = {
-  id?: string;
-  content: string;
-  chunkIndex: number;
-  isActive?: boolean;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
-  tenant: Prisma.TenantCreateNestedOneWithoutKnowledgeBaseChunksInput;
-};
-
-export type KnowledgeBaseChunkUncheckedCreateWithoutDocumentInput = {
-  id?: string;
-  tenantId: string;
-  content: string;
-  chunkIndex: number;
-  isActive?: boolean;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
-};
-
-export type KnowledgeBaseChunkCreateOrConnectWithoutDocumentInput = {
-  where: Prisma.KnowledgeBaseChunkWhereUniqueInput;
-  create: Prisma.XOR<
-    Prisma.KnowledgeBaseChunkCreateWithoutDocumentInput,
-    Prisma.KnowledgeBaseChunkUncheckedCreateWithoutDocumentInput
-  >;
-};
-
-export type KnowledgeBaseChunkCreateManyDocumentInputEnvelope = {
-  data:
-    | Prisma.KnowledgeBaseChunkCreateManyDocumentInput
-    | Prisma.KnowledgeBaseChunkCreateManyDocumentInput[];
-  skipDuplicates?: boolean;
-};
-
-export type KnowledgeBaseChunkUpsertWithWhereUniqueWithoutDocumentInput = {
-  where: Prisma.KnowledgeBaseChunkWhereUniqueInput;
-  update: Prisma.XOR<
-    Prisma.KnowledgeBaseChunkUpdateWithoutDocumentInput,
-    Prisma.KnowledgeBaseChunkUncheckedUpdateWithoutDocumentInput
-  >;
-  create: Prisma.XOR<
-    Prisma.KnowledgeBaseChunkCreateWithoutDocumentInput,
-    Prisma.KnowledgeBaseChunkUncheckedCreateWithoutDocumentInput
-  >;
 };
 
 export type KnowledgeBaseChunkUpdateWithWhereUniqueWithoutDocumentInput = {
@@ -838,23 +631,14 @@ export type KnowledgeBaseChunkUpdateManyWithWhereWithoutDocumentInput = {
   >;
 };
 
-export type KnowledgeBaseChunkCreateManyTenantInput = {
-  id?: string;
-  documentId: string;
-  content: string;
-  chunkIndex: number;
-  isActive?: boolean;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
-};
-
 export type KnowledgeBaseChunkUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   content?: Prisma.StringFieldUpdateOperationsInput | string;
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  tokenCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   document?: Prisma.KnowledgeBaseDocumentUpdateOneRequiredWithoutChunksNestedInput;
 };
 
@@ -863,9 +647,10 @@ export type KnowledgeBaseChunkUncheckedUpdateWithoutTenantInput = {
   documentId?: Prisma.StringFieldUpdateOperationsInput | string;
   content?: Prisma.StringFieldUpdateOperationsInput | string;
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  tokenCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
 export type KnowledgeBaseChunkUncheckedUpdateManyWithoutTenantInput = {
@@ -873,28 +658,20 @@ export type KnowledgeBaseChunkUncheckedUpdateManyWithoutTenantInput = {
   documentId?: Prisma.StringFieldUpdateOperationsInput | string;
   content?: Prisma.StringFieldUpdateOperationsInput | string;
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  tokenCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-};
-
-export type KnowledgeBaseChunkCreateManyDocumentInput = {
-  id?: string;
-  tenantId: string;
-  content: string;
-  chunkIndex: number;
-  isActive?: boolean;
-  createdAt?: Date | string;
-  updatedAt?: Date | string;
 };
 
 export type KnowledgeBaseChunkUpdateWithoutDocumentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   content?: Prisma.StringFieldUpdateOperationsInput | string;
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  tokenCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   tenant?: Prisma.TenantUpdateOneRequiredWithoutKnowledgeBaseChunksNestedInput;
 };
 
@@ -903,9 +680,10 @@ export type KnowledgeBaseChunkUncheckedUpdateWithoutDocumentInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
   content?: Prisma.StringFieldUpdateOperationsInput | string;
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  tokenCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
 export type KnowledgeBaseChunkUncheckedUpdateManyWithoutDocumentInput = {
@@ -913,9 +691,10 @@ export type KnowledgeBaseChunkUncheckedUpdateManyWithoutDocumentInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
   content?: Prisma.StringFieldUpdateOperationsInput | string;
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  tokenCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
 };
 
 export type KnowledgeBaseChunkSelect<
@@ -928,28 +707,10 @@ export type KnowledgeBaseChunkSelect<
     documentId?: boolean;
     content?: boolean;
     chunkIndex?: boolean;
+    metadata?: boolean;
+    tokenCount?: boolean;
     isActive?: boolean;
     createdAt?: boolean;
-    updatedAt?: boolean;
-    tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>;
-    document?: boolean | Prisma.KnowledgeBaseDocumentDefaultArgs<ExtArgs>;
-  },
-  ExtArgs["result"]["knowledgeBaseChunk"]
->;
-
-export type KnowledgeBaseChunkSelectCreateManyAndReturn<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs =
-    runtime.Types.Extensions.DefaultArgs,
-> = runtime.Types.Extensions.GetSelect<
-  {
-    id?: boolean;
-    tenantId?: boolean;
-    documentId?: boolean;
-    content?: boolean;
-    chunkIndex?: boolean;
-    isActive?: boolean;
-    createdAt?: boolean;
-    updatedAt?: boolean;
     tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>;
     document?: boolean | Prisma.KnowledgeBaseDocumentDefaultArgs<ExtArgs>;
   },
@@ -966,9 +727,10 @@ export type KnowledgeBaseChunkSelectUpdateManyAndReturn<
     documentId?: boolean;
     content?: boolean;
     chunkIndex?: boolean;
+    metadata?: boolean;
+    tokenCount?: boolean;
     isActive?: boolean;
     createdAt?: boolean;
-    updatedAt?: boolean;
     tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>;
     document?: boolean | Prisma.KnowledgeBaseDocumentDefaultArgs<ExtArgs>;
   },
@@ -981,9 +743,10 @@ export type KnowledgeBaseChunkSelectScalar = {
   documentId?: boolean;
   content?: boolean;
   chunkIndex?: boolean;
+  metadata?: boolean;
+  tokenCount?: boolean;
   isActive?: boolean;
   createdAt?: boolean;
-  updatedAt?: boolean;
 };
 
 export type KnowledgeBaseChunkOmit<
@@ -995,19 +758,13 @@ export type KnowledgeBaseChunkOmit<
   | "documentId"
   | "content"
   | "chunkIndex"
+  | "metadata"
+  | "tokenCount"
   | "isActive"
-  | "createdAt"
-  | "updatedAt",
+  | "createdAt",
   ExtArgs["result"]["knowledgeBaseChunk"]
 >;
 export type KnowledgeBaseChunkInclude<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs =
-    runtime.Types.Extensions.DefaultArgs,
-> = {
-  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>;
-  document?: boolean | Prisma.KnowledgeBaseDocumentDefaultArgs<ExtArgs>;
-};
-export type KnowledgeBaseChunkIncludeCreateManyAndReturn<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
 > = {
@@ -1038,9 +795,10 @@ export type $KnowledgeBaseChunkPayload<
       documentId: string;
       content: string;
       chunkIndex: number;
+      metadata: runtime.JsonValue;
+      tokenCount: number | null;
       isActive: boolean;
       createdAt: Date;
-      updatedAt: Date;
     },
     ExtArgs["result"]["knowledgeBaseChunk"]
   >;
@@ -1210,84 +968,6 @@ export interface KnowledgeBaseChunkDelegate<
   >;
 
   /**
-   * Create a KnowledgeBaseChunk.
-   * @param {KnowledgeBaseChunkCreateArgs} args - Arguments to create a KnowledgeBaseChunk.
-   * @example
-   * // Create one KnowledgeBaseChunk
-   * const KnowledgeBaseChunk = await prisma.knowledgeBaseChunk.create({
-   *   data: {
-   *     // ... data to create a KnowledgeBaseChunk
-   *   }
-   * })
-   *
-   */
-  create<T extends KnowledgeBaseChunkCreateArgs>(
-    args: Prisma.SelectSubset<T, KnowledgeBaseChunkCreateArgs<ExtArgs>>,
-  ): Prisma.Prisma__KnowledgeBaseChunkClient<
-    runtime.Types.Result.GetResult<
-      Prisma.$KnowledgeBaseChunkPayload<ExtArgs>,
-      T,
-      "create",
-      GlobalOmitOptions
-    >,
-    never,
-    ExtArgs,
-    GlobalOmitOptions
-  >;
-
-  /**
-   * Create many KnowledgeBaseChunks.
-   * @param {KnowledgeBaseChunkCreateManyArgs} args - Arguments to create many KnowledgeBaseChunks.
-   * @example
-   * // Create many KnowledgeBaseChunks
-   * const knowledgeBaseChunk = await prisma.knowledgeBaseChunk.createMany({
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   *
-   */
-  createMany<T extends KnowledgeBaseChunkCreateManyArgs>(
-    args?: Prisma.SelectSubset<T, KnowledgeBaseChunkCreateManyArgs<ExtArgs>>,
-  ): Prisma.PrismaPromise<Prisma.BatchPayload>;
-
-  /**
-   * Create many KnowledgeBaseChunks and returns the data saved in the database.
-   * @param {KnowledgeBaseChunkCreateManyAndReturnArgs} args - Arguments to create many KnowledgeBaseChunks.
-   * @example
-   * // Create many KnowledgeBaseChunks
-   * const knowledgeBaseChunk = await prisma.knowledgeBaseChunk.createManyAndReturn({
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   *
-   * // Create many KnowledgeBaseChunks and only return the `id`
-   * const knowledgeBaseChunkWithIdOnly = await prisma.knowledgeBaseChunk.createManyAndReturn({
-   *   select: { id: true },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   *
-   */
-  createManyAndReturn<T extends KnowledgeBaseChunkCreateManyAndReturnArgs>(
-    args?: Prisma.SelectSubset<
-      T,
-      KnowledgeBaseChunkCreateManyAndReturnArgs<ExtArgs>
-    >,
-  ): Prisma.PrismaPromise<
-    runtime.Types.Result.GetResult<
-      Prisma.$KnowledgeBaseChunkPayload<ExtArgs>,
-      T,
-      "createManyAndReturn",
-      GlobalOmitOptions
-    >
-  >;
-
-  /**
    * Delete a KnowledgeBaseChunk.
    * @param {KnowledgeBaseChunkDeleteArgs} args - Arguments to delete one KnowledgeBaseChunk.
    * @example
@@ -1419,37 +1099,6 @@ export interface KnowledgeBaseChunkDelegate<
       "updateManyAndReturn",
       GlobalOmitOptions
     >
-  >;
-
-  /**
-   * Create or update one KnowledgeBaseChunk.
-   * @param {KnowledgeBaseChunkUpsertArgs} args - Arguments to update or create a KnowledgeBaseChunk.
-   * @example
-   * // Update or create a KnowledgeBaseChunk
-   * const knowledgeBaseChunk = await prisma.knowledgeBaseChunk.upsert({
-   *   create: {
-   *     // ... data to create a KnowledgeBaseChunk
-   *   },
-   *   update: {
-   *     // ... in case it already exists, update
-   *   },
-   *   where: {
-   *     // ... the filter for the KnowledgeBaseChunk we want to update
-   *   }
-   * })
-   */
-  upsert<T extends KnowledgeBaseChunkUpsertArgs>(
-    args: Prisma.SelectSubset<T, KnowledgeBaseChunkUpsertArgs<ExtArgs>>,
-  ): Prisma.Prisma__KnowledgeBaseChunkClient<
-    runtime.Types.Result.GetResult<
-      Prisma.$KnowledgeBaseChunkPayload<ExtArgs>,
-      T,
-      "upsert",
-      GlobalOmitOptions
-    >,
-    never,
-    ExtArgs,
-    GlobalOmitOptions
   >;
 
   /**
@@ -1688,9 +1337,10 @@ export interface KnowledgeBaseChunkFieldRefs {
   readonly documentId: Prisma.FieldRef<"KnowledgeBaseChunk", "String">;
   readonly content: Prisma.FieldRef<"KnowledgeBaseChunk", "String">;
   readonly chunkIndex: Prisma.FieldRef<"KnowledgeBaseChunk", "Int">;
+  readonly metadata: Prisma.FieldRef<"KnowledgeBaseChunk", "Json">;
+  readonly tokenCount: Prisma.FieldRef<"KnowledgeBaseChunk", "Int">;
   readonly isActive: Prisma.FieldRef<"KnowledgeBaseChunk", "Boolean">;
   readonly createdAt: Prisma.FieldRef<"KnowledgeBaseChunk", "DateTime">;
-  readonly updatedAt: Prisma.FieldRef<"KnowledgeBaseChunk", "DateTime">;
 }
 
 // Custom InputTypes
@@ -1922,78 +1572,6 @@ export type KnowledgeBaseChunkFindManyArgs<
 };
 
 /**
- * KnowledgeBaseChunk create
- */
-export type KnowledgeBaseChunkCreateArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs =
-    runtime.Types.Extensions.DefaultArgs,
-> = {
-  /**
-   * Select specific fields to fetch from the KnowledgeBaseChunk
-   */
-  select?: Prisma.KnowledgeBaseChunkSelect<ExtArgs> | null;
-  /**
-   * Omit specific fields from the KnowledgeBaseChunk
-   */
-  omit?: Prisma.KnowledgeBaseChunkOmit<ExtArgs> | null;
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.KnowledgeBaseChunkInclude<ExtArgs> | null;
-  /**
-   * The data needed to create a KnowledgeBaseChunk.
-   */
-  data: Prisma.XOR<
-    Prisma.KnowledgeBaseChunkCreateInput,
-    Prisma.KnowledgeBaseChunkUncheckedCreateInput
-  >;
-};
-
-/**
- * KnowledgeBaseChunk createMany
- */
-export type KnowledgeBaseChunkCreateManyArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs =
-    runtime.Types.Extensions.DefaultArgs,
-> = {
-  /**
-   * The data used to create many KnowledgeBaseChunks.
-   */
-  data:
-    | Prisma.KnowledgeBaseChunkCreateManyInput
-    | Prisma.KnowledgeBaseChunkCreateManyInput[];
-  skipDuplicates?: boolean;
-};
-
-/**
- * KnowledgeBaseChunk createManyAndReturn
- */
-export type KnowledgeBaseChunkCreateManyAndReturnArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs =
-    runtime.Types.Extensions.DefaultArgs,
-> = {
-  /**
-   * Select specific fields to fetch from the KnowledgeBaseChunk
-   */
-  select?: Prisma.KnowledgeBaseChunkSelectCreateManyAndReturn<ExtArgs> | null;
-  /**
-   * Omit specific fields from the KnowledgeBaseChunk
-   */
-  omit?: Prisma.KnowledgeBaseChunkOmit<ExtArgs> | null;
-  /**
-   * The data used to create many KnowledgeBaseChunks.
-   */
-  data:
-    | Prisma.KnowledgeBaseChunkCreateManyInput
-    | Prisma.KnowledgeBaseChunkCreateManyInput[];
-  skipDuplicates?: boolean;
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.KnowledgeBaseChunkIncludeCreateManyAndReturn<ExtArgs> | null;
-};
-
-/**
  * KnowledgeBaseChunk update
  */
 export type KnowledgeBaseChunkUpdateArgs<
@@ -2083,45 +1661,6 @@ export type KnowledgeBaseChunkUpdateManyAndReturnArgs<
    * Choose, which related nodes to fetch as well
    */
   include?: Prisma.KnowledgeBaseChunkIncludeUpdateManyAndReturn<ExtArgs> | null;
-};
-
-/**
- * KnowledgeBaseChunk upsert
- */
-export type KnowledgeBaseChunkUpsertArgs<
-  ExtArgs extends runtime.Types.Extensions.InternalArgs =
-    runtime.Types.Extensions.DefaultArgs,
-> = {
-  /**
-   * Select specific fields to fetch from the KnowledgeBaseChunk
-   */
-  select?: Prisma.KnowledgeBaseChunkSelect<ExtArgs> | null;
-  /**
-   * Omit specific fields from the KnowledgeBaseChunk
-   */
-  omit?: Prisma.KnowledgeBaseChunkOmit<ExtArgs> | null;
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.KnowledgeBaseChunkInclude<ExtArgs> | null;
-  /**
-   * The filter to search for the KnowledgeBaseChunk to update in case it exists.
-   */
-  where: Prisma.KnowledgeBaseChunkWhereUniqueInput;
-  /**
-   * In case the KnowledgeBaseChunk found by the `where` argument doesn't exist, create a new KnowledgeBaseChunk with this data.
-   */
-  create: Prisma.XOR<
-    Prisma.KnowledgeBaseChunkCreateInput,
-    Prisma.KnowledgeBaseChunkUncheckedCreateInput
-  >;
-  /**
-   * In case the KnowledgeBaseChunk was found with the provided `where` argument, update it with this data.
-   */
-  update: Prisma.XOR<
-    Prisma.KnowledgeBaseChunkUpdateInput,
-    Prisma.KnowledgeBaseChunkUncheckedUpdateInput
-  >;
 };
 
 /**

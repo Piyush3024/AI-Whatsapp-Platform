@@ -65,9 +65,11 @@ enum MessageType {
 }
 
 enum DocumentStatus {
-  ACTIVE
-  ARCHIVED
+  UPLOADING
   PROCESSING
+  EMBEDDING
+  READY
+  ARCHIVED
   FAILED
 }
 
@@ -470,7 +472,7 @@ model WhatsAppNumber {
   qualityScore       Float? // 0.0 - 1.0
   verificationStatus WhatsAppVerificationStatus @default(PENDING)
   webhookUrl         String?
-  isDefault          Boolean                    @default(false) // <-- ADD THIS
+  isDefault          Boolean                    @default(false)
   isActive           Boolean                    @default(true)
   autoReplyEnabled   Boolean                    @default(true)
   greetingMessage    String?
@@ -779,15 +781,22 @@ model TenantAIPrompt {
 }
 
 model KnowledgeBaseDocument {
-  id        String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId  String         @db.Uuid
-  title     String
-  fileUrl   String
-  version   Int            @default(1)
-  status    DocumentStatus @default(PROCESSING)
-  createdAt DateTime       @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime       @updatedAt @db.Timestamptz(6)
-  deletedAt DateTime?      @db.Timestamptz(6)
+  id          String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId    String         @db.Uuid
+  title       String
+  fileName    String // Original filename (e.g., "services.pdf")
+  fileSize    Int // Size in bytes (max 10MB)
+  fileType    String // MIME type (e.g., "application/pdf")
+  fileUrl     String? // Public R2 URL (e.g., "https://bucket.r2.dev/docs/abc123.pdf")
+  storagePath String // R2 object key (e.g., "tenants/{tenantId}/kb/abc123.pdf")
+  checksum    String // SHA-256 hash (prevents duplicate uploads)
+  version     Int            @default(1)
+  status      DocumentStatus @default(UPLOADING)
+  metadata    Json           @default("{}") // e.g., { error: "Invalid PDF", processedAt: "2026-01-01" }
+
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
 
   // Relations
   tenant Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -799,15 +808,17 @@ model KnowledgeBaseDocument {
 }
 
 model KnowledgeBaseChunk {
-  id         String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId   String                       @db.Uuid
-  documentId String                       @db.Uuid
-  content    String
-  chunkIndex Int
-  embedding  Unsupported("vector(1536)")?
-  isActive   Boolean                      @default(true)
-  createdAt  DateTime                     @default(now()) @db.Timestamptz(6)
-  updatedAt  DateTime                     @updatedAt @db.Timestamptz(6)
+  id         String                      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId   String                      @db.Uuid
+  documentId String                      @db.Uuid
+  content    String // Extracted text (max ~512 tokens)
+  chunkIndex Int // Order within document (0-based)
+  embedding  Unsupported("vector(1536)") // pgvector type (1536-dim for text-embedding-3-small)
+  metadata   Json                        @default("{}") // e.g., { page: 1, section: "Pricing" }
+  tokenCount Int? // Number of tokens in content (for cost tracking)
+  isActive   Boolean                     @default(true) // Soft-delete flag
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
 
   // Relations
   tenant   Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -815,7 +826,7 @@ model KnowledgeBaseChunk {
 
   @@index([tenantId])
   @@index([tenantId, documentId])
-  @@index([tenantId, isActive])
+  @@index([tenantId, isActive]) // Critical for RAG queries
   @@map("knowledge_base_chunks")
 }
 

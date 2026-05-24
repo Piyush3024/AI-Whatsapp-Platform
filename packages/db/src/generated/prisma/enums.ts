@@ -68,9 +68,11 @@ export const MessageType = {
 export type MessageType = (typeof MessageType)[keyof typeof MessageType];
 
 export const DocumentStatus = {
-  ACTIVE: "ACTIVE",
-  ARCHIVED: "ARCHIVED",
+  UPLOADING: "UPLOADING",
   PROCESSING: "PROCESSING",
+  EMBEDDING: "EMBEDDING",
+  READY: "READY",
+  ARCHIVED: "ARCHIVED",
   FAILED: "FAILED",
 } as const;
 

@@ -27,10 +27,12 @@ export type AggregateKnowledgeBaseDocument = {
 };
 
 export type KnowledgeBaseDocumentAvgAggregateOutputType = {
+  fileSize: number | null;
   version: number | null;
 };
 
 export type KnowledgeBaseDocumentSumAggregateOutputType = {
+  fileSize: number | null;
   version: number | null;
 };
 
@@ -38,7 +40,12 @@ export type KnowledgeBaseDocumentMinAggregateOutputType = {
   id: string | null;
   tenantId: string | null;
   title: string | null;
+  fileName: string | null;
+  fileSize: number | null;
+  fileType: string | null;
   fileUrl: string | null;
+  storagePath: string | null;
+  checksum: string | null;
   version: number | null;
   status: $Enums.DocumentStatus | null;
   createdAt: Date | null;
@@ -50,7 +57,12 @@ export type KnowledgeBaseDocumentMaxAggregateOutputType = {
   id: string | null;
   tenantId: string | null;
   title: string | null;
+  fileName: string | null;
+  fileSize: number | null;
+  fileType: string | null;
   fileUrl: string | null;
+  storagePath: string | null;
+  checksum: string | null;
   version: number | null;
   status: $Enums.DocumentStatus | null;
   createdAt: Date | null;
@@ -62,9 +74,15 @@ export type KnowledgeBaseDocumentCountAggregateOutputType = {
   id: number;
   tenantId: number;
   title: number;
+  fileName: number;
+  fileSize: number;
+  fileType: number;
   fileUrl: number;
+  storagePath: number;
+  checksum: number;
   version: number;
   status: number;
+  metadata: number;
   createdAt: number;
   updatedAt: number;
   deletedAt: number;
@@ -72,10 +90,12 @@ export type KnowledgeBaseDocumentCountAggregateOutputType = {
 };
 
 export type KnowledgeBaseDocumentAvgAggregateInputType = {
+  fileSize?: true;
   version?: true;
 };
 
 export type KnowledgeBaseDocumentSumAggregateInputType = {
+  fileSize?: true;
   version?: true;
 };
 
@@ -83,7 +103,12 @@ export type KnowledgeBaseDocumentMinAggregateInputType = {
   id?: true;
   tenantId?: true;
   title?: true;
+  fileName?: true;
+  fileSize?: true;
+  fileType?: true;
   fileUrl?: true;
+  storagePath?: true;
+  checksum?: true;
   version?: true;
   status?: true;
   createdAt?: true;
@@ -95,7 +120,12 @@ export type KnowledgeBaseDocumentMaxAggregateInputType = {
   id?: true;
   tenantId?: true;
   title?: true;
+  fileName?: true;
+  fileSize?: true;
+  fileType?: true;
   fileUrl?: true;
+  storagePath?: true;
+  checksum?: true;
   version?: true;
   status?: true;
   createdAt?: true;
@@ -107,9 +137,15 @@ export type KnowledgeBaseDocumentCountAggregateInputType = {
   id?: true;
   tenantId?: true;
   title?: true;
+  fileName?: true;
+  fileSize?: true;
+  fileType?: true;
   fileUrl?: true;
+  storagePath?: true;
+  checksum?: true;
   version?: true;
   status?: true;
+  metadata?: true;
   createdAt?: true;
   updatedAt?: true;
   deletedAt?: true;
@@ -219,9 +255,15 @@ export type KnowledgeBaseDocumentGroupByOutputType = {
   id: string;
   tenantId: string;
   title: string;
-  fileUrl: string;
+  fileName: string;
+  fileSize: number;
+  fileType: string;
+  fileUrl: string | null;
+  storagePath: string;
+  checksum: string;
   version: number;
   status: $Enums.DocumentStatus;
+  metadata: runtime.JsonValue;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
@@ -261,11 +303,20 @@ export type KnowledgeBaseDocumentWhereInput = {
   id?: Prisma.UuidFilter<"KnowledgeBaseDocument"> | string;
   tenantId?: Prisma.UuidFilter<"KnowledgeBaseDocument"> | string;
   title?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
-  fileUrl?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
+  fileName?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
+  fileSize?: Prisma.IntFilter<"KnowledgeBaseDocument"> | number;
+  fileType?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
+  fileUrl?:
+    | Prisma.StringNullableFilter<"KnowledgeBaseDocument">
+    | string
+    | null;
+  storagePath?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
+  checksum?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
   version?: Prisma.IntFilter<"KnowledgeBaseDocument"> | number;
   status?:
     | Prisma.EnumDocumentStatusFilter<"KnowledgeBaseDocument">
     | $Enums.DocumentStatus;
+  metadata?: Prisma.JsonFilter<"KnowledgeBaseDocument">;
   createdAt?: Prisma.DateTimeFilter<"KnowledgeBaseDocument"> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<"KnowledgeBaseDocument"> | Date | string;
   deletedAt?:
@@ -284,9 +335,15 @@ export type KnowledgeBaseDocumentOrderByWithRelationInput = {
   id?: Prisma.SortOrder;
   tenantId?: Prisma.SortOrder;
   title?: Prisma.SortOrder;
-  fileUrl?: Prisma.SortOrder;
+  fileName?: Prisma.SortOrder;
+  fileSize?: Prisma.SortOrder;
+  fileType?: Prisma.SortOrder;
+  fileUrl?: Prisma.SortOrderInput | Prisma.SortOrder;
+  storagePath?: Prisma.SortOrder;
+  checksum?: Prisma.SortOrder;
   version?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
+  metadata?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -306,11 +363,20 @@ export type KnowledgeBaseDocumentWhereUniqueInput = Prisma.AtLeast<
       | Prisma.KnowledgeBaseDocumentWhereInput[];
     tenantId?: Prisma.UuidFilter<"KnowledgeBaseDocument"> | string;
     title?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
-    fileUrl?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
+    fileName?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
+    fileSize?: Prisma.IntFilter<"KnowledgeBaseDocument"> | number;
+    fileType?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
+    fileUrl?:
+      | Prisma.StringNullableFilter<"KnowledgeBaseDocument">
+      | string
+      | null;
+    storagePath?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
+    checksum?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
     version?: Prisma.IntFilter<"KnowledgeBaseDocument"> | number;
     status?:
       | Prisma.EnumDocumentStatusFilter<"KnowledgeBaseDocument">
       | $Enums.DocumentStatus;
+    metadata?: Prisma.JsonFilter<"KnowledgeBaseDocument">;
     createdAt?: Prisma.DateTimeFilter<"KnowledgeBaseDocument"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"KnowledgeBaseDocument"> | Date | string;
     deletedAt?:
@@ -331,9 +397,15 @@ export type KnowledgeBaseDocumentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder;
   tenantId?: Prisma.SortOrder;
   title?: Prisma.SortOrder;
-  fileUrl?: Prisma.SortOrder;
+  fileName?: Prisma.SortOrder;
+  fileSize?: Prisma.SortOrder;
+  fileType?: Prisma.SortOrder;
+  fileUrl?: Prisma.SortOrderInput | Prisma.SortOrder;
+  storagePath?: Prisma.SortOrder;
+  checksum?: Prisma.SortOrder;
   version?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
+  metadata?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -355,11 +427,28 @@ export type KnowledgeBaseDocumentScalarWhereWithAggregatesInput = {
   id?: Prisma.UuidWithAggregatesFilter<"KnowledgeBaseDocument"> | string;
   tenantId?: Prisma.UuidWithAggregatesFilter<"KnowledgeBaseDocument"> | string;
   title?: Prisma.StringWithAggregatesFilter<"KnowledgeBaseDocument"> | string;
-  fileUrl?: Prisma.StringWithAggregatesFilter<"KnowledgeBaseDocument"> | string;
+  fileName?:
+    | Prisma.StringWithAggregatesFilter<"KnowledgeBaseDocument">
+    | string;
+  fileSize?: Prisma.IntWithAggregatesFilter<"KnowledgeBaseDocument"> | number;
+  fileType?:
+    | Prisma.StringWithAggregatesFilter<"KnowledgeBaseDocument">
+    | string;
+  fileUrl?:
+    | Prisma.StringNullableWithAggregatesFilter<"KnowledgeBaseDocument">
+    | string
+    | null;
+  storagePath?:
+    | Prisma.StringWithAggregatesFilter<"KnowledgeBaseDocument">
+    | string;
+  checksum?:
+    | Prisma.StringWithAggregatesFilter<"KnowledgeBaseDocument">
+    | string;
   version?: Prisma.IntWithAggregatesFilter<"KnowledgeBaseDocument"> | number;
   status?:
     | Prisma.EnumDocumentStatusWithAggregatesFilter<"KnowledgeBaseDocument">
     | $Enums.DocumentStatus;
+  metadata?: Prisma.JsonWithAggregatesFilter<"KnowledgeBaseDocument">;
   createdAt?:
     | Prisma.DateTimeWithAggregatesFilter<"KnowledgeBaseDocument">
     | Date
@@ -378,9 +467,15 @@ export type KnowledgeBaseDocumentScalarWhereWithAggregatesInput = {
 export type KnowledgeBaseDocumentCreateInput = {
   id?: string;
   title: string;
-  fileUrl: string;
+  fileName: string;
+  fileSize: number;
+  fileType: string;
+  fileUrl?: string | null;
+  storagePath: string;
+  checksum: string;
   version?: number;
   status?: $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -392,9 +487,15 @@ export type KnowledgeBaseDocumentUncheckedCreateInput = {
   id?: string;
   tenantId: string;
   title: string;
-  fileUrl: string;
+  fileName: string;
+  fileSize: number;
+  fileType: string;
+  fileUrl?: string | null;
+  storagePath: string;
+  checksum: string;
   version?: number;
   status?: $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -404,11 +505,17 @@ export type KnowledgeBaseDocumentUncheckedCreateInput = {
 export type KnowledgeBaseDocumentUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   title?: Prisma.StringFieldUpdateOperationsInput | string;
-  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileSize?: Prisma.IntFieldUpdateOperationsInput | number;
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string;
+  checksum?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   status?:
     | Prisma.EnumDocumentStatusFieldUpdateOperationsInput
     | $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -424,11 +531,17 @@ export type KnowledgeBaseDocumentUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
   title?: Prisma.StringFieldUpdateOperationsInput | string;
-  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileSize?: Prisma.IntFieldUpdateOperationsInput | number;
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string;
+  checksum?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   status?:
     | Prisma.EnumDocumentStatusFieldUpdateOperationsInput
     | $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -443,9 +556,15 @@ export type KnowledgeBaseDocumentCreateManyInput = {
   id?: string;
   tenantId: string;
   title: string;
-  fileUrl: string;
+  fileName: string;
+  fileSize: number;
+  fileType: string;
+  fileUrl?: string | null;
+  storagePath: string;
+  checksum: string;
   version?: number;
   status?: $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -454,11 +573,17 @@ export type KnowledgeBaseDocumentCreateManyInput = {
 export type KnowledgeBaseDocumentUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   title?: Prisma.StringFieldUpdateOperationsInput | string;
-  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileSize?: Prisma.IntFieldUpdateOperationsInput | number;
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string;
+  checksum?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   status?:
     | Prisma.EnumDocumentStatusFieldUpdateOperationsInput
     | $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -472,11 +597,17 @@ export type KnowledgeBaseDocumentUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
   title?: Prisma.StringFieldUpdateOperationsInput | string;
-  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileSize?: Prisma.IntFieldUpdateOperationsInput | number;
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string;
+  checksum?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   status?:
     | Prisma.EnumDocumentStatusFieldUpdateOperationsInput
     | $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -500,15 +631,22 @@ export type KnowledgeBaseDocumentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder;
   tenantId?: Prisma.SortOrder;
   title?: Prisma.SortOrder;
+  fileName?: Prisma.SortOrder;
+  fileSize?: Prisma.SortOrder;
+  fileType?: Prisma.SortOrder;
   fileUrl?: Prisma.SortOrder;
+  storagePath?: Prisma.SortOrder;
+  checksum?: Prisma.SortOrder;
   version?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
+  metadata?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
 };
 
 export type KnowledgeBaseDocumentAvgOrderByAggregateInput = {
+  fileSize?: Prisma.SortOrder;
   version?: Prisma.SortOrder;
 };
 
@@ -516,7 +654,12 @@ export type KnowledgeBaseDocumentMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder;
   tenantId?: Prisma.SortOrder;
   title?: Prisma.SortOrder;
+  fileName?: Prisma.SortOrder;
+  fileSize?: Prisma.SortOrder;
+  fileType?: Prisma.SortOrder;
   fileUrl?: Prisma.SortOrder;
+  storagePath?: Prisma.SortOrder;
+  checksum?: Prisma.SortOrder;
   version?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
@@ -528,7 +671,12 @@ export type KnowledgeBaseDocumentMinOrderByAggregateInput = {
   id?: Prisma.SortOrder;
   tenantId?: Prisma.SortOrder;
   title?: Prisma.SortOrder;
+  fileName?: Prisma.SortOrder;
+  fileSize?: Prisma.SortOrder;
+  fileType?: Prisma.SortOrder;
   fileUrl?: Prisma.SortOrder;
+  storagePath?: Prisma.SortOrder;
+  checksum?: Prisma.SortOrder;
   version?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
@@ -537,6 +685,7 @@ export type KnowledgeBaseDocumentMinOrderByAggregateInput = {
 };
 
 export type KnowledgeBaseDocumentSumOrderByAggregateInput = {
+  fileSize?: Prisma.SortOrder;
   version?: Prisma.SortOrder;
 };
 
@@ -659,15 +808,6 @@ export type EnumDocumentStatusFieldUpdateOperationsInput = {
   set?: $Enums.DocumentStatus;
 };
 
-export type KnowledgeBaseDocumentCreateNestedOneWithoutChunksInput = {
-  create?: Prisma.XOR<
-    Prisma.KnowledgeBaseDocumentCreateWithoutChunksInput,
-    Prisma.KnowledgeBaseDocumentUncheckedCreateWithoutChunksInput
-  >;
-  connectOrCreate?: Prisma.KnowledgeBaseDocumentCreateOrConnectWithoutChunksInput;
-  connect?: Prisma.KnowledgeBaseDocumentWhereUniqueInput;
-};
-
 export type KnowledgeBaseDocumentUpdateOneRequiredWithoutChunksNestedInput = {
   create?: Prisma.XOR<
     Prisma.KnowledgeBaseDocumentCreateWithoutChunksInput,
@@ -688,9 +828,15 @@ export type KnowledgeBaseDocumentUpdateOneRequiredWithoutChunksNestedInput = {
 export type KnowledgeBaseDocumentCreateWithoutTenantInput = {
   id?: string;
   title: string;
-  fileUrl: string;
+  fileName: string;
+  fileSize: number;
+  fileType: string;
+  fileUrl?: string | null;
+  storagePath: string;
+  checksum: string;
   version?: number;
   status?: $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -700,9 +846,15 @@ export type KnowledgeBaseDocumentCreateWithoutTenantInput = {
 export type KnowledgeBaseDocumentUncheckedCreateWithoutTenantInput = {
   id?: string;
   title: string;
-  fileUrl: string;
+  fileName: string;
+  fileSize: number;
+  fileType: string;
+  fileUrl?: string | null;
+  storagePath: string;
+  checksum: string;
   version?: number;
   status?: $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -763,11 +915,20 @@ export type KnowledgeBaseDocumentScalarWhereInput = {
   id?: Prisma.UuidFilter<"KnowledgeBaseDocument"> | string;
   tenantId?: Prisma.UuidFilter<"KnowledgeBaseDocument"> | string;
   title?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
-  fileUrl?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
+  fileName?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
+  fileSize?: Prisma.IntFilter<"KnowledgeBaseDocument"> | number;
+  fileType?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
+  fileUrl?:
+    | Prisma.StringNullableFilter<"KnowledgeBaseDocument">
+    | string
+    | null;
+  storagePath?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
+  checksum?: Prisma.StringFilter<"KnowledgeBaseDocument"> | string;
   version?: Prisma.IntFilter<"KnowledgeBaseDocument"> | number;
   status?:
     | Prisma.EnumDocumentStatusFilter<"KnowledgeBaseDocument">
     | $Enums.DocumentStatus;
+  metadata?: Prisma.JsonFilter<"KnowledgeBaseDocument">;
   createdAt?: Prisma.DateTimeFilter<"KnowledgeBaseDocument"> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<"KnowledgeBaseDocument"> | Date | string;
   deletedAt?:
@@ -780,9 +941,15 @@ export type KnowledgeBaseDocumentScalarWhereInput = {
 export type KnowledgeBaseDocumentCreateWithoutChunksInput = {
   id?: string;
   title: string;
-  fileUrl: string;
+  fileName: string;
+  fileSize: number;
+  fileType: string;
+  fileUrl?: string | null;
+  storagePath: string;
+  checksum: string;
   version?: number;
   status?: $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -793,9 +960,15 @@ export type KnowledgeBaseDocumentUncheckedCreateWithoutChunksInput = {
   id?: string;
   tenantId: string;
   title: string;
-  fileUrl: string;
+  fileName: string;
+  fileSize: number;
+  fileType: string;
+  fileUrl?: string | null;
+  storagePath: string;
+  checksum: string;
   version?: number;
   status?: $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -832,11 +1005,17 @@ export type KnowledgeBaseDocumentUpdateToOneWithWhereWithoutChunksInput = {
 export type KnowledgeBaseDocumentUpdateWithoutChunksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   title?: Prisma.StringFieldUpdateOperationsInput | string;
-  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileSize?: Prisma.IntFieldUpdateOperationsInput | number;
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string;
+  checksum?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   status?:
     | Prisma.EnumDocumentStatusFieldUpdateOperationsInput
     | $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -851,11 +1030,17 @@ export type KnowledgeBaseDocumentUncheckedUpdateWithoutChunksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
   title?: Prisma.StringFieldUpdateOperationsInput | string;
-  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileSize?: Prisma.IntFieldUpdateOperationsInput | number;
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string;
+  checksum?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   status?:
     | Prisma.EnumDocumentStatusFieldUpdateOperationsInput
     | $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -868,9 +1053,15 @@ export type KnowledgeBaseDocumentUncheckedUpdateWithoutChunksInput = {
 export type KnowledgeBaseDocumentCreateManyTenantInput = {
   id?: string;
   title: string;
-  fileUrl: string;
+  fileName: string;
+  fileSize: number;
+  fileType: string;
+  fileUrl?: string | null;
+  storagePath: string;
+  checksum: string;
   version?: number;
   status?: $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -879,11 +1070,17 @@ export type KnowledgeBaseDocumentCreateManyTenantInput = {
 export type KnowledgeBaseDocumentUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   title?: Prisma.StringFieldUpdateOperationsInput | string;
-  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileSize?: Prisma.IntFieldUpdateOperationsInput | number;
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string;
+  checksum?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   status?:
     | Prisma.EnumDocumentStatusFieldUpdateOperationsInput
     | $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -897,11 +1094,17 @@ export type KnowledgeBaseDocumentUpdateWithoutTenantInput = {
 export type KnowledgeBaseDocumentUncheckedUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   title?: Prisma.StringFieldUpdateOperationsInput | string;
-  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileSize?: Prisma.IntFieldUpdateOperationsInput | number;
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string;
+  checksum?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   status?:
     | Prisma.EnumDocumentStatusFieldUpdateOperationsInput
     | $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -915,11 +1118,17 @@ export type KnowledgeBaseDocumentUncheckedUpdateWithoutTenantInput = {
 export type KnowledgeBaseDocumentUncheckedUpdateManyWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   title?: Prisma.StringFieldUpdateOperationsInput | string;
-  fileUrl?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileSize?: Prisma.IntFieldUpdateOperationsInput | number;
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string;
+  fileUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  storagePath?: Prisma.StringFieldUpdateOperationsInput | string;
+  checksum?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   status?:
     | Prisma.EnumDocumentStatusFieldUpdateOperationsInput
     | $Enums.DocumentStatus;
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -975,9 +1184,15 @@ export type KnowledgeBaseDocumentSelect<
     id?: boolean;
     tenantId?: boolean;
     title?: boolean;
+    fileName?: boolean;
+    fileSize?: boolean;
+    fileType?: boolean;
     fileUrl?: boolean;
+    storagePath?: boolean;
+    checksum?: boolean;
     version?: boolean;
     status?: boolean;
+    metadata?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     deletedAt?: boolean;
@@ -998,9 +1213,15 @@ export type KnowledgeBaseDocumentSelectCreateManyAndReturn<
     id?: boolean;
     tenantId?: boolean;
     title?: boolean;
+    fileName?: boolean;
+    fileSize?: boolean;
+    fileType?: boolean;
     fileUrl?: boolean;
+    storagePath?: boolean;
+    checksum?: boolean;
     version?: boolean;
     status?: boolean;
+    metadata?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     deletedAt?: boolean;
@@ -1017,9 +1238,15 @@ export type KnowledgeBaseDocumentSelectUpdateManyAndReturn<
     id?: boolean;
     tenantId?: boolean;
     title?: boolean;
+    fileName?: boolean;
+    fileSize?: boolean;
+    fileType?: boolean;
     fileUrl?: boolean;
+    storagePath?: boolean;
+    checksum?: boolean;
     version?: boolean;
     status?: boolean;
+    metadata?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     deletedAt?: boolean;
@@ -1032,9 +1259,15 @@ export type KnowledgeBaseDocumentSelectScalar = {
   id?: boolean;
   tenantId?: boolean;
   title?: boolean;
+  fileName?: boolean;
+  fileSize?: boolean;
+  fileType?: boolean;
   fileUrl?: boolean;
+  storagePath?: boolean;
+  checksum?: boolean;
   version?: boolean;
   status?: boolean;
+  metadata?: boolean;
   createdAt?: boolean;
   updatedAt?: boolean;
   deletedAt?: boolean;
@@ -1047,9 +1280,15 @@ export type KnowledgeBaseDocumentOmit<
   | "id"
   | "tenantId"
   | "title"
+  | "fileName"
+  | "fileSize"
+  | "fileType"
   | "fileUrl"
+  | "storagePath"
+  | "checksum"
   | "version"
   | "status"
+  | "metadata"
   | "createdAt"
   | "updatedAt"
   | "deletedAt",
@@ -1092,9 +1331,15 @@ export type $KnowledgeBaseDocumentPayload<
       id: string;
       tenantId: string;
       title: string;
-      fileUrl: string;
+      fileName: string;
+      fileSize: number;
+      fileType: string;
+      fileUrl: string | null;
+      storagePath: string;
+      checksum: string;
       version: number;
       status: $Enums.DocumentStatus;
+      metadata: runtime.JsonValue;
       createdAt: Date;
       updatedAt: Date;
       deletedAt: Date | null;
@@ -1740,9 +1985,15 @@ export interface KnowledgeBaseDocumentFieldRefs {
   readonly id: Prisma.FieldRef<"KnowledgeBaseDocument", "String">;
   readonly tenantId: Prisma.FieldRef<"KnowledgeBaseDocument", "String">;
   readonly title: Prisma.FieldRef<"KnowledgeBaseDocument", "String">;
+  readonly fileName: Prisma.FieldRef<"KnowledgeBaseDocument", "String">;
+  readonly fileSize: Prisma.FieldRef<"KnowledgeBaseDocument", "Int">;
+  readonly fileType: Prisma.FieldRef<"KnowledgeBaseDocument", "String">;
   readonly fileUrl: Prisma.FieldRef<"KnowledgeBaseDocument", "String">;
+  readonly storagePath: Prisma.FieldRef<"KnowledgeBaseDocument", "String">;
+  readonly checksum: Prisma.FieldRef<"KnowledgeBaseDocument", "String">;
   readonly version: Prisma.FieldRef<"KnowledgeBaseDocument", "Int">;
   readonly status: Prisma.FieldRef<"KnowledgeBaseDocument", "DocumentStatus">;
+  readonly metadata: Prisma.FieldRef<"KnowledgeBaseDocument", "Json">;
   readonly createdAt: Prisma.FieldRef<"KnowledgeBaseDocument", "DateTime">;
   readonly updatedAt: Prisma.FieldRef<"KnowledgeBaseDocument", "DateTime">;
   readonly deletedAt: Prisma.FieldRef<"KnowledgeBaseDocument", "DateTime">;

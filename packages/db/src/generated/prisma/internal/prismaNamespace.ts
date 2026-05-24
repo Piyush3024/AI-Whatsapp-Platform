@@ -2657,18 +2657,6 @@ export type TypeMap<
           args: Prisma.KnowledgeBaseChunkFindManyArgs<ExtArgs>;
           result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeBaseChunkPayload>[];
         };
-        create: {
-          args: Prisma.KnowledgeBaseChunkCreateArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeBaseChunkPayload>;
-        };
-        createMany: {
-          args: Prisma.KnowledgeBaseChunkCreateManyArgs<ExtArgs>;
-          result: BatchPayload;
-        };
-        createManyAndReturn: {
-          args: Prisma.KnowledgeBaseChunkCreateManyAndReturnArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeBaseChunkPayload>[];
-        };
         delete: {
           args: Prisma.KnowledgeBaseChunkDeleteArgs<ExtArgs>;
           result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeBaseChunkPayload>;
@@ -2688,10 +2676,6 @@ export type TypeMap<
         updateManyAndReturn: {
           args: Prisma.KnowledgeBaseChunkUpdateManyAndReturnArgs<ExtArgs>;
           result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeBaseChunkPayload>[];
-        };
-        upsert: {
-          args: Prisma.KnowledgeBaseChunkUpsertArgs<ExtArgs>;
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$KnowledgeBaseChunkPayload>;
         };
         aggregate: {
           args: Prisma.KnowledgeBaseChunkAggregateArgs<ExtArgs>;
@@ -3574,9 +3558,15 @@ export const KnowledgeBaseDocumentScalarFieldEnum = {
   id: "id",
   tenantId: "tenantId",
   title: "title",
+  fileName: "fileName",
+  fileSize: "fileSize",
+  fileType: "fileType",
   fileUrl: "fileUrl",
+  storagePath: "storagePath",
+  checksum: "checksum",
   version: "version",
   status: "status",
+  metadata: "metadata",
   createdAt: "createdAt",
   updatedAt: "updatedAt",
   deletedAt: "deletedAt",
@@ -3591,9 +3581,10 @@ export const KnowledgeBaseChunkScalarFieldEnum = {
   documentId: "documentId",
   content: "content",
   chunkIndex: "chunkIndex",
+  metadata: "metadata",
+  tokenCount: "tokenCount",
   isActive: "isActive",
   createdAt: "createdAt",
-  updatedAt: "updatedAt",
 } as const;
 
 export type KnowledgeBaseChunkScalarFieldEnum =

@@ -1167,15 +1167,6 @@ export type TenantUpdateOneRequiredWithoutKnowledgeBaseDocsNestedInput = {
   >;
 };
 
-export type TenantCreateNestedOneWithoutKnowledgeBaseChunksInput = {
-  create?: Prisma.XOR<
-    Prisma.TenantCreateWithoutKnowledgeBaseChunksInput,
-    Prisma.TenantUncheckedCreateWithoutKnowledgeBaseChunksInput
-  >;
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutKnowledgeBaseChunksInput;
-  connect?: Prisma.TenantWhereUniqueInput;
-};
-
 export type TenantUpdateOneRequiredWithoutKnowledgeBaseChunksNestedInput = {
   create?: Prisma.XOR<
     Prisma.TenantCreateWithoutKnowledgeBaseChunksInput,
