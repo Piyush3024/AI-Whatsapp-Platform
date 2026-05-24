@@ -7,6 +7,9 @@
 // ----------------------------------------------------------
 // WhatsApp Message Object (Meta API format)
 // ----------------------------------------------------------
+
+import { ReminderRuleType } from "@whatsapp-ai/db/generated/prisma";
+
 export interface WhatsAppTextMessage {
   type: "text";
   text: { body: string };
@@ -106,9 +109,9 @@ export interface StatusUpdateJob {
 // ----------------------------------------------------------
 // Queue: reminders
 // ----------------------------------------------------------
-export interface ReminderJob {
+export interface ReminderMessageJob {
   tenantId: string;
-  scheduledReminderId: string; // DB ID — idempotency key
+  scheduledReminderId: string;
   bookingId: string;
   customerPhone: string;
   messageBody: string;
@@ -149,4 +152,10 @@ export interface WhatsAppTestMessageJob {
   phoneNumberId: string;
   recipientPhone: string;
   message: string;
+}
+
+export interface ReminderJobPayload {
+  tenantId: string;
+  bookingId: string;
+  ruleType: ReminderRuleType;
 }

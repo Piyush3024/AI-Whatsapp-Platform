@@ -19,6 +19,7 @@ import {
   Prisma,
   Service,
 } from '@whatsapp-ai/db/generated/prisma';
+import { RemindersService } from '../reminders/reminders.service.js';
 
 /**
  * Booking service for managing bookings.
@@ -33,7 +34,10 @@ import {
 export class BookingsService {
   private readonly logger = new Logger(BookingsService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly remindersService: RemindersService,
+  ) {}
 
   /**
    * Find all bookings with pagination, search, and filters.
@@ -259,6 +263,8 @@ export class BookingsService {
       `Booking created: ${booking.id} for customer: ${dto.customerId}`,
     );
 
+    await this.remindersService.scheduleRemindersForBooking(booking.id);
+
     return this.findOne(booking.id);
   }
 
@@ -278,6 +284,14 @@ export class BookingsService {
         errorCode: 'BOOKING_NOT_FOUND',
         message: `Booking with ID ${id} not found`,
       });
+    }
+
+    if (
+      dto.startTime &&
+      existing &&
+      new Date(dto.startTime).getTime() !== existing.startTime.getTime()
+    ) {
+      await this.remindersService.scheduleRemindersForBooking(id);
     }
 
     // If changing staff or time, check conflicts
@@ -343,6 +357,10 @@ export class BookingsService {
         errorCode: 'BOOKING_NOT_FOUND',
         message: `Booking with ID ${id} not found`,
       });
+    }
+
+    if (status === BookingStatus.CANCELLED) {
+      await this.remindersService.cancelRemindersForBooking(id);
     }
 
     const previousStatus = existing.status;

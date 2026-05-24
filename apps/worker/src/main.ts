@@ -33,6 +33,10 @@ import { redisConnection, checkRedisHealth, closeRedis } from "./lib/redis.js";
 import { connectPrisma, disconnectPrisma } from "./lib/prisma.js";
 import { logger } from "./lib/logger.js";
 import { QUEUE_NAMES } from "./constants/queues.js";
+import {
+  processReminderJob,
+  type ReminderJobPayload,
+} from "./processors/reminders.processor.js";
 
 // ============================================================
 // UNHANDLED ERROR HANDLERS
@@ -106,10 +110,14 @@ function createWorkers(): Worker[] {
   );
 
   // reminders worker
-  const remindersWorker = new Worker(QUEUE_NAMES.REMINDERS, placeholder, {
-    connection: redisConnection,
-    concurrency: 5,
-  });
+  const remindersWorker = new Worker<ReminderJobPayload>(
+    QUEUE_NAMES.REMINDERS,
+    processReminderJob,
+    {
+      connection: redisConnection,
+      concurrency: 5,
+    },
+  );
 
   // follow_ups worker
   const followUpsWorker = new Worker(QUEUE_NAMES.FOLLOW_UPS, placeholder, {

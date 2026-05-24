@@ -23,6 +23,7 @@ import { ServicesModule } from './modules/services/services.module.js';
 import { CustomersModule } from './modules/customers/customers.module.js';
 import { BookingsModule } from './modules/bookings/bookings.module.js';
 import { WhatsAppNumberModule } from './modules/whatsapp-number/whatsapp-number.module.js';
+import { RemindersModule } from './modules/reminders/reminders.module.js';
 
 @Module({
   imports: [
@@ -153,6 +154,7 @@ import { WhatsAppNumberModule } from './modules/whatsapp-number/whatsapp-number.
     CustomersModule,
     BookingsModule,
     WhatsAppNumberModule,
+    RemindersModule,
   ],
 
   controllers: [HealthController],
