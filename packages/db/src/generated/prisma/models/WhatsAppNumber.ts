@@ -20,8 +20,18 @@ export type WhatsAppNumberModel =
 
 export type AggregateWhatsAppNumber = {
   _count: WhatsAppNumberCountAggregateOutputType | null;
+  _avg: WhatsAppNumberAvgAggregateOutputType | null;
+  _sum: WhatsAppNumberSumAggregateOutputType | null;
   _min: WhatsAppNumberMinAggregateOutputType | null;
   _max: WhatsAppNumberMaxAggregateOutputType | null;
+};
+
+export type WhatsAppNumberAvgAggregateOutputType = {
+  qualityScore: number | null;
+};
+
+export type WhatsAppNumberSumAggregateOutputType = {
+  qualityScore: number | null;
 };
 
 export type WhatsAppNumberMinAggregateOutputType = {
@@ -29,9 +39,16 @@ export type WhatsAppNumberMinAggregateOutputType = {
   tenantId: string | null;
   locationId: string | null;
   phoneNumber: string | null;
+  phoneNumberId: string | null;
   whatsappBusinessId: string | null;
   displayName: string | null;
+  qualityScore: number | null;
+  verificationStatus: $Enums.WhatsAppVerificationStatus | null;
+  webhookUrl: string | null;
+  isDefault: boolean | null;
   isActive: boolean | null;
+  autoReplyEnabled: boolean | null;
+  greetingMessage: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
   deletedAt: Date | null;
@@ -42,9 +59,16 @@ export type WhatsAppNumberMaxAggregateOutputType = {
   tenantId: string | null;
   locationId: string | null;
   phoneNumber: string | null;
+  phoneNumberId: string | null;
   whatsappBusinessId: string | null;
   displayName: string | null;
+  qualityScore: number | null;
+  verificationStatus: $Enums.WhatsAppVerificationStatus | null;
+  webhookUrl: string | null;
+  isDefault: boolean | null;
   isActive: boolean | null;
+  autoReplyEnabled: boolean | null;
+  greetingMessage: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
   deletedAt: Date | null;
@@ -55,13 +79,28 @@ export type WhatsAppNumberCountAggregateOutputType = {
   tenantId: number;
   locationId: number;
   phoneNumber: number;
+  phoneNumberId: number;
   whatsappBusinessId: number;
   displayName: number;
+  qualityScore: number;
+  verificationStatus: number;
+  webhookUrl: number;
+  isDefault: number;
   isActive: number;
+  autoReplyEnabled: number;
+  greetingMessage: number;
   createdAt: number;
   updatedAt: number;
   deletedAt: number;
   _all: number;
+};
+
+export type WhatsAppNumberAvgAggregateInputType = {
+  qualityScore?: true;
+};
+
+export type WhatsAppNumberSumAggregateInputType = {
+  qualityScore?: true;
 };
 
 export type WhatsAppNumberMinAggregateInputType = {
@@ -69,9 +108,16 @@ export type WhatsAppNumberMinAggregateInputType = {
   tenantId?: true;
   locationId?: true;
   phoneNumber?: true;
+  phoneNumberId?: true;
   whatsappBusinessId?: true;
   displayName?: true;
+  qualityScore?: true;
+  verificationStatus?: true;
+  webhookUrl?: true;
+  isDefault?: true;
   isActive?: true;
+  autoReplyEnabled?: true;
+  greetingMessage?: true;
   createdAt?: true;
   updatedAt?: true;
   deletedAt?: true;
@@ -82,9 +128,16 @@ export type WhatsAppNumberMaxAggregateInputType = {
   tenantId?: true;
   locationId?: true;
   phoneNumber?: true;
+  phoneNumberId?: true;
   whatsappBusinessId?: true;
   displayName?: true;
+  qualityScore?: true;
+  verificationStatus?: true;
+  webhookUrl?: true;
+  isDefault?: true;
   isActive?: true;
+  autoReplyEnabled?: true;
+  greetingMessage?: true;
   createdAt?: true;
   updatedAt?: true;
   deletedAt?: true;
@@ -95,9 +148,16 @@ export type WhatsAppNumberCountAggregateInputType = {
   tenantId?: true;
   locationId?: true;
   phoneNumber?: true;
+  phoneNumberId?: true;
   whatsappBusinessId?: true;
   displayName?: true;
+  qualityScore?: true;
+  verificationStatus?: true;
+  webhookUrl?: true;
+  isDefault?: true;
   isActive?: true;
+  autoReplyEnabled?: true;
+  greetingMessage?: true;
   createdAt?: true;
   updatedAt?: true;
   deletedAt?: true;
@@ -147,6 +207,18 @@ export type WhatsAppNumberAggregateArgs<
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    *
+   * Select which fields to average
+   **/
+  _avg?: WhatsAppNumberAvgAggregateInputType;
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   *
+   * Select which fields to sum
+   **/
+  _sum?: WhatsAppNumberSumAggregateInputType;
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   *
    * Select which fields to find the minimum value
    **/
   _min?: WhatsAppNumberMinAggregateInputType;
@@ -183,6 +255,8 @@ export type WhatsAppNumberGroupByArgs<
   take?: number;
   skip?: number;
   _count?: WhatsAppNumberCountAggregateInputType | true;
+  _avg?: WhatsAppNumberAvgAggregateInputType;
+  _sum?: WhatsAppNumberSumAggregateInputType;
   _min?: WhatsAppNumberMinAggregateInputType;
   _max?: WhatsAppNumberMaxAggregateInputType;
 };
@@ -192,13 +266,22 @@ export type WhatsAppNumberGroupByOutputType = {
   tenantId: string;
   locationId: string | null;
   phoneNumber: string;
+  phoneNumberId: string | null;
   whatsappBusinessId: string | null;
   displayName: string;
+  qualityScore: number | null;
+  verificationStatus: $Enums.WhatsAppVerificationStatus;
+  webhookUrl: string | null;
+  isDefault: boolean;
   isActive: boolean;
+  autoReplyEnabled: boolean;
+  greetingMessage: string | null;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
   _count: WhatsAppNumberCountAggregateOutputType | null;
+  _avg: WhatsAppNumberAvgAggregateOutputType | null;
+  _sum: WhatsAppNumberSumAggregateOutputType | null;
   _min: WhatsAppNumberMinAggregateOutputType | null;
   _max: WhatsAppNumberMaxAggregateOutputType | null;
 };
@@ -225,12 +308,24 @@ export type WhatsAppNumberWhereInput = {
   tenantId?: Prisma.UuidFilter<"WhatsAppNumber"> | string;
   locationId?: Prisma.UuidNullableFilter<"WhatsAppNumber"> | string | null;
   phoneNumber?: Prisma.StringFilter<"WhatsAppNumber"> | string;
+  phoneNumberId?: Prisma.StringNullableFilter<"WhatsAppNumber"> | string | null;
   whatsappBusinessId?:
     | Prisma.StringNullableFilter<"WhatsAppNumber">
     | string
     | null;
   displayName?: Prisma.StringFilter<"WhatsAppNumber"> | string;
+  qualityScore?: Prisma.FloatNullableFilter<"WhatsAppNumber"> | number | null;
+  verificationStatus?:
+    | Prisma.EnumWhatsAppVerificationStatusFilter<"WhatsAppNumber">
+    | $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: Prisma.StringNullableFilter<"WhatsAppNumber"> | string | null;
+  isDefault?: Prisma.BoolFilter<"WhatsAppNumber"> | boolean;
   isActive?: Prisma.BoolFilter<"WhatsAppNumber"> | boolean;
+  autoReplyEnabled?: Prisma.BoolFilter<"WhatsAppNumber"> | boolean;
+  greetingMessage?:
+    | Prisma.StringNullableFilter<"WhatsAppNumber">
+    | string
+    | null;
   createdAt?: Prisma.DateTimeFilter<"WhatsAppNumber"> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<"WhatsAppNumber"> | Date | string;
   deletedAt?:
@@ -254,9 +349,16 @@ export type WhatsAppNumberOrderByWithRelationInput = {
   tenantId?: Prisma.SortOrder;
   locationId?: Prisma.SortOrderInput | Prisma.SortOrder;
   phoneNumber?: Prisma.SortOrder;
+  phoneNumberId?: Prisma.SortOrderInput | Prisma.SortOrder;
   whatsappBusinessId?: Prisma.SortOrderInput | Prisma.SortOrder;
   displayName?: Prisma.SortOrder;
+  qualityScore?: Prisma.SortOrderInput | Prisma.SortOrder;
+  verificationStatus?: Prisma.SortOrder;
+  webhookUrl?: Prisma.SortOrderInput | Prisma.SortOrder;
+  isDefault?: Prisma.SortOrder;
   isActive?: Prisma.SortOrder;
+  autoReplyEnabled?: Prisma.SortOrder;
+  greetingMessage?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -274,12 +376,27 @@ export type WhatsAppNumberWhereUniqueInput = Prisma.AtLeast<
     NOT?: Prisma.WhatsAppNumberWhereInput | Prisma.WhatsAppNumberWhereInput[];
     tenantId?: Prisma.UuidFilter<"WhatsAppNumber"> | string;
     locationId?: Prisma.UuidNullableFilter<"WhatsAppNumber"> | string | null;
+    phoneNumberId?:
+      | Prisma.StringNullableFilter<"WhatsAppNumber">
+      | string
+      | null;
     whatsappBusinessId?:
       | Prisma.StringNullableFilter<"WhatsAppNumber">
       | string
       | null;
     displayName?: Prisma.StringFilter<"WhatsAppNumber"> | string;
+    qualityScore?: Prisma.FloatNullableFilter<"WhatsAppNumber"> | number | null;
+    verificationStatus?:
+      | Prisma.EnumWhatsAppVerificationStatusFilter<"WhatsAppNumber">
+      | $Enums.WhatsAppVerificationStatus;
+    webhookUrl?: Prisma.StringNullableFilter<"WhatsAppNumber"> | string | null;
+    isDefault?: Prisma.BoolFilter<"WhatsAppNumber"> | boolean;
     isActive?: Prisma.BoolFilter<"WhatsAppNumber"> | boolean;
+    autoReplyEnabled?: Prisma.BoolFilter<"WhatsAppNumber"> | boolean;
+    greetingMessage?:
+      | Prisma.StringNullableFilter<"WhatsAppNumber">
+      | string
+      | null;
     createdAt?: Prisma.DateTimeFilter<"WhatsAppNumber"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"WhatsAppNumber"> | Date | string;
     deletedAt?:
@@ -305,15 +422,24 @@ export type WhatsAppNumberOrderByWithAggregationInput = {
   tenantId?: Prisma.SortOrder;
   locationId?: Prisma.SortOrderInput | Prisma.SortOrder;
   phoneNumber?: Prisma.SortOrder;
+  phoneNumberId?: Prisma.SortOrderInput | Prisma.SortOrder;
   whatsappBusinessId?: Prisma.SortOrderInput | Prisma.SortOrder;
   displayName?: Prisma.SortOrder;
+  qualityScore?: Prisma.SortOrderInput | Prisma.SortOrder;
+  verificationStatus?: Prisma.SortOrder;
+  webhookUrl?: Prisma.SortOrderInput | Prisma.SortOrder;
+  isDefault?: Prisma.SortOrder;
   isActive?: Prisma.SortOrder;
+  autoReplyEnabled?: Prisma.SortOrder;
+  greetingMessage?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   _count?: Prisma.WhatsAppNumberCountOrderByAggregateInput;
+  _avg?: Prisma.WhatsAppNumberAvgOrderByAggregateInput;
   _max?: Prisma.WhatsAppNumberMaxOrderByAggregateInput;
   _min?: Prisma.WhatsAppNumberMinOrderByAggregateInput;
+  _sum?: Prisma.WhatsAppNumberSumOrderByAggregateInput;
 };
 
 export type WhatsAppNumberScalarWhereWithAggregatesInput = {
@@ -331,12 +457,35 @@ export type WhatsAppNumberScalarWhereWithAggregatesInput = {
     | string
     | null;
   phoneNumber?: Prisma.StringWithAggregatesFilter<"WhatsAppNumber"> | string;
+  phoneNumberId?:
+    | Prisma.StringNullableWithAggregatesFilter<"WhatsAppNumber">
+    | string
+    | null;
   whatsappBusinessId?:
     | Prisma.StringNullableWithAggregatesFilter<"WhatsAppNumber">
     | string
     | null;
   displayName?: Prisma.StringWithAggregatesFilter<"WhatsAppNumber"> | string;
+  qualityScore?:
+    | Prisma.FloatNullableWithAggregatesFilter<"WhatsAppNumber">
+    | number
+    | null;
+  verificationStatus?:
+    | Prisma.EnumWhatsAppVerificationStatusWithAggregatesFilter<"WhatsAppNumber">
+    | $Enums.WhatsAppVerificationStatus;
+  webhookUrl?:
+    | Prisma.StringNullableWithAggregatesFilter<"WhatsAppNumber">
+    | string
+    | null;
+  isDefault?: Prisma.BoolWithAggregatesFilter<"WhatsAppNumber"> | boolean;
   isActive?: Prisma.BoolWithAggregatesFilter<"WhatsAppNumber"> | boolean;
+  autoReplyEnabled?:
+    | Prisma.BoolWithAggregatesFilter<"WhatsAppNumber">
+    | boolean;
+  greetingMessage?:
+    | Prisma.StringNullableWithAggregatesFilter<"WhatsAppNumber">
+    | string
+    | null;
   createdAt?:
     | Prisma.DateTimeWithAggregatesFilter<"WhatsAppNumber">
     | Date
@@ -355,9 +504,16 @@ export type WhatsAppNumberScalarWhereWithAggregatesInput = {
 export type WhatsAppNumberCreateInput = {
   id?: string;
   phoneNumber: string;
+  phoneNumberId?: string | null;
   whatsappBusinessId?: string | null;
   displayName: string;
+  qualityScore?: number | null;
+  verificationStatus?: $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: string | null;
+  isDefault?: boolean;
   isActive?: boolean;
+  autoReplyEnabled?: boolean;
+  greetingMessage?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -371,9 +527,16 @@ export type WhatsAppNumberUncheckedCreateInput = {
   tenantId: string;
   locationId?: string | null;
   phoneNumber: string;
+  phoneNumberId?: string | null;
   whatsappBusinessId?: string | null;
   displayName: string;
+  qualityScore?: number | null;
+  verificationStatus?: $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: string | null;
+  isDefault?: boolean;
   isActive?: boolean;
+  autoReplyEnabled?: boolean;
+  greetingMessage?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -383,12 +546,27 @@ export type WhatsAppNumberUncheckedCreateInput = {
 export type WhatsAppNumberUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string;
+  phoneNumberId?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   whatsappBusinessId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
     | null;
   displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  qualityScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null;
+  verificationStatus?:
+    | Prisma.EnumWhatsAppVerificationStatusFieldUpdateOperationsInput
+    | $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  autoReplyEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  greetingMessage?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -406,12 +584,27 @@ export type WhatsAppNumberUncheckedUpdateInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string;
+  phoneNumberId?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   whatsappBusinessId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
     | null;
   displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  qualityScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null;
+  verificationStatus?:
+    | Prisma.EnumWhatsAppVerificationStatusFieldUpdateOperationsInput
+    | $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  autoReplyEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  greetingMessage?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -427,9 +620,16 @@ export type WhatsAppNumberCreateManyInput = {
   tenantId: string;
   locationId?: string | null;
   phoneNumber: string;
+  phoneNumberId?: string | null;
   whatsappBusinessId?: string | null;
   displayName: string;
+  qualityScore?: number | null;
+  verificationStatus?: $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: string | null;
+  isDefault?: boolean;
   isActive?: boolean;
+  autoReplyEnabled?: boolean;
+  greetingMessage?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -438,12 +638,27 @@ export type WhatsAppNumberCreateManyInput = {
 export type WhatsAppNumberUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string;
+  phoneNumberId?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   whatsappBusinessId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
     | null;
   displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  qualityScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null;
+  verificationStatus?:
+    | Prisma.EnumWhatsAppVerificationStatusFieldUpdateOperationsInput
+    | $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  autoReplyEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  greetingMessage?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -458,12 +673,27 @@ export type WhatsAppNumberUncheckedUpdateManyInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string;
+  phoneNumberId?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   whatsappBusinessId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
     | null;
   displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  qualityScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null;
+  verificationStatus?:
+    | Prisma.EnumWhatsAppVerificationStatusFieldUpdateOperationsInput
+    | $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  autoReplyEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  greetingMessage?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -488,12 +718,23 @@ export type WhatsAppNumberCountOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder;
   locationId?: Prisma.SortOrder;
   phoneNumber?: Prisma.SortOrder;
+  phoneNumberId?: Prisma.SortOrder;
   whatsappBusinessId?: Prisma.SortOrder;
   displayName?: Prisma.SortOrder;
+  qualityScore?: Prisma.SortOrder;
+  verificationStatus?: Prisma.SortOrder;
+  webhookUrl?: Prisma.SortOrder;
+  isDefault?: Prisma.SortOrder;
   isActive?: Prisma.SortOrder;
+  autoReplyEnabled?: Prisma.SortOrder;
+  greetingMessage?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
+};
+
+export type WhatsAppNumberAvgOrderByAggregateInput = {
+  qualityScore?: Prisma.SortOrder;
 };
 
 export type WhatsAppNumberMaxOrderByAggregateInput = {
@@ -501,9 +742,16 @@ export type WhatsAppNumberMaxOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder;
   locationId?: Prisma.SortOrder;
   phoneNumber?: Prisma.SortOrder;
+  phoneNumberId?: Prisma.SortOrder;
   whatsappBusinessId?: Prisma.SortOrder;
   displayName?: Prisma.SortOrder;
+  qualityScore?: Prisma.SortOrder;
+  verificationStatus?: Prisma.SortOrder;
+  webhookUrl?: Prisma.SortOrder;
+  isDefault?: Prisma.SortOrder;
   isActive?: Prisma.SortOrder;
+  autoReplyEnabled?: Prisma.SortOrder;
+  greetingMessage?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
@@ -514,12 +762,23 @@ export type WhatsAppNumberMinOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder;
   locationId?: Prisma.SortOrder;
   phoneNumber?: Prisma.SortOrder;
+  phoneNumberId?: Prisma.SortOrder;
   whatsappBusinessId?: Prisma.SortOrder;
   displayName?: Prisma.SortOrder;
+  qualityScore?: Prisma.SortOrder;
+  verificationStatus?: Prisma.SortOrder;
+  webhookUrl?: Prisma.SortOrder;
+  isDefault?: Prisma.SortOrder;
   isActive?: Prisma.SortOrder;
+  autoReplyEnabled?: Prisma.SortOrder;
+  greetingMessage?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
+};
+
+export type WhatsAppNumberSumOrderByAggregateInput = {
+  qualityScore?: Prisma.SortOrder;
 };
 
 export type WhatsAppNumberScalarRelationFilter = {
@@ -747,6 +1006,18 @@ export type WhatsAppNumberUncheckedUpdateManyWithoutLocationNestedInput = {
     | Prisma.WhatsAppNumberScalarWhereInput[];
 };
 
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null;
+  increment?: number;
+  decrement?: number;
+  multiply?: number;
+  divide?: number;
+};
+
+export type EnumWhatsAppVerificationStatusFieldUpdateOperationsInput = {
+  set?: $Enums.WhatsAppVerificationStatus;
+};
+
 export type WhatsAppNumberCreateNestedOneWithoutConversationsInput = {
   create?: Prisma.XOR<
     Prisma.WhatsAppNumberCreateWithoutConversationsInput,
@@ -776,9 +1047,16 @@ export type WhatsAppNumberUpdateOneRequiredWithoutConversationsNestedInput = {
 export type WhatsAppNumberCreateWithoutTenantInput = {
   id?: string;
   phoneNumber: string;
+  phoneNumberId?: string | null;
   whatsappBusinessId?: string | null;
   displayName: string;
+  qualityScore?: number | null;
+  verificationStatus?: $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: string | null;
+  isDefault?: boolean;
   isActive?: boolean;
+  autoReplyEnabled?: boolean;
+  greetingMessage?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -790,9 +1068,16 @@ export type WhatsAppNumberUncheckedCreateWithoutTenantInput = {
   id?: string;
   locationId?: string | null;
   phoneNumber: string;
+  phoneNumberId?: string | null;
   whatsappBusinessId?: string | null;
   displayName: string;
+  qualityScore?: number | null;
+  verificationStatus?: $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: string | null;
+  isDefault?: boolean;
   isActive?: boolean;
+  autoReplyEnabled?: boolean;
+  greetingMessage?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -854,12 +1139,24 @@ export type WhatsAppNumberScalarWhereInput = {
   tenantId?: Prisma.UuidFilter<"WhatsAppNumber"> | string;
   locationId?: Prisma.UuidNullableFilter<"WhatsAppNumber"> | string | null;
   phoneNumber?: Prisma.StringFilter<"WhatsAppNumber"> | string;
+  phoneNumberId?: Prisma.StringNullableFilter<"WhatsAppNumber"> | string | null;
   whatsappBusinessId?:
     | Prisma.StringNullableFilter<"WhatsAppNumber">
     | string
     | null;
   displayName?: Prisma.StringFilter<"WhatsAppNumber"> | string;
+  qualityScore?: Prisma.FloatNullableFilter<"WhatsAppNumber"> | number | null;
+  verificationStatus?:
+    | Prisma.EnumWhatsAppVerificationStatusFilter<"WhatsAppNumber">
+    | $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: Prisma.StringNullableFilter<"WhatsAppNumber"> | string | null;
+  isDefault?: Prisma.BoolFilter<"WhatsAppNumber"> | boolean;
   isActive?: Prisma.BoolFilter<"WhatsAppNumber"> | boolean;
+  autoReplyEnabled?: Prisma.BoolFilter<"WhatsAppNumber"> | boolean;
+  greetingMessage?:
+    | Prisma.StringNullableFilter<"WhatsAppNumber">
+    | string
+    | null;
   createdAt?: Prisma.DateTimeFilter<"WhatsAppNumber"> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<"WhatsAppNumber"> | Date | string;
   deletedAt?:
@@ -872,9 +1169,16 @@ export type WhatsAppNumberScalarWhereInput = {
 export type WhatsAppNumberCreateWithoutLocationInput = {
   id?: string;
   phoneNumber: string;
+  phoneNumberId?: string | null;
   whatsappBusinessId?: string | null;
   displayName: string;
+  qualityScore?: number | null;
+  verificationStatus?: $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: string | null;
+  isDefault?: boolean;
   isActive?: boolean;
+  autoReplyEnabled?: boolean;
+  greetingMessage?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -886,9 +1190,16 @@ export type WhatsAppNumberUncheckedCreateWithoutLocationInput = {
   id?: string;
   tenantId: string;
   phoneNumber: string;
+  phoneNumberId?: string | null;
   whatsappBusinessId?: string | null;
   displayName: string;
+  qualityScore?: number | null;
+  verificationStatus?: $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: string | null;
+  isDefault?: boolean;
   isActive?: boolean;
+  autoReplyEnabled?: boolean;
+  greetingMessage?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -941,9 +1252,16 @@ export type WhatsAppNumberUpdateManyWithWhereWithoutLocationInput = {
 export type WhatsAppNumberCreateWithoutConversationsInput = {
   id?: string;
   phoneNumber: string;
+  phoneNumberId?: string | null;
   whatsappBusinessId?: string | null;
   displayName: string;
+  qualityScore?: number | null;
+  verificationStatus?: $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: string | null;
+  isDefault?: boolean;
   isActive?: boolean;
+  autoReplyEnabled?: boolean;
+  greetingMessage?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -956,9 +1274,16 @@ export type WhatsAppNumberUncheckedCreateWithoutConversationsInput = {
   tenantId: string;
   locationId?: string | null;
   phoneNumber: string;
+  phoneNumberId?: string | null;
   whatsappBusinessId?: string | null;
   displayName: string;
+  qualityScore?: number | null;
+  verificationStatus?: $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: string | null;
+  isDefault?: boolean;
   isActive?: boolean;
+  autoReplyEnabled?: boolean;
+  greetingMessage?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -995,12 +1320,27 @@ export type WhatsAppNumberUpdateToOneWithWhereWithoutConversationsInput = {
 export type WhatsAppNumberUpdateWithoutConversationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string;
+  phoneNumberId?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   whatsappBusinessId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
     | null;
   displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  qualityScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null;
+  verificationStatus?:
+    | Prisma.EnumWhatsAppVerificationStatusFieldUpdateOperationsInput
+    | $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  autoReplyEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  greetingMessage?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -1017,12 +1357,27 @@ export type WhatsAppNumberUncheckedUpdateWithoutConversationsInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string;
+  phoneNumberId?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   whatsappBusinessId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
     | null;
   displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  qualityScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null;
+  verificationStatus?:
+    | Prisma.EnumWhatsAppVerificationStatusFieldUpdateOperationsInput
+    | $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  autoReplyEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  greetingMessage?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -1036,9 +1391,16 @@ export type WhatsAppNumberCreateManyTenantInput = {
   id?: string;
   locationId?: string | null;
   phoneNumber: string;
+  phoneNumberId?: string | null;
   whatsappBusinessId?: string | null;
   displayName: string;
+  qualityScore?: number | null;
+  verificationStatus?: $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: string | null;
+  isDefault?: boolean;
   isActive?: boolean;
+  autoReplyEnabled?: boolean;
+  greetingMessage?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -1047,12 +1409,27 @@ export type WhatsAppNumberCreateManyTenantInput = {
 export type WhatsAppNumberUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string;
+  phoneNumberId?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   whatsappBusinessId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
     | null;
   displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  qualityScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null;
+  verificationStatus?:
+    | Prisma.EnumWhatsAppVerificationStatusFieldUpdateOperationsInput
+    | $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  autoReplyEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  greetingMessage?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -1068,12 +1445,27 @@ export type WhatsAppNumberUncheckedUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string;
+  phoneNumberId?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   whatsappBusinessId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
     | null;
   displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  qualityScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null;
+  verificationStatus?:
+    | Prisma.EnumWhatsAppVerificationStatusFieldUpdateOperationsInput
+    | $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  autoReplyEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  greetingMessage?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -1088,12 +1480,27 @@ export type WhatsAppNumberUncheckedUpdateManyWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string;
+  phoneNumberId?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   whatsappBusinessId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
     | null;
   displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  qualityScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null;
+  verificationStatus?:
+    | Prisma.EnumWhatsAppVerificationStatusFieldUpdateOperationsInput
+    | $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  autoReplyEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  greetingMessage?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -1107,9 +1514,16 @@ export type WhatsAppNumberCreateManyLocationInput = {
   id?: string;
   tenantId: string;
   phoneNumber: string;
+  phoneNumberId?: string | null;
   whatsappBusinessId?: string | null;
   displayName: string;
+  qualityScore?: number | null;
+  verificationStatus?: $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: string | null;
+  isDefault?: boolean;
   isActive?: boolean;
+  autoReplyEnabled?: boolean;
+  greetingMessage?: string | null;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -1118,12 +1532,27 @@ export type WhatsAppNumberCreateManyLocationInput = {
 export type WhatsAppNumberUpdateWithoutLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string;
+  phoneNumberId?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   whatsappBusinessId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
     | null;
   displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  qualityScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null;
+  verificationStatus?:
+    | Prisma.EnumWhatsAppVerificationStatusFieldUpdateOperationsInput
+    | $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  autoReplyEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  greetingMessage?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -1139,12 +1568,27 @@ export type WhatsAppNumberUncheckedUpdateWithoutLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string;
+  phoneNumberId?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   whatsappBusinessId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
     | null;
   displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  qualityScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null;
+  verificationStatus?:
+    | Prisma.EnumWhatsAppVerificationStatusFieldUpdateOperationsInput
+    | $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  autoReplyEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  greetingMessage?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -1159,12 +1603,27 @@ export type WhatsAppNumberUncheckedUpdateManyWithoutLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
   phoneNumber?: Prisma.StringFieldUpdateOperationsInput | string;
+  phoneNumberId?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   whatsappBusinessId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
     | null;
   displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  qualityScore?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null;
+  verificationStatus?:
+    | Prisma.EnumWhatsAppVerificationStatusFieldUpdateOperationsInput
+    | $Enums.WhatsAppVerificationStatus;
+  webhookUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  autoReplyEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  greetingMessage?:
+    | Prisma.NullableStringFieldUpdateOperationsInput
+    | string
+    | null;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -1221,9 +1680,16 @@ export type WhatsAppNumberSelect<
     tenantId?: boolean;
     locationId?: boolean;
     phoneNumber?: boolean;
+    phoneNumberId?: boolean;
     whatsappBusinessId?: boolean;
     displayName?: boolean;
+    qualityScore?: boolean;
+    verificationStatus?: boolean;
+    webhookUrl?: boolean;
+    isDefault?: boolean;
     isActive?: boolean;
+    autoReplyEnabled?: boolean;
+    greetingMessage?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     deletedAt?: boolean;
@@ -1244,9 +1710,16 @@ export type WhatsAppNumberSelectCreateManyAndReturn<
     tenantId?: boolean;
     locationId?: boolean;
     phoneNumber?: boolean;
+    phoneNumberId?: boolean;
     whatsappBusinessId?: boolean;
     displayName?: boolean;
+    qualityScore?: boolean;
+    verificationStatus?: boolean;
+    webhookUrl?: boolean;
+    isDefault?: boolean;
     isActive?: boolean;
+    autoReplyEnabled?: boolean;
+    greetingMessage?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     deletedAt?: boolean;
@@ -1265,9 +1738,16 @@ export type WhatsAppNumberSelectUpdateManyAndReturn<
     tenantId?: boolean;
     locationId?: boolean;
     phoneNumber?: boolean;
+    phoneNumberId?: boolean;
     whatsappBusinessId?: boolean;
     displayName?: boolean;
+    qualityScore?: boolean;
+    verificationStatus?: boolean;
+    webhookUrl?: boolean;
+    isDefault?: boolean;
     isActive?: boolean;
+    autoReplyEnabled?: boolean;
+    greetingMessage?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     deletedAt?: boolean;
@@ -1282,9 +1762,16 @@ export type WhatsAppNumberSelectScalar = {
   tenantId?: boolean;
   locationId?: boolean;
   phoneNumber?: boolean;
+  phoneNumberId?: boolean;
   whatsappBusinessId?: boolean;
   displayName?: boolean;
+  qualityScore?: boolean;
+  verificationStatus?: boolean;
+  webhookUrl?: boolean;
+  isDefault?: boolean;
   isActive?: boolean;
+  autoReplyEnabled?: boolean;
+  greetingMessage?: boolean;
   createdAt?: boolean;
   updatedAt?: boolean;
   deletedAt?: boolean;
@@ -1298,9 +1785,16 @@ export type WhatsAppNumberOmit<
   | "tenantId"
   | "locationId"
   | "phoneNumber"
+  | "phoneNumberId"
   | "whatsappBusinessId"
   | "displayName"
+  | "qualityScore"
+  | "verificationStatus"
+  | "webhookUrl"
+  | "isDefault"
   | "isActive"
+  | "autoReplyEnabled"
+  | "greetingMessage"
   | "createdAt"
   | "updatedAt"
   | "deletedAt",
@@ -1346,9 +1840,16 @@ export type $WhatsAppNumberPayload<
       tenantId: string;
       locationId: string | null;
       phoneNumber: string;
+      phoneNumberId: string | null;
       whatsappBusinessId: string | null;
       displayName: string;
+      qualityScore: number | null;
+      verificationStatus: $Enums.WhatsAppVerificationStatus;
+      webhookUrl: string | null;
+      isDefault: boolean;
       isActive: boolean;
+      autoReplyEnabled: boolean;
+      greetingMessage: string | null;
       createdAt: Date;
       updatedAt: Date;
       deletedAt: Date | null;
@@ -2000,9 +2501,19 @@ export interface WhatsAppNumberFieldRefs {
   readonly tenantId: Prisma.FieldRef<"WhatsAppNumber", "String">;
   readonly locationId: Prisma.FieldRef<"WhatsAppNumber", "String">;
   readonly phoneNumber: Prisma.FieldRef<"WhatsAppNumber", "String">;
+  readonly phoneNumberId: Prisma.FieldRef<"WhatsAppNumber", "String">;
   readonly whatsappBusinessId: Prisma.FieldRef<"WhatsAppNumber", "String">;
   readonly displayName: Prisma.FieldRef<"WhatsAppNumber", "String">;
+  readonly qualityScore: Prisma.FieldRef<"WhatsAppNumber", "Float">;
+  readonly verificationStatus: Prisma.FieldRef<
+    "WhatsAppNumber",
+    "WhatsAppVerificationStatus"
+  >;
+  readonly webhookUrl: Prisma.FieldRef<"WhatsAppNumber", "String">;
+  readonly isDefault: Prisma.FieldRef<"WhatsAppNumber", "Boolean">;
   readonly isActive: Prisma.FieldRef<"WhatsAppNumber", "Boolean">;
+  readonly autoReplyEnabled: Prisma.FieldRef<"WhatsAppNumber", "Boolean">;
+  readonly greetingMessage: Prisma.FieldRef<"WhatsAppNumber", "String">;
   readonly createdAt: Prisma.FieldRef<"WhatsAppNumber", "DateTime">;
   readonly updatedAt: Prisma.FieldRef<"WhatsAppNumber", "DateTime">;
   readonly deletedAt: Prisma.FieldRef<"WhatsAppNumber", "DateTime">;

@@ -3345,9 +3345,16 @@ export const WhatsAppNumberScalarFieldEnum = {
   tenantId: "tenantId",
   locationId: "locationId",
   phoneNumber: "phoneNumber",
+  phoneNumberId: "phoneNumberId",
   whatsappBusinessId: "whatsappBusinessId",
   displayName: "displayName",
+  qualityScore: "qualityScore",
+  verificationStatus: "verificationStatus",
+  webhookUrl: "webhookUrl",
+  isDefault: "isDefault",
   isActive: "isActive",
+  autoReplyEnabled: "autoReplyEnabled",
+  greetingMessage: "greetingMessage",
   createdAt: "createdAt",
   updatedAt: "updatedAt",
   deletedAt: "deletedAt",
@@ -3894,6 +3901,34 @@ export type ListEnumDayOfWeekFieldRefInput<$PrismaModel> = FieldRefInputType<
 >;
 
 /**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  "Float"
+>;
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  "Float[]"
+>;
+
+/**
+ * Reference to a field of type 'WhatsAppVerificationStatus'
+ */
+export type EnumWhatsAppVerificationStatusFieldRefInput<$PrismaModel> =
+  FieldRefInputType<$PrismaModel, "WhatsAppVerificationStatus">;
+
+/**
+ * Reference to a field of type 'WhatsAppVerificationStatus[]'
+ */
+export type ListEnumWhatsAppVerificationStatusFieldRefInput<$PrismaModel> =
+  FieldRefInputType<$PrismaModel, "WhatsAppVerificationStatus[]">;
+
+/**
  * Reference to a field of type 'CustomerOptInStatus'
  */
 export type EnumCustomerOptInStatusFieldRefInput<$PrismaModel> =
@@ -4029,22 +4064,6 @@ export type EnumAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<
 export type ListEnumAuditActionFieldRefInput<$PrismaModel> = FieldRefInputType<
   $PrismaModel,
   "AuditAction[]"
->;
-
-/**
- * Reference to a field of type 'Float'
- */
-export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<
-  $PrismaModel,
-  "Float"
->;
-
-/**
- * Reference to a field of type 'Float[]'
- */
-export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<
-  $PrismaModel,
-  "Float[]"
 >;
 
 /**

@@ -136,3 +136,17 @@ export interface EmbeddingJob {
   fileUrl: string;
   title: string;
 }
+
+/**
+ * WhatsApp Test Message Job
+ *
+ * Used for sending test messages to verify number configuration.
+ * Does NOT create DB message record — just sends and returns result.
+ */
+export interface WhatsAppTestMessageJob {
+  tenantId: string;
+  whatsAppNumberId: string;
+  phoneNumberId: string;
+  recipientPhone: string;
+  message: string;
+}

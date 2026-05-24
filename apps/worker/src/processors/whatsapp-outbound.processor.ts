@@ -2,7 +2,10 @@ import type { Job } from "bullmq";
 import { createJobLogger } from "../lib/logger.js";
 import { withTenantContext } from "../lib/prisma.js";
 import { env } from "../config/env.js";
-import type { OutboundMessageJob } from "../types/job-payloads.js";
+import type {
+  OutboundMessageJob,
+  WhatsAppTestMessageJob,
+} from "../types/job-payloads.js";
 
 // ============================================================
 // WHATSAPP OUTBOUND PROCESSOR
@@ -46,8 +49,17 @@ interface MetaErrorResponse {
 }
 
 export async function processOutboundMessage(
-  job: Job<OutboundMessageJob>,
+  job: Job<OutboundMessageJob | WhatsAppTestMessageJob>,
 ): Promise<void> {
+  // Route based on job name
+  if (job.name === "send-test-message") {
+    await processTestMessage(job as Job<WhatsAppTestMessageJob>);
+    return;
+  }
+  await processOutbound(job as Job<OutboundMessageJob>);
+}
+
+async function processOutbound(job: Job<OutboundMessageJob>): Promise<void> {
   const {
     tenantId,
     conversationId,
@@ -246,4 +258,77 @@ export async function processOutboundMessage(
   if (apiCallFailed) {
     throw new Error(`Message send failed permanently: ${failureReason}`);
   }
+}
+
+// ============================================================
+// TEST MESSAGE HANDLER
+// Sends verification test message — no DB logging
+// ============================================================
+
+interface TestMessageResponse {
+  messaging_product: string;
+  contacts: Array<{ input: string; wa_id: string }>;
+  messages: Array<{ id: string }>;
+}
+
+interface TestErrorResponse {
+  error: {
+    message: string;
+    type: string;
+    code: number;
+    fbtrace_id: string;
+  };
+}
+
+async function processTestMessage(
+  job: Job<WhatsAppTestMessageJob>,
+): Promise<{ wamid: string }> {
+  const { tenantId, phoneNumberId, recipientPhone, message } = job.data;
+  const log = createJobLogger("whatsapp-outbound", job.id, tenantId);
+
+  log.info({ phoneNumberId, recipientPhone }, "Sending test message");
+
+  const accessToken = env.WHATSAPP_ACCESS_TOKEN;
+  const url = `${GRAPH_API_BASE}/${phoneNumberId}/messages`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({
+      messaging_product: "whatsapp",
+      recipient_type: "individual",
+      to: recipientPhone,
+      type: "text",
+      text: {
+        preview_url: false,
+        body: message,
+      },
+    }),
+  });
+
+  const responseBody = (await response.json()) as
+    | TestMessageResponse
+    | TestErrorResponse;
+
+  if (!response.ok) {
+    const errorBody = responseBody as TestErrorResponse;
+    const errorMessage = errorBody.error?.message ?? "Unknown error";
+
+    log.error(
+      { statusCode: response.status, errorMessage },
+      "Test message failed",
+    );
+
+    throw new Error(`Failed to send test message: ${errorMessage}`);
+  }
+
+  const successBody = responseBody as TestMessageResponse;
+  const wamid = successBody.messages?.[0]?.id ?? "";
+
+  log.info({ wamid, recipientPhone }, "Test message sent successfully");
+
+  return { wamid };
 }

@@ -630,6 +630,32 @@ export type UuidNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedUuidNullableFilter<$PrismaModel> | string | null;
 };
 
+export type FloatNullableFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null;
+  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null;
+  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null;
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  not?: Prisma.NestedFloatNullableFilter<$PrismaModel> | number | null;
+};
+
+export type EnumWhatsAppVerificationStatusFilter<$PrismaModel = never> = {
+  equals?:
+    | $Enums.WhatsAppVerificationStatus
+    | Prisma.EnumWhatsAppVerificationStatusFieldRefInput<$PrismaModel>;
+  in?:
+    | $Enums.WhatsAppVerificationStatus[]
+    | Prisma.ListEnumWhatsAppVerificationStatusFieldRefInput<$PrismaModel>;
+  notIn?:
+    | $Enums.WhatsAppVerificationStatus[]
+    | Prisma.ListEnumWhatsAppVerificationStatusFieldRefInput<$PrismaModel>;
+  not?:
+    | Prisma.NestedEnumWhatsAppVerificationStatusFilter<$PrismaModel>
+    | $Enums.WhatsAppVerificationStatus;
+};
+
 export type UuidNullableWithAggregatesFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel> | null;
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null;
@@ -646,6 +672,45 @@ export type UuidNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>;
   _min?: Prisma.NestedStringNullableFilter<$PrismaModel>;
   _max?: Prisma.NestedStringNullableFilter<$PrismaModel>;
+};
+
+export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null;
+  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null;
+  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null;
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  not?:
+    | Prisma.NestedFloatNullableWithAggregatesFilter<$PrismaModel>
+    | number
+    | null;
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>;
+  _avg?: Prisma.NestedFloatNullableFilter<$PrismaModel>;
+  _sum?: Prisma.NestedFloatNullableFilter<$PrismaModel>;
+  _min?: Prisma.NestedFloatNullableFilter<$PrismaModel>;
+  _max?: Prisma.NestedFloatNullableFilter<$PrismaModel>;
+};
+
+export type EnumWhatsAppVerificationStatusWithAggregatesFilter<
+  $PrismaModel = never,
+> = {
+  equals?:
+    | $Enums.WhatsAppVerificationStatus
+    | Prisma.EnumWhatsAppVerificationStatusFieldRefInput<$PrismaModel>;
+  in?:
+    | $Enums.WhatsAppVerificationStatus[]
+    | Prisma.ListEnumWhatsAppVerificationStatusFieldRefInput<$PrismaModel>;
+  notIn?:
+    | $Enums.WhatsAppVerificationStatus[]
+    | Prisma.ListEnumWhatsAppVerificationStatusFieldRefInput<$PrismaModel>;
+  not?:
+    | Prisma.NestedEnumWhatsAppVerificationStatusWithAggregatesFilter<$PrismaModel>
+    | $Enums.WhatsAppVerificationStatus;
+  _count?: Prisma.NestedIntFilter<$PrismaModel>;
+  _min?: Prisma.NestedEnumWhatsAppVerificationStatusFilter<$PrismaModel>;
+  _max?: Prisma.NestedEnumWhatsAppVerificationStatusFilter<$PrismaModel>;
 };
 
 export type EnumCustomerOptInStatusFilter<$PrismaModel = never> = {
@@ -1543,6 +1608,32 @@ export type NestedUuidNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedUuidNullableFilter<$PrismaModel> | string | null;
 };
 
+export type NestedFloatNullableFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null;
+  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null;
+  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null;
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  not?: Prisma.NestedFloatNullableFilter<$PrismaModel> | number | null;
+};
+
+export type NestedEnumWhatsAppVerificationStatusFilter<$PrismaModel = never> = {
+  equals?:
+    | $Enums.WhatsAppVerificationStatus
+    | Prisma.EnumWhatsAppVerificationStatusFieldRefInput<$PrismaModel>;
+  in?:
+    | $Enums.WhatsAppVerificationStatus[]
+    | Prisma.ListEnumWhatsAppVerificationStatusFieldRefInput<$PrismaModel>;
+  notIn?:
+    | $Enums.WhatsAppVerificationStatus[]
+    | Prisma.ListEnumWhatsAppVerificationStatusFieldRefInput<$PrismaModel>;
+  not?:
+    | Prisma.NestedEnumWhatsAppVerificationStatusFilter<$PrismaModel>
+    | $Enums.WhatsAppVerificationStatus;
+};
+
 export type NestedUuidNullableWithAggregatesFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel> | null;
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null;
@@ -1558,6 +1649,45 @@ export type NestedUuidNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>;
   _min?: Prisma.NestedStringNullableFilter<$PrismaModel>;
   _max?: Prisma.NestedStringNullableFilter<$PrismaModel>;
+};
+
+export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null;
+  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null;
+  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null;
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
+  not?:
+    | Prisma.NestedFloatNullableWithAggregatesFilter<$PrismaModel>
+    | number
+    | null;
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>;
+  _avg?: Prisma.NestedFloatNullableFilter<$PrismaModel>;
+  _sum?: Prisma.NestedFloatNullableFilter<$PrismaModel>;
+  _min?: Prisma.NestedFloatNullableFilter<$PrismaModel>;
+  _max?: Prisma.NestedFloatNullableFilter<$PrismaModel>;
+};
+
+export type NestedEnumWhatsAppVerificationStatusWithAggregatesFilter<
+  $PrismaModel = never,
+> = {
+  equals?:
+    | $Enums.WhatsAppVerificationStatus
+    | Prisma.EnumWhatsAppVerificationStatusFieldRefInput<$PrismaModel>;
+  in?:
+    | $Enums.WhatsAppVerificationStatus[]
+    | Prisma.ListEnumWhatsAppVerificationStatusFieldRefInput<$PrismaModel>;
+  notIn?:
+    | $Enums.WhatsAppVerificationStatus[]
+    | Prisma.ListEnumWhatsAppVerificationStatusFieldRefInput<$PrismaModel>;
+  not?:
+    | Prisma.NestedEnumWhatsAppVerificationStatusWithAggregatesFilter<$PrismaModel>
+    | $Enums.WhatsAppVerificationStatus;
+  _count?: Prisma.NestedIntFilter<$PrismaModel>;
+  _min?: Prisma.NestedEnumWhatsAppVerificationStatusFilter<$PrismaModel>;
+  _max?: Prisma.NestedEnumWhatsAppVerificationStatusFilter<$PrismaModel>;
 };
 
 export type NestedEnumCustomerOptInStatusFilter<$PrismaModel = never> = {
@@ -1780,17 +1910,6 @@ export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedIntNullableFilter<$PrismaModel>;
   _min?: Prisma.NestedIntNullableFilter<$PrismaModel>;
   _max?: Prisma.NestedIntNullableFilter<$PrismaModel>;
-};
-
-export type NestedFloatNullableFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null;
-  in?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null;
-  notIn?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel> | null;
-  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
-  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
-  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
-  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>;
-  not?: Prisma.NestedFloatNullableFilter<$PrismaModel> | number | null;
 };
 
 export type NestedEnumScheduledReminderStatusFilter<$PrismaModel = never> = {

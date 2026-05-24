@@ -63,8 +63,8 @@ export async function processInboundMessage(
       // Note: WhatsAppNumber.phoneNumber = display number, yahan phoneNumberId (Meta ID) se match karein
       return tx.whatsAppNumber.findFirst({
         where: {
-          // Meta phoneNumberId whatsappBusinessId field mein store hai
-          whatsappBusinessId: phoneNumberId,
+          // Meta's phone_number_id stored in phoneNumberId field
+          phoneNumberId: phoneNumberId,
           isActive: true,
           deletedAt: null,
         },

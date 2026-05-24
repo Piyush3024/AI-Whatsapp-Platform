@@ -71,6 +71,13 @@ enum DocumentStatus {
   FAILED
 }
 
+enum WhatsAppVerificationStatus {
+  PENDING
+  VERIFIED
+  NOT_VERIFIED
+  FLAGGED
+}
+
 enum BookingStatus {
   PENDING
   CONFIRMED
@@ -453,16 +460,23 @@ model LocationBusinessHour {
 }
 
 model WhatsAppNumber {
-  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId           String    @db.Uuid
-  locationId         String?   @db.Uuid
-  phoneNumber        String
-  whatsappBusinessId String?
+  id                 String                     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId           String                     @db.Uuid
+  locationId         String?                    @db.Uuid
+  phoneNumber        String // E.164 format
+  phoneNumberId      String? // Meta's phone_number_id
+  whatsappBusinessId String? // WABA ID
   displayName        String
-  isActive           Boolean   @default(true)
-  createdAt          DateTime  @default(now()) @db.Timestamptz(6)
-  updatedAt          DateTime  @updatedAt @db.Timestamptz(6)
-  deletedAt          DateTime? @db.Timestamptz(6)
+  qualityScore       Float? // 0.0 - 1.0
+  verificationStatus WhatsAppVerificationStatus @default(PENDING)
+  webhookUrl         String?
+  isDefault          Boolean                    @default(false) // <-- ADD THIS
+  isActive           Boolean                    @default(true)
+  autoReplyEnabled   Boolean                    @default(true)
+  greetingMessage    String?
+  createdAt          DateTime                   @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime                   @updatedAt @db.Timestamptz(6)
+  deletedAt          DateTime?                  @db.Timestamptz(6)
 
   // Relations
   tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -471,6 +485,7 @@ model WhatsAppNumber {
 
   @@unique([phoneNumber])
   @@index([tenantId])
+  @@index([phoneNumberId])
   @@map("whatsapp_numbers")
 }
 

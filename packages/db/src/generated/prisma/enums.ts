@@ -77,6 +77,16 @@ export const DocumentStatus = {
 export type DocumentStatus =
   (typeof DocumentStatus)[keyof typeof DocumentStatus];
 
+export const WhatsAppVerificationStatus = {
+  PENDING: "PENDING",
+  VERIFIED: "VERIFIED",
+  NOT_VERIFIED: "NOT_VERIFIED",
+  FLAGGED: "FLAGGED",
+} as const;
+
+export type WhatsAppVerificationStatus =
+  (typeof WhatsAppVerificationStatus)[keyof typeof WhatsAppVerificationStatus];
+
 export const BookingStatus = {
   PENDING: "PENDING",
   CONFIRMED: "CONFIRMED",
