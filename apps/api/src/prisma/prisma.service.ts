@@ -1,10 +1,10 @@
 import {
   Injectable,
   Logger,
-  OnModuleInit,
   OnModuleDestroy,
+  OnModuleInit,
 } from '@nestjs/common';
-import { PrismaClient } from '@whatsapp-ai/db/generated/prisma';
+import { Prisma, PrismaClient } from '@whatsapp-ai/db/generated/prisma';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { ClsService } from 'nestjs-cls';
 
@@ -39,16 +39,71 @@ const SOFT_DELETE_MODELS = new Set([
   'TenantMessageTemplate',
 ]);
 
+const READ_OPERATIONS = new Set([
+  'findMany',
+  'findFirst',
+  'findUnique',
+  'findFirstOrThrow',
+  'findUniqueOrThrow',
+  'count',
+]);
+
+type PrismaQueryArgs = {
+  where?: Record<string, unknown>;
+  [key: string]: unknown;
+};
+
+interface PrismaExtensionQueryParams {
+  model?: string;
+  operation: string;
+  args: PrismaQueryArgs;
+  query: (args: PrismaQueryArgs) => Prisma.PrismaPromise<unknown>;
+}
+
+function buildExtendedPrismaClient(baseClient: PrismaClient, cls: ClsService) {
+  return baseClient.$extends({
+    name: 'softDelete+tenantRLS',
+    query: {
+      $allModels: {
+        async $allOperations({
+          model,
+          operation,
+          args,
+          query,
+        }: PrismaExtensionQueryParams): Promise<unknown> {
+          if (
+            model &&
+            READ_OPERATIONS.has(operation) &&
+            SOFT_DELETE_MODELS.has(model)
+          ) {
+            args.where = { deletedAt: null, ...args.where };
+          }
+
+          const tenantId = cls.get<string>('tenantId');
+          if (tenantId) {
+            const [, result] = await baseClient.$transaction([
+              baseClient.$executeRaw`
+                SELECT set_config('app.current_tenant_id', ${tenantId}, true)
+              `,
+              query(args),
+            ]);
+
+            return result;
+          }
+
+          return query(args);
+        },
+      },
+    },
+  });
+}
+
 /**
  * PrismaService
  *
- * Extends PrismaClient using the driver adapter pattern (official Prisma 7 + NestJS approach).
- * Uses PrismaPg adapter — required for Prisma 7's ESM client with PostgreSQL.
- *
- * Responsibilities:
- *  1. Connect/disconnect via NestJS lifecycle hooks
- *  2. Expose setTenantContext() / clearTenantContext() for RLS (called by TenantMiddleware)
- *  3. Expose a soft-delete extended client via this.db for all queries
+ * Extends PrismaClient using the driver adapter pattern.
+ * Use this.db for all database queries so soft-delete and tenant RLS context
+ * are applied consistently.
  */
 @Injectable()
 export class PrismaService
@@ -57,12 +112,6 @@ export class PrismaService
 {
   private readonly logger = new Logger(PrismaService.name);
 
-  /**
-   * Use this.db for all database queries in your services.
-   * It has the soft-delete extension applied globally.
-   *
-   * Example: this.prisma.db.user.findMany()
-   */
   readonly db: ReturnType<typeof this._buildDb>;
 
   constructor(private readonly cls: ClsService) {
@@ -83,10 +132,6 @@ export class PrismaService
     this.logger.log('Database connection closed', 'PrismaService');
   }
 
-  /**
-   * Get current tenant ID from CLS context.
-   * Use this in services when you need the tenantId for custom queries.
-   */
   getTenantId(): string {
     const tenantId = this.cls.get<string>('tenantId');
     if (!tenantId) {
@@ -97,52 +142,7 @@ export class PrismaService
     return tenantId;
   }
 
-  /**
-   * Builds the soft-delete extended client.
-   * All find*, count operations automatically exclude soft-deleted rows.
-   * delete/deleteMany are converted to soft deletes.
-   */
-
   private _buildDb() {
-    const cls = this.cls;
-    const baseClient = this;
-    return this.$extends({
-      name: 'softDelete+tenantRLS',
-      query: {
-        $allModels: {
-          async $allOperations({ model, operation, args, query }: any) {
-            // ── Soft delete filter ──────────────────────────────────────
-            const readOps = [
-              'findMany',
-              'findFirst',
-              'findUnique',
-              'findFirstOrThrow',
-              'findUniqueOrThrow',
-              'count',
-            ];
-            if (readOps.includes(operation) && SOFT_DELETE_MODELS.has(model)) {
-              args.where = { deletedAt: null, ...args.where };
-            }
-
-            // ── RLS tenant context ──────────────────────────────────────
-            // Set config atomically with the query in the same transaction.
-            // This is safe for connection pooling — context never leaks
-            // to another request's query on the same connection.
-            const tenantId = cls.get<string>('tenantId');
-            if (tenantId) {
-              const [, result] = await baseClient.$transaction([
-                baseClient.$executeRaw`
-                SELECT set_config('app.current_tenant_id', ${tenantId}, true)
-              `,
-                query(args),
-              ]);
-              return result;
-            }
-
-            return query(args);
-          },
-        },
-      },
-    });
+    return buildExtendedPrismaClient(this, this.cls);
   }
 }

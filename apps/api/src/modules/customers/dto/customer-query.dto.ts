@@ -5,7 +5,7 @@ import {
   IsInt,
   Min,
   Max,
-  IsIn,
+  // IsIn,
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
@@ -71,7 +71,7 @@ export class CustomerQueryDto {
   })
   @IsOptional()
   @IsString({ message: 'Search must be a string' })
-  @Transform(({ value }) => value?.trim())
+  @Transform(({ value }: { value: string | undefined }) => value?.trim())
   search?: string;
 
   @ApiPropertyOptional({
@@ -88,7 +88,9 @@ export class CustomerQueryDto {
   })
   @IsOptional()
   @IsString({ message: 'Tag must be a string' })
-  @Transform(({ value }) => value?.trim().toLowerCase())
+  @Transform(({ value }: { value: string | undefined }) =>
+    value?.trim().toLowerCase(),
+  )
   tag?: string;
 
   @ApiPropertyOptional({

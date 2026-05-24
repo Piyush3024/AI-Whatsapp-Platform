@@ -209,4 +209,4 @@ process.on('uncaughtException', (error: Error) => {
   process.exit(1);
 });
 
-bootstrap();
+void bootstrap();

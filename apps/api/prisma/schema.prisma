@@ -350,8 +350,7 @@ model Location {
   updatedAt DateTime  @updatedAt @db.Timestamptz(6)
   deletedAt DateTime? @db.Timestamptz(6)
 
-  bookings       Booking[]
-
+  bookings Booking[]
 
   @@index([tenantId])
   @@map("locations")
@@ -405,8 +404,7 @@ model Customer {
   updatedAt   DateTime            @updatedAt @db.Timestamptz(6)
   deletedAt   DateTime?           @db.Timestamptz(6)
 
-  bookings       Booking[]
-
+  bookings Booking[]
 
   @@unique([tenantId, phone])
   @@index([tenantId])
@@ -425,7 +423,7 @@ model Conversation {
   createdAt        DateTime          @default(now()) @db.Timestamptz(6)
   updatedAt        DateTime          @updatedAt @db.Timestamptz(6)
   deletedAt        DateTime?         @db.Timestamptz(6)
-  messages         Message[] 
+  messages         Message[]
 
   @@index([tenantId])
   @@index([tenantId, customerId])
@@ -446,8 +444,7 @@ model Message {
   createdAt      DateTime      @default(now()) @db.Timestamptz(6)
   updatedAt      DateTime      @updatedAt @db.Timestamptz(6)
   deletedAt      DateTime?     @db.Timestamptz(6)
-  conversation   Conversation  @relation(fields: [conversationId], references: [id]) 
-
+  conversation   Conversation  @relation(fields: [conversationId], references: [id])
 
   @@index([tenantId])
   @@index([tenantId, conversationId])
@@ -468,8 +465,7 @@ model Staff {
   updatedAt  DateTime  @updatedAt @db.Timestamptz(6)
   deletedAt  DateTime? @db.Timestamptz(6)
 
-  bookings       Booking[]
-
+  bookings Booking[]
 
   @@index([tenantId])
   @@map("staff")
@@ -526,7 +522,6 @@ model Service {
 
   bookingServices BookingService[]
 
-
   @@index([tenantId])
   @@map("services")
 }
@@ -549,11 +544,10 @@ model Booking {
   updatedAt      DateTime      @updatedAt @db.Timestamptz(6)
   deletedAt      DateTime?     @db.Timestamptz(6)
 
-  customer       Customer        @relation(fields: [customerId], references: [id])
-  staff          Staff?          @relation(fields: [staffId], references: [id])
-  location       Location?       @relation(fields: [locationId], references: [id])
-  services       BookingService[]
-
+  customer Customer         @relation(fields: [customerId], references: [id])
+  staff    Staff?           @relation(fields: [staffId], references: [id])
+  location Location?        @relation(fields: [locationId], references: [id])
+  services BookingService[]
 
   @@index([tenantId])
   @@index([tenantId, customerId])
@@ -574,9 +568,8 @@ model BookingService {
   updatedAt DateTime  @updatedAt @db.Timestamptz(6)
   deletedAt DateTime? @db.Timestamptz(6)
 
-  booking        Booking         @relation(fields: [bookingId], references: [id])
-  service        Service         @relation(fields: [serviceId], references: [id])
-
+  booking Booking @relation(fields: [bookingId], references: [id])
+  service Service @relation(fields: [serviceId], references: [id])
 
   @@unique([bookingId, serviceId])
   @@index([tenantId])

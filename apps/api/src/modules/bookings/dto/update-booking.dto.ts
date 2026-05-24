@@ -3,12 +3,12 @@ import {
   IsOptional,
   IsUUID,
   IsDateString,
-  IsEnum,
+  // IsEnum,
   MaxLength,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { BookingStatus } from '@whatsapp-ai/db/generated/prisma';
+// import { BookingStatus } from '@whatsapp-ai/db/generated/prisma';
 
 /**
  * DTO for updating an existing booking.
@@ -50,6 +50,6 @@ export class UpdateBookingDto {
   @IsOptional()
   @IsString({ message: 'Notes must be a string' })
   @MaxLength(1000, { message: 'Notes must not exceed 1000 characters' })
-  @Transform(({ value }) => value?.trim())
+  @Transform(({ value }: { value: string | undefined }) => value?.trim())
   notes?: string;
 }

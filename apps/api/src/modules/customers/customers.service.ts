@@ -107,7 +107,7 @@ export class CustomersService {
     ]);
 
     return {
-      items: items.map(this.transformCustomer),
+      items: items.map((item) => this.transformCustomer(item)),
       meta: {
         total,
         page,

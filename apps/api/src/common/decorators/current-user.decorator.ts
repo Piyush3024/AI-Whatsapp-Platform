@@ -12,6 +12,10 @@ export interface CurrentUserPayload {
   email: string;
 }
 
+interface RequestWithCurrentUser {
+  user?: CurrentUserPayload;
+}
+
 /**
  * @CurrentUser() param decorator
  *
@@ -33,8 +37,8 @@ export const CurrentUser = createParamDecorator(
   (property: keyof CurrentUserPayload | undefined, ctx: ExecutionContext) => {
     // Fastify mein request.user Passport set karta hai Phase 2 mein.
     // Abhi ke liye raw request se user nikaalte hain.
-    const request = ctx.switchToHttp().getRequest();
-    const user = request.user as CurrentUserPayload;
+    const request = ctx.switchToHttp().getRequest<RequestWithCurrentUser>();
+    const user = request.user;
 
     // Agar specific property maangi hai toh wohi do, warna poora user object.
     return property ? user?.[property] : user;

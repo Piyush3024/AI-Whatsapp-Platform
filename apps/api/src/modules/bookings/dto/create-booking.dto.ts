@@ -6,11 +6,11 @@ import {
   IsUUID,
   IsDateString,
   IsEnum,
-  Min,
+  // Min,
   MaxLength,
   ArrayMinSize,
 } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { BookingSource } from '@whatsapp-ai/db/generated/prisma';
 
@@ -58,12 +58,19 @@ export class CreateBookingDto {
     {},
     { message: 'Start time must be a valid ISO 8601 date string' },
   )
-  @Transform(({ value }) => {
-    const date = new Date(value);
+  @Transform(({ value }: { value: unknown }) => {
+    const dateValue = value as string;
+    const date = new Date(dateValue);
+
+    if (isNaN(date.getTime())) {
+      throw new Error('Invalid date format');
+    }
+
     if (date <= new Date()) {
       throw new Error('Start time must be in the future');
     }
-    return value;
+
+    return dateValue;
   })
   startTime!: string;
 
@@ -89,7 +96,7 @@ export class CreateBookingDto {
   @IsOptional()
   @IsString({ message: 'Notes must be a string' })
   @MaxLength(1000, { message: 'Notes must not exceed 1000 characters' })
-  @Transform(({ value }) => value?.trim())
+  @Transform(({ value }: { value: string | undefined }) => value?.trim())
   notes?: string;
 
   @ApiPropertyOptional({

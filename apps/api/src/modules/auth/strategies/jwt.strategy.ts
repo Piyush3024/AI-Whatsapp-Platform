@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PrismaService } from '../../../prisma/prisma.service.js';
-import { Logger } from 'nestjs-pino';
 
 /**
  * JWT Access Token ka shape — sign karte waqt yahi payload hota hai.

@@ -141,7 +141,7 @@ export class AuthService {
     // ── Step 1: User dhundho ──────────────────────────────────────────────
     // findUnique soft-delete filter bypass karta hai — deletedAt wale users
     // ko bhi check karna hai (show specific error nahi karna security ke liye)
-    const user = await this.prisma.user.findUnique({
+    const user = await this.prisma.db.user.findUnique({
       where: { email: dto.email.toLowerCase() },
     });
 

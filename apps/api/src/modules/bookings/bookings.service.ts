@@ -17,10 +17,7 @@ import {
   BookingStatus,
   BookingSource,
   Prisma,
-  Customer,
-  Staff,
   Service,
-  Booking,
 } from '@whatsapp-ai/db/generated/prisma';
 
 /**
@@ -320,7 +317,7 @@ export class BookingsService {
       updateData.notes = dto.notes;
     }
 
-    const booking = await this.prisma.db.booking.update({
+    await this.prisma.db.booking.update({
       where: { id },
       data: updateData,
     });
@@ -350,9 +347,9 @@ export class BookingsService {
 
     const previousStatus = existing.status;
 
-    const booking = await this.prisma.db.$transaction(async (tx) => {
+    await this.prisma.db.$transaction(async (tx) => {
       // Update status
-      const updated = await tx.booking.update({
+      await tx.booking.update({
         where: { id },
         data: { status },
       });
@@ -371,8 +368,6 @@ export class BookingsService {
           },
         },
       });
-
-      return updated;
     });
 
     this.logger.log(

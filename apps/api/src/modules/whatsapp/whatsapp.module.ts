@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { WhatsAppWebhookController } from './whatsapp-webhook.controller.js';
 import { WhatsAppWebhookService } from './whatsapp-webhook.service.js';
 import { QUEUE_NAMES } from './whatsapp-webhook.service.js';

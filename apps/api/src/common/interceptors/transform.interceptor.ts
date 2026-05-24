@@ -44,21 +44,23 @@ export interface ApiResponse<T> {
 @Injectable()
 export class TransformInterceptor<T> implements NestInterceptor<
   T,
-  ApiResponse<T>
+  ApiResponse<T | null>
 > {
   intercept(
     context: ExecutionContext,
-    next: CallHandler,
-  ): Observable<ApiResponse<T>> {
+    next: CallHandler<T>,
+  ): Observable<ApiResponse<T | null>> {
     const request = context.switchToHttp().getRequest<FastifyRequest>();
 
     return next.handle().pipe(
-      map((data) => ({
-        success: true,
-        data: data ?? null,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-      })),
+      map(
+        (data: T): ApiResponse<T | null> => ({
+          success: true,
+          data: data ?? null,
+          timestamp: new Date().toISOString(),
+          path: request.url,
+        }),
+      ),
     );
   }
 }

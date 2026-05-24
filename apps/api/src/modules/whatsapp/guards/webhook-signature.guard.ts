@@ -9,6 +9,10 @@ import { ConfigService } from '@nestjs/config';
 import { createHmac, timingSafeEqual } from 'crypto';
 import type { FastifyRequest } from 'fastify';
 
+interface FastifyRequestWithRawBody extends FastifyRequest {
+  rawBody?: Buffer;
+}
+
 /**
  * WebhookSignatureGuard — WhatsApp HMAC-SHA256 Signature Verification
  *
@@ -34,14 +38,14 @@ export class WebhookSignatureGuard implements CanActivate {
   constructor(private readonly config: ConfigService) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest<FastifyRequest>();
+    const request = context
+      .switchToHttp()
+      .getRequest<FastifyRequestWithRawBody>();
 
     // ── Step 1: Signature header nikalo ──────────────────────────────────
-    const signatureHeader = (request.headers as Record<string, string>)[
-      'x-hub-signature-256'
-    ];
+    const signatureHeader = request.headers['x-hub-signature-256'];
 
-    if (!signatureHeader) {
+    if (typeof signatureHeader !== 'string') {
       this.logger.warn(
         'Webhook request received without X-Hub-Signature-256 header',
         'WebhookSignatureGuard',
@@ -51,7 +55,7 @@ export class WebhookSignatureGuard implements CanActivate {
 
     // ── Step 2: Raw body nikalo ───────────────────────────────────────────
     // NestJS rawBody: true se milta hai — Buffer format mein
-    const rawBody = (request as any).rawBody as Buffer | undefined;
+    const rawBody = request.rawBody;
 
     if (!rawBody) {
       this.logger.error(

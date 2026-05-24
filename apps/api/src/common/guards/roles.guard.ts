@@ -8,6 +8,12 @@ import { Reflector } from '@nestjs/core';
 import { UserRole } from '@whatsapp-ai/db/generated/prisma';
 import { ROLES_KEY } from '../decorators/roles.decorator.js';
 
+interface RequestWithRole {
+  user?: {
+    role?: UserRole;
+  };
+}
+
 /**
  * RolesGuard — Role-Based Access Control Guard
  *
@@ -40,8 +46,8 @@ export class RolesGuard implements CanActivate {
     if (!requiredRoles || requiredRoles.length === 0) return true;
 
     // ── Step 3: User ka role check karo ────────────────────────────────────
-    const request = context.switchToHttp().getRequest();
-    const userRole = request.user?.role as UserRole;
+    const request = context.switchToHttp().getRequest<RequestWithRole>();
+    const userRole = request.user?.role;
 
     if (!userRole) {
       throw new ForbiddenException(

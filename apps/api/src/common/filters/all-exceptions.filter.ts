@@ -22,6 +22,16 @@ interface ErrorResponse {
   path: string;
 }
 
+interface HttpExceptionResponseBody {
+  message?: string | string[];
+}
+
+function isHttpExceptionResponseBody(
+  value: unknown,
+): value is HttpExceptionResponseBody {
+  return typeof value === 'object' && value !== null;
+}
+
 /**
  * AllExceptionsFilter — Global Exception Filter
  *
@@ -66,19 +76,25 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
       // Validation errors (class-validator se aate hain) — array of messages
       if (
-        statusCode === HttpStatus.BAD_REQUEST &&
-        typeof exceptionResponse === 'object' &&
-        Array.isArray((exceptionResponse as any).message)
+        statusCode === Number(HttpStatus.BAD_REQUEST) &&
+        isHttpExceptionResponseBody(exceptionResponse) &&
+        Array.isArray(exceptionResponse.message)
       ) {
         errorCode = 'VALIDATION_ERROR';
         message = 'Request validation failed.';
-        errors = (exceptionResponse as any).message as string[];
+        errors = exceptionResponse.message;
       } else {
         errorCode = this._getErrorCode(statusCode);
-        message =
-          typeof exceptionResponse === 'string'
-            ? exceptionResponse
-            : ((exceptionResponse as any).message ?? exception.message);
+        if (typeof exceptionResponse === 'string') {
+          message = exceptionResponse;
+        } else if (
+          isHttpExceptionResponseBody(exceptionResponse) &&
+          typeof exceptionResponse.message === 'string'
+        ) {
+          message = exceptionResponse.message;
+        } else {
+          message = exception.message;
+        }
       }
     }
     // ── Unknown / unhandled errors ──────────────────────────────────────────

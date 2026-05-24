@@ -42,7 +42,7 @@ export class CreateCustomerDto {
   @IsOptional()
   @IsString({ message: 'Name must be a string' })
   @MaxLength(255, { message: 'Name must not exceed 255 characters' })
-  @Transform(({ value }) => value?.trim())
+  @Transform(({ value }: { value: string | undefined }) => value?.trim())
   name?: string;
 
   @ApiPropertyOptional({
@@ -51,7 +51,9 @@ export class CreateCustomerDto {
   })
   @IsOptional()
   @IsEmail({}, { message: 'Please provide a valid email address' })
-  @Transform(({ value }) => value?.trim().toLowerCase())
+  @Transform(({ value }: { value: string | undefined }) =>
+    value?.trim().toLowerCase(),
+  )
   email?: string;
 
   @ApiPropertyOptional({
@@ -62,7 +64,7 @@ export class CreateCustomerDto {
   @IsOptional()
   @IsString({ message: 'Notes must be a string' })
   @MaxLength(2000, { message: 'Notes must not exceed 2000 characters' })
-  @Transform(({ value }) => value?.trim())
+  @Transform(({ value }: { value: string | undefined }) => value?.trim())
   notes?: string;
 
   @ApiPropertyOptional({
@@ -74,10 +76,10 @@ export class CreateCustomerDto {
   @IsOptional()
   @IsArray({ message: 'Tags must be an array of strings' })
   @IsString({ each: true, message: 'Each tag must be a string' })
-  @Transform(({ value }) => {
+  @Transform(({ value }: { value: string | undefined }): string[] => {
     if (typeof value === 'string') {
       try {
-        return JSON.parse(value);
+        return JSON.parse(value) as string[];
       } catch {
         return value
           .split(',')
@@ -85,7 +87,7 @@ export class CreateCustomerDto {
           .filter(Boolean);
       }
     }
-    return value ?? [];
+    return [];
   })
   tags?: string[];
 

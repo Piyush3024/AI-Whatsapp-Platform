@@ -67,10 +67,10 @@ export class WhatsAppWebhookController {
    */
   @Get()
   @ApiOperation({ summary: 'WhatsApp webhook verification (Meta handshake)' })
-  async verifyWebhook(
+  verifyWebhook(
     @Query() query: WhatsAppVerifyQuery,
     @Res() reply: FastifyReply,
-  ): Promise<void> {
+  ): void {
     const mode = query['hub.mode'];
     const token = query['hub.verify_token'];
     const challenge = query['hub.challenge'];
@@ -123,9 +123,7 @@ export class WhatsAppWebhookController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(WebhookSignatureGuard)
   @ApiOperation({ summary: 'WhatsApp inbound messages receive karo' })
-  async receiveWebhook(
-    @Body() payload: WhatsAppWebhookPayload,
-  ): Promise<{ status: string }> {
+  receiveWebhook(@Body() payload: WhatsAppWebhookPayload): { status: string } {
     this.logger.log(
       `Webhook received — entries: ${payload.entry?.length ?? 0}`,
       'WhatsAppWebhookController',
@@ -133,7 +131,7 @@ export class WhatsAppWebhookController {
 
     // Fire and forget — await mat karo response delay hoga
     // Errors BullMQ retry logic handle karega
-    this.webhookService.processWebhook(payload).catch((error: Error) => {
+    void this.webhookService.processWebhook(payload).catch((error: Error) => {
       this.logger.error(
         `Failed to queue webhook payload: ${error.message}`,
         error.stack,
