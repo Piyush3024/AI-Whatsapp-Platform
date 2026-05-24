@@ -20,8 +20,18 @@ export type ScheduledReminderModel =
 
 export type AggregateScheduledReminder = {
   _count: ScheduledReminderCountAggregateOutputType | null;
+  _avg: ScheduledReminderAvgAggregateOutputType | null;
+  _sum: ScheduledReminderSumAggregateOutputType | null;
   _min: ScheduledReminderMinAggregateOutputType | null;
   _max: ScheduledReminderMaxAggregateOutputType | null;
+};
+
+export type ScheduledReminderAvgAggregateOutputType = {
+  attempts: number | null;
+};
+
+export type ScheduledReminderSumAggregateOutputType = {
+  attempts: number | null;
 };
 
 export type ScheduledReminderMinAggregateOutputType = {
@@ -29,10 +39,12 @@ export type ScheduledReminderMinAggregateOutputType = {
   tenantId: string | null;
   bookingId: string | null;
   ruleType: $Enums.ReminderRuleType | null;
+  message: string | null;
   scheduledAt: Date | null;
   sentAt: Date | null;
   status: $Enums.ScheduledReminderStatus | null;
   error: string | null;
+  attempts: number | null;
   createdAt: Date | null;
   updatedAt: Date | null;
   deletedAt: Date | null;
@@ -43,10 +55,12 @@ export type ScheduledReminderMaxAggregateOutputType = {
   tenantId: string | null;
   bookingId: string | null;
   ruleType: $Enums.ReminderRuleType | null;
+  message: string | null;
   scheduledAt: Date | null;
   sentAt: Date | null;
   status: $Enums.ScheduledReminderStatus | null;
   error: string | null;
+  attempts: number | null;
   createdAt: Date | null;
   updatedAt: Date | null;
   deletedAt: Date | null;
@@ -57,14 +71,24 @@ export type ScheduledReminderCountAggregateOutputType = {
   tenantId: number;
   bookingId: number;
   ruleType: number;
+  message: number;
   scheduledAt: number;
   sentAt: number;
   status: number;
   error: number;
+  attempts: number;
   createdAt: number;
   updatedAt: number;
   deletedAt: number;
   _all: number;
+};
+
+export type ScheduledReminderAvgAggregateInputType = {
+  attempts?: true;
+};
+
+export type ScheduledReminderSumAggregateInputType = {
+  attempts?: true;
 };
 
 export type ScheduledReminderMinAggregateInputType = {
@@ -72,10 +96,12 @@ export type ScheduledReminderMinAggregateInputType = {
   tenantId?: true;
   bookingId?: true;
   ruleType?: true;
+  message?: true;
   scheduledAt?: true;
   sentAt?: true;
   status?: true;
   error?: true;
+  attempts?: true;
   createdAt?: true;
   updatedAt?: true;
   deletedAt?: true;
@@ -86,10 +112,12 @@ export type ScheduledReminderMaxAggregateInputType = {
   tenantId?: true;
   bookingId?: true;
   ruleType?: true;
+  message?: true;
   scheduledAt?: true;
   sentAt?: true;
   status?: true;
   error?: true;
+  attempts?: true;
   createdAt?: true;
   updatedAt?: true;
   deletedAt?: true;
@@ -100,10 +128,12 @@ export type ScheduledReminderCountAggregateInputType = {
   tenantId?: true;
   bookingId?: true;
   ruleType?: true;
+  message?: true;
   scheduledAt?: true;
   sentAt?: true;
   status?: true;
   error?: true;
+  attempts?: true;
   createdAt?: true;
   updatedAt?: true;
   deletedAt?: true;
@@ -153,6 +183,18 @@ export type ScheduledReminderAggregateArgs<
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    *
+   * Select which fields to average
+   **/
+  _avg?: ScheduledReminderAvgAggregateInputType;
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   *
+   * Select which fields to sum
+   **/
+  _sum?: ScheduledReminderSumAggregateInputType;
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   *
    * Select which fields to find the minimum value
    **/
   _min?: ScheduledReminderMinAggregateInputType;
@@ -191,6 +233,8 @@ export type ScheduledReminderGroupByArgs<
   take?: number;
   skip?: number;
   _count?: ScheduledReminderCountAggregateInputType | true;
+  _avg?: ScheduledReminderAvgAggregateInputType;
+  _sum?: ScheduledReminderSumAggregateInputType;
   _min?: ScheduledReminderMinAggregateInputType;
   _max?: ScheduledReminderMaxAggregateInputType;
 };
@@ -200,14 +244,18 @@ export type ScheduledReminderGroupByOutputType = {
   tenantId: string;
   bookingId: string;
   ruleType: $Enums.ReminderRuleType;
+  message: string;
   scheduledAt: Date;
   sentAt: Date | null;
   status: $Enums.ScheduledReminderStatus;
   error: string | null;
+  attempts: number;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
   _count: ScheduledReminderCountAggregateOutputType | null;
+  _avg: ScheduledReminderAvgAggregateOutputType | null;
+  _sum: ScheduledReminderSumAggregateOutputType | null;
   _min: ScheduledReminderMinAggregateOutputType | null;
   _max: ScheduledReminderMaxAggregateOutputType | null;
 };
@@ -241,6 +289,7 @@ export type ScheduledReminderWhereInput = {
   ruleType?:
     | Prisma.EnumReminderRuleTypeFilter<"ScheduledReminder">
     | $Enums.ReminderRuleType;
+  message?: Prisma.StringFilter<"ScheduledReminder"> | string;
   scheduledAt?: Prisma.DateTimeFilter<"ScheduledReminder"> | Date | string;
   sentAt?:
     | Prisma.DateTimeNullableFilter<"ScheduledReminder">
@@ -251,6 +300,7 @@ export type ScheduledReminderWhereInput = {
     | Prisma.EnumScheduledReminderStatusFilter<"ScheduledReminder">
     | $Enums.ScheduledReminderStatus;
   error?: Prisma.StringNullableFilter<"ScheduledReminder"> | string | null;
+  attempts?: Prisma.IntFilter<"ScheduledReminder"> | number;
   createdAt?: Prisma.DateTimeFilter<"ScheduledReminder"> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<"ScheduledReminder"> | Date | string;
   deletedAt?:
@@ -273,10 +323,12 @@ export type ScheduledReminderOrderByWithRelationInput = {
   tenantId?: Prisma.SortOrder;
   bookingId?: Prisma.SortOrder;
   ruleType?: Prisma.SortOrder;
+  message?: Prisma.SortOrder;
   scheduledAt?: Prisma.SortOrder;
   sentAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   status?: Prisma.SortOrder;
   error?: Prisma.SortOrderInput | Prisma.SortOrder;
+  attempts?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
@@ -299,6 +351,7 @@ export type ScheduledReminderWhereUniqueInput = Prisma.AtLeast<
     ruleType?:
       | Prisma.EnumReminderRuleTypeFilter<"ScheduledReminder">
       | $Enums.ReminderRuleType;
+    message?: Prisma.StringFilter<"ScheduledReminder"> | string;
     scheduledAt?: Prisma.DateTimeFilter<"ScheduledReminder"> | Date | string;
     sentAt?:
       | Prisma.DateTimeNullableFilter<"ScheduledReminder">
@@ -309,6 +362,7 @@ export type ScheduledReminderWhereUniqueInput = Prisma.AtLeast<
       | Prisma.EnumScheduledReminderStatusFilter<"ScheduledReminder">
       | $Enums.ScheduledReminderStatus;
     error?: Prisma.StringNullableFilter<"ScheduledReminder"> | string | null;
+    attempts?: Prisma.IntFilter<"ScheduledReminder"> | number;
     createdAt?: Prisma.DateTimeFilter<"ScheduledReminder"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"ScheduledReminder"> | Date | string;
     deletedAt?:
@@ -333,16 +387,20 @@ export type ScheduledReminderOrderByWithAggregationInput = {
   tenantId?: Prisma.SortOrder;
   bookingId?: Prisma.SortOrder;
   ruleType?: Prisma.SortOrder;
+  message?: Prisma.SortOrder;
   scheduledAt?: Prisma.SortOrder;
   sentAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   status?: Prisma.SortOrder;
   error?: Prisma.SortOrderInput | Prisma.SortOrder;
+  attempts?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   _count?: Prisma.ScheduledReminderCountOrderByAggregateInput;
+  _avg?: Prisma.ScheduledReminderAvgOrderByAggregateInput;
   _max?: Prisma.ScheduledReminderMaxOrderByAggregateInput;
   _min?: Prisma.ScheduledReminderMinOrderByAggregateInput;
+  _sum?: Prisma.ScheduledReminderSumOrderByAggregateInput;
 };
 
 export type ScheduledReminderScalarWhereWithAggregatesInput = {
@@ -359,6 +417,7 @@ export type ScheduledReminderScalarWhereWithAggregatesInput = {
   ruleType?:
     | Prisma.EnumReminderRuleTypeWithAggregatesFilter<"ScheduledReminder">
     | $Enums.ReminderRuleType;
+  message?: Prisma.StringWithAggregatesFilter<"ScheduledReminder"> | string;
   scheduledAt?:
     | Prisma.DateTimeWithAggregatesFilter<"ScheduledReminder">
     | Date
@@ -375,6 +434,7 @@ export type ScheduledReminderScalarWhereWithAggregatesInput = {
     | Prisma.StringNullableWithAggregatesFilter<"ScheduledReminder">
     | string
     | null;
+  attempts?: Prisma.IntWithAggregatesFilter<"ScheduledReminder"> | number;
   createdAt?:
     | Prisma.DateTimeWithAggregatesFilter<"ScheduledReminder">
     | Date
@@ -393,10 +453,12 @@ export type ScheduledReminderScalarWhereWithAggregatesInput = {
 export type ScheduledReminderCreateInput = {
   id?: string;
   ruleType: $Enums.ReminderRuleType;
+  message: string;
   scheduledAt: Date | string;
   sentAt?: Date | string | null;
   status?: $Enums.ScheduledReminderStatus;
   error?: string | null;
+  attempts?: number;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -409,10 +471,12 @@ export type ScheduledReminderUncheckedCreateInput = {
   tenantId: string;
   bookingId: string;
   ruleType: $Enums.ReminderRuleType;
+  message: string;
   scheduledAt: Date | string;
   sentAt?: Date | string | null;
   status?: $Enums.ScheduledReminderStatus;
   error?: string | null;
+  attempts?: number;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -423,6 +487,7 @@ export type ScheduledReminderUpdateInput = {
   ruleType?:
     | Prisma.EnumReminderRuleTypeFieldUpdateOperationsInput
     | $Enums.ReminderRuleType;
+  message?: Prisma.StringFieldUpdateOperationsInput | string;
   scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   sentAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -433,6 +498,7 @@ export type ScheduledReminderUpdateInput = {
     | Prisma.EnumScheduledReminderStatusFieldUpdateOperationsInput
     | $Enums.ScheduledReminderStatus;
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -451,6 +517,7 @@ export type ScheduledReminderUncheckedUpdateInput = {
   ruleType?:
     | Prisma.EnumReminderRuleTypeFieldUpdateOperationsInput
     | $Enums.ReminderRuleType;
+  message?: Prisma.StringFieldUpdateOperationsInput | string;
   scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   sentAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -461,6 +528,7 @@ export type ScheduledReminderUncheckedUpdateInput = {
     | Prisma.EnumScheduledReminderStatusFieldUpdateOperationsInput
     | $Enums.ScheduledReminderStatus;
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -475,10 +543,12 @@ export type ScheduledReminderCreateManyInput = {
   tenantId: string;
   bookingId: string;
   ruleType: $Enums.ReminderRuleType;
+  message: string;
   scheduledAt: Date | string;
   sentAt?: Date | string | null;
   status?: $Enums.ScheduledReminderStatus;
   error?: string | null;
+  attempts?: number;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -489,6 +559,7 @@ export type ScheduledReminderUpdateManyMutationInput = {
   ruleType?:
     | Prisma.EnumReminderRuleTypeFieldUpdateOperationsInput
     | $Enums.ReminderRuleType;
+  message?: Prisma.StringFieldUpdateOperationsInput | string;
   scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   sentAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -499,6 +570,7 @@ export type ScheduledReminderUpdateManyMutationInput = {
     | Prisma.EnumScheduledReminderStatusFieldUpdateOperationsInput
     | $Enums.ScheduledReminderStatus;
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -515,6 +587,7 @@ export type ScheduledReminderUncheckedUpdateManyInput = {
   ruleType?:
     | Prisma.EnumReminderRuleTypeFieldUpdateOperationsInput
     | $Enums.ReminderRuleType;
+  message?: Prisma.StringFieldUpdateOperationsInput | string;
   scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   sentAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -525,6 +598,7 @@ export type ScheduledReminderUncheckedUpdateManyInput = {
     | Prisma.EnumScheduledReminderStatusFieldUpdateOperationsInput
     | $Enums.ScheduledReminderStatus;
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -549,13 +623,19 @@ export type ScheduledReminderCountOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder;
   bookingId?: Prisma.SortOrder;
   ruleType?: Prisma.SortOrder;
+  message?: Prisma.SortOrder;
   scheduledAt?: Prisma.SortOrder;
   sentAt?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   error?: Prisma.SortOrder;
+  attempts?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
+};
+
+export type ScheduledReminderAvgOrderByAggregateInput = {
+  attempts?: Prisma.SortOrder;
 };
 
 export type ScheduledReminderMaxOrderByAggregateInput = {
@@ -563,10 +643,12 @@ export type ScheduledReminderMaxOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder;
   bookingId?: Prisma.SortOrder;
   ruleType?: Prisma.SortOrder;
+  message?: Prisma.SortOrder;
   scheduledAt?: Prisma.SortOrder;
   sentAt?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   error?: Prisma.SortOrder;
+  attempts?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
@@ -577,13 +659,19 @@ export type ScheduledReminderMinOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder;
   bookingId?: Prisma.SortOrder;
   ruleType?: Prisma.SortOrder;
+  message?: Prisma.SortOrder;
   scheduledAt?: Prisma.SortOrder;
   sentAt?: Prisma.SortOrder;
   status?: Prisma.SortOrder;
   error?: Prisma.SortOrder;
+  attempts?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
+};
+
+export type ScheduledReminderSumOrderByAggregateInput = {
+  attempts?: Prisma.SortOrder;
 };
 
 export type ScheduledReminderCreateNestedManyWithoutTenantInput = {
@@ -813,10 +901,12 @@ export type EnumScheduledReminderStatusFieldUpdateOperationsInput = {
 export type ScheduledReminderCreateWithoutTenantInput = {
   id?: string;
   ruleType: $Enums.ReminderRuleType;
+  message: string;
   scheduledAt: Date | string;
   sentAt?: Date | string | null;
   status?: $Enums.ScheduledReminderStatus;
   error?: string | null;
+  attempts?: number;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -827,10 +917,12 @@ export type ScheduledReminderUncheckedCreateWithoutTenantInput = {
   id?: string;
   bookingId: string;
   ruleType: $Enums.ReminderRuleType;
+  message: string;
   scheduledAt: Date | string;
   sentAt?: Date | string | null;
   status?: $Enums.ScheduledReminderStatus;
   error?: string | null;
+  attempts?: number;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -893,6 +985,7 @@ export type ScheduledReminderScalarWhereInput = {
   ruleType?:
     | Prisma.EnumReminderRuleTypeFilter<"ScheduledReminder">
     | $Enums.ReminderRuleType;
+  message?: Prisma.StringFilter<"ScheduledReminder"> | string;
   scheduledAt?: Prisma.DateTimeFilter<"ScheduledReminder"> | Date | string;
   sentAt?:
     | Prisma.DateTimeNullableFilter<"ScheduledReminder">
@@ -903,6 +996,7 @@ export type ScheduledReminderScalarWhereInput = {
     | Prisma.EnumScheduledReminderStatusFilter<"ScheduledReminder">
     | $Enums.ScheduledReminderStatus;
   error?: Prisma.StringNullableFilter<"ScheduledReminder"> | string | null;
+  attempts?: Prisma.IntFilter<"ScheduledReminder"> | number;
   createdAt?: Prisma.DateTimeFilter<"ScheduledReminder"> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<"ScheduledReminder"> | Date | string;
   deletedAt?:
@@ -915,10 +1009,12 @@ export type ScheduledReminderScalarWhereInput = {
 export type ScheduledReminderCreateWithoutBookingInput = {
   id?: string;
   ruleType: $Enums.ReminderRuleType;
+  message: string;
   scheduledAt: Date | string;
   sentAt?: Date | string | null;
   status?: $Enums.ScheduledReminderStatus;
   error?: string | null;
+  attempts?: number;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -929,10 +1025,12 @@ export type ScheduledReminderUncheckedCreateWithoutBookingInput = {
   id?: string;
   tenantId: string;
   ruleType: $Enums.ReminderRuleType;
+  message: string;
   scheduledAt: Date | string;
   sentAt?: Date | string | null;
   status?: $Enums.ScheduledReminderStatus;
   error?: string | null;
+  attempts?: number;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -985,10 +1083,12 @@ export type ScheduledReminderCreateManyTenantInput = {
   id?: string;
   bookingId: string;
   ruleType: $Enums.ReminderRuleType;
+  message: string;
   scheduledAt: Date | string;
   sentAt?: Date | string | null;
   status?: $Enums.ScheduledReminderStatus;
   error?: string | null;
+  attempts?: number;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -999,6 +1099,7 @@ export type ScheduledReminderUpdateWithoutTenantInput = {
   ruleType?:
     | Prisma.EnumReminderRuleTypeFieldUpdateOperationsInput
     | $Enums.ReminderRuleType;
+  message?: Prisma.StringFieldUpdateOperationsInput | string;
   scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   sentAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -1009,6 +1110,7 @@ export type ScheduledReminderUpdateWithoutTenantInput = {
     | Prisma.EnumScheduledReminderStatusFieldUpdateOperationsInput
     | $Enums.ScheduledReminderStatus;
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -1025,6 +1127,7 @@ export type ScheduledReminderUncheckedUpdateWithoutTenantInput = {
   ruleType?:
     | Prisma.EnumReminderRuleTypeFieldUpdateOperationsInput
     | $Enums.ReminderRuleType;
+  message?: Prisma.StringFieldUpdateOperationsInput | string;
   scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   sentAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -1035,6 +1138,7 @@ export type ScheduledReminderUncheckedUpdateWithoutTenantInput = {
     | Prisma.EnumScheduledReminderStatusFieldUpdateOperationsInput
     | $Enums.ScheduledReminderStatus;
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -1050,6 +1154,7 @@ export type ScheduledReminderUncheckedUpdateManyWithoutTenantInput = {
   ruleType?:
     | Prisma.EnumReminderRuleTypeFieldUpdateOperationsInput
     | $Enums.ReminderRuleType;
+  message?: Prisma.StringFieldUpdateOperationsInput | string;
   scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   sentAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -1060,6 +1165,7 @@ export type ScheduledReminderUncheckedUpdateManyWithoutTenantInput = {
     | Prisma.EnumScheduledReminderStatusFieldUpdateOperationsInput
     | $Enums.ScheduledReminderStatus;
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -1073,10 +1179,12 @@ export type ScheduledReminderCreateManyBookingInput = {
   id?: string;
   tenantId: string;
   ruleType: $Enums.ReminderRuleType;
+  message: string;
   scheduledAt: Date | string;
   sentAt?: Date | string | null;
   status?: $Enums.ScheduledReminderStatus;
   error?: string | null;
+  attempts?: number;
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
@@ -1087,6 +1195,7 @@ export type ScheduledReminderUpdateWithoutBookingInput = {
   ruleType?:
     | Prisma.EnumReminderRuleTypeFieldUpdateOperationsInput
     | $Enums.ReminderRuleType;
+  message?: Prisma.StringFieldUpdateOperationsInput | string;
   scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   sentAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -1097,6 +1206,7 @@ export type ScheduledReminderUpdateWithoutBookingInput = {
     | Prisma.EnumScheduledReminderStatusFieldUpdateOperationsInput
     | $Enums.ScheduledReminderStatus;
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -1113,6 +1223,7 @@ export type ScheduledReminderUncheckedUpdateWithoutBookingInput = {
   ruleType?:
     | Prisma.EnumReminderRuleTypeFieldUpdateOperationsInput
     | $Enums.ReminderRuleType;
+  message?: Prisma.StringFieldUpdateOperationsInput | string;
   scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   sentAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -1123,6 +1234,7 @@ export type ScheduledReminderUncheckedUpdateWithoutBookingInput = {
     | Prisma.EnumScheduledReminderStatusFieldUpdateOperationsInput
     | $Enums.ScheduledReminderStatus;
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -1138,6 +1250,7 @@ export type ScheduledReminderUncheckedUpdateManyWithoutBookingInput = {
   ruleType?:
     | Prisma.EnumReminderRuleTypeFieldUpdateOperationsInput
     | $Enums.ReminderRuleType;
+  message?: Prisma.StringFieldUpdateOperationsInput | string;
   scheduledAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   sentAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
@@ -1148,6 +1261,7 @@ export type ScheduledReminderUncheckedUpdateManyWithoutBookingInput = {
     | Prisma.EnumScheduledReminderStatusFieldUpdateOperationsInput
     | $Enums.ScheduledReminderStatus;
   error?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  attempts?: Prisma.IntFieldUpdateOperationsInput | number;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
@@ -1166,10 +1280,12 @@ export type ScheduledReminderSelect<
     tenantId?: boolean;
     bookingId?: boolean;
     ruleType?: boolean;
+    message?: boolean;
     scheduledAt?: boolean;
     sentAt?: boolean;
     status?: boolean;
     error?: boolean;
+    attempts?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     deletedAt?: boolean;
@@ -1188,10 +1304,12 @@ export type ScheduledReminderSelectCreateManyAndReturn<
     tenantId?: boolean;
     bookingId?: boolean;
     ruleType?: boolean;
+    message?: boolean;
     scheduledAt?: boolean;
     sentAt?: boolean;
     status?: boolean;
     error?: boolean;
+    attempts?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     deletedAt?: boolean;
@@ -1210,10 +1328,12 @@ export type ScheduledReminderSelectUpdateManyAndReturn<
     tenantId?: boolean;
     bookingId?: boolean;
     ruleType?: boolean;
+    message?: boolean;
     scheduledAt?: boolean;
     sentAt?: boolean;
     status?: boolean;
     error?: boolean;
+    attempts?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
     deletedAt?: boolean;
@@ -1228,10 +1348,12 @@ export type ScheduledReminderSelectScalar = {
   tenantId?: boolean;
   bookingId?: boolean;
   ruleType?: boolean;
+  message?: boolean;
   scheduledAt?: boolean;
   sentAt?: boolean;
   status?: boolean;
   error?: boolean;
+  attempts?: boolean;
   createdAt?: boolean;
   updatedAt?: boolean;
   deletedAt?: boolean;
@@ -1245,10 +1367,12 @@ export type ScheduledReminderOmit<
   | "tenantId"
   | "bookingId"
   | "ruleType"
+  | "message"
   | "scheduledAt"
   | "sentAt"
   | "status"
   | "error"
+  | "attempts"
   | "createdAt"
   | "updatedAt"
   | "deletedAt",
@@ -1291,10 +1415,12 @@ export type $ScheduledReminderPayload<
       tenantId: string;
       bookingId: string;
       ruleType: $Enums.ReminderRuleType;
+      message: string;
       scheduledAt: Date;
       sentAt: Date | null;
       status: $Enums.ScheduledReminderStatus;
       error: string | null;
+      attempts: number;
       createdAt: Date;
       updatedAt: Date;
       deletedAt: Date | null;
@@ -1944,6 +2070,7 @@ export interface ScheduledReminderFieldRefs {
   readonly tenantId: Prisma.FieldRef<"ScheduledReminder", "String">;
   readonly bookingId: Prisma.FieldRef<"ScheduledReminder", "String">;
   readonly ruleType: Prisma.FieldRef<"ScheduledReminder", "ReminderRuleType">;
+  readonly message: Prisma.FieldRef<"ScheduledReminder", "String">;
   readonly scheduledAt: Prisma.FieldRef<"ScheduledReminder", "DateTime">;
   readonly sentAt: Prisma.FieldRef<"ScheduledReminder", "DateTime">;
   readonly status: Prisma.FieldRef<
@@ -1951,6 +2078,7 @@ export interface ScheduledReminderFieldRefs {
     "ScheduledReminderStatus"
   >;
   readonly error: Prisma.FieldRef<"ScheduledReminder", "String">;
+  readonly attempts: Prisma.FieldRef<"ScheduledReminder", "Int">;
   readonly createdAt: Prisma.FieldRef<"ScheduledReminder", "DateTime">;
   readonly updatedAt: Prisma.FieldRef<"ScheduledReminder", "DateTime">;
   readonly deletedAt: Prisma.FieldRef<"ScheduledReminder", "DateTime">;

@@ -75,9 +75,29 @@ export const outboundQueue = new Queue<OutboundMessageJob>(
   },
 );
 
+// ── reminders queue ───────────────────────────────────────────────────────
+export const remindersQueue = new Queue(QUEUE_NAMES.REMINDERS, {
+  connection: producerRedis,
+  defaultJobOptions: {
+    attempts: 3,
+    backoff: {
+      type: "exponential",
+      delay: 2_000,
+    },
+    removeOnComplete: {
+      age: 24 * 3600,
+      count: 1000,
+    },
+    removeOnFail: {
+      age: 7 * 24 * 3600,
+    },
+  },
+});
+
 // ── Graceful close ────────────────────────────────────────────────────────
 export async function closeQueues(): Promise<void> {
   await aiReplyQueue.close();
   await outboundQueue.close();
+  await remindersQueue.close();
   await producerRedis.quit();
 }

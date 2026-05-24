@@ -54,7 +54,7 @@ export async function processEmbedding(job: Job<EmbeddingJob>): Promise<void> {
     throw new Error(`Document not found: ${documentId}`);
   }
 
-  if (document.status === "ACTIVE") {
+  if (document.status === "READY") {
     log.warn({ documentId }, "Document already processed — skipping");
     return;
   }
@@ -196,17 +196,17 @@ export async function processEmbedding(job: Job<EmbeddingJob>): Promise<void> {
     );
   }
 
-  // ── Step 6: Document ACTIVE mark karo ────────────────────────────────
+  // ── Step 6: Document READY mark karo ────────────────────────────────
   await withTenantContext(tenantId, async (tx) => {
     await tx.knowledgeBaseDocument.update({
       where: { id: documentId },
-      data: { status: "ACTIVE" },
+      data: { status: "READY" },
     });
   });
 
   log.info(
     { documentId, totalChunks: processedChunks },
-    "Document embedding complete — status set to ACTIVE",
+    "Document embedding complete — status set to READY",
   );
 }
 

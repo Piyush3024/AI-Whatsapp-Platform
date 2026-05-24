@@ -741,10 +741,12 @@ model ScheduledReminder {
   tenantId    String                  @db.Uuid
   bookingId   String                  @db.Uuid
   ruleType    ReminderRuleType
+  message     String
   scheduledAt DateTime                @db.Timestamptz(6)
   sentAt      DateTime?               @db.Timestamptz(6)
   status      ScheduledReminderStatus @default(PENDING)
   error       String?
+  attempts    Int                     @default(0)
   createdAt   DateTime                @default(now()) @db.Timestamptz(6)
   updatedAt   DateTime                @updatedAt @db.Timestamptz(6)
   deletedAt   DateTime?               @db.Timestamptz(6)
