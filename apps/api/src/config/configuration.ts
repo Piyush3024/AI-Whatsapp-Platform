@@ -47,6 +47,13 @@ export interface StripeConfig {
   secretKey: string;
   webhookSecret: string;
 }
+export interface EsewaConfig {
+  merchantId: string;
+  secretKey: string;
+  successUrl: string;
+  failureUrl: string;
+  mode: 'sandbox' | 'live';
+}
 
 export interface ThrottleConfig {
   ttlMs: number;
@@ -93,6 +100,13 @@ export default () => ({
     secretKey: process.env.STRIPE_SECRET_KEY!,
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
   } satisfies StripeConfig,
+  esewa: {
+    merchantId: process.env.ESEWA_MERCHANT_ID!,
+    secretKey: process.env.ESEWA_SECRET_KEY!,
+    successUrl: process.env.ESEWA_SUCCESS_URL!,
+    failureUrl: process.env.ESEWA_FAILURE_URL!,
+    mode: (process.env.ESEWA_MODE ?? 'sandbox') as 'sandbox' | 'live',
+  } satisfies EsewaConfig,
 
   throttle: {
     ttlMs: parseInt(process.env.THROTTLE_TTL_MS ?? '60000', 10),

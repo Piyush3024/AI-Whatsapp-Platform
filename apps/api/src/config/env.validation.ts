@@ -55,6 +55,13 @@ export const envValidationSchema = Joi.object({
     .pattern(/^whsec_/)
     .required(),
 
+  // ── eSewa ─────────────────────────────────────────────────────────────────
+  ESEWA_MERCHANT_ID: Joi.string().required(),
+  ESEWA_SECRET_KEY: Joi.string().required(),
+  ESEWA_SUCCESS_URL: Joi.string().uri().required(),
+  ESEWA_FAILURE_URL: Joi.string().uri().required(),
+  ESEWA_MODE: Joi.string().valid('sandbox', 'live').default('sandbox'),
+
   // ── Rate Limiting (optional — has sane defaults) ──────────────────────────
   THROTTLE_TTL_MS: Joi.number().integer().default(60_000), // 1 minute window
   THROTTLE_LIMIT: Joi.number().integer().default(120), // 120 req/min
