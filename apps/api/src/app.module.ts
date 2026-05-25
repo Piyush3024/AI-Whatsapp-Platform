@@ -24,6 +24,7 @@ import { CustomersModule } from './modules/customers/customers.module.js';
 import { BookingsModule } from './modules/bookings/bookings.module.js';
 import { WhatsAppNumberModule } from './modules/whatsapp-number/whatsapp-number.module.js';
 import { RemindersModule } from './modules/reminders/reminders.module.js';
+import { KnowledgeBaseModule } from './modules/knowledge-base/knowledge-base.module.js';
 
 @Module({
   imports: [
@@ -155,6 +156,7 @@ import { RemindersModule } from './modules/reminders/reminders.module.js';
     BookingsModule,
     WhatsAppNumberModule,
     RemindersModule,
+    KnowledgeBaseModule,
   ],
 
   controllers: [HealthController],

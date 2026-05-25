@@ -29,7 +29,15 @@ const MAX_RETRY_ATTEMPTS = 3;
 // Processor
 // ============================================================
 
-export async function processReminderJob(
+export async function processReminderJob(job: Job): Promise<void> {
+  if (job.name === "sweep-due-reminders") {
+    return processDueReminders();
+  }
+  // default: individual reminder
+  return processSingleReminder(job as Job<ReminderJobPayload>);
+}
+
+export async function processSingleReminder(
   job: Job<ReminderJobPayload>,
 ): Promise<void> {
   const { tenantId, bookingId, ruleType } = job.data;

@@ -159,3 +159,5 @@ export interface ReminderJobPayload {
   bookingId: string;
   ruleType: ReminderRuleType;
 }
+
+export type RemindersQueuePayload = ReminderJobPayload | { sweep?: boolean };

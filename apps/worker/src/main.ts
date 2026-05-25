@@ -37,6 +37,7 @@ import {
   processReminderJob,
   type ReminderJobPayload,
 } from "./processors/reminders.processor.js";
+import { remindersQueue } from "./lib/queues.js";
 
 // ============================================================
 // UNHANDLED ERROR HANDLERS
@@ -186,6 +187,18 @@ function attachWorkerListeners(workerList: Worker[]): void {
     });
   }
 }
+
+await remindersQueue.add(
+  "sweep-due-reminders",
+  { sweep: true },
+  {
+    repeat: { every: 60_000 }, // har 60 seconds
+    jobId: "sweeper-due-reminders", // fixed jobId = no duplicates on restart
+    removeOnComplete: true,
+    removeOnFail: false,
+  },
+);
+logger.info("Reminders sweeper repeatable job registered");
 
 // ============================================================
 // GRACEFUL SHUTDOWN

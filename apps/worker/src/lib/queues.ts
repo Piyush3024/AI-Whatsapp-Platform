@@ -3,7 +3,7 @@ import { Redis } from "ioredis";
 import { env } from "../config/env.js";
 import { QUEUE_NAMES } from "../constants/queues.js";
 import type { AiReplyJob, OutboundMessageJob } from "../types/job-payloads.js";
-import type { ReminderJobPayload } from "../types/job-payloads.js";
+import type { RemindersQueuePayload } from "../types/job-payloads.js";
 
 // ============================================================
 // OUTBOUND QUEUE INSTANCES
@@ -77,7 +77,7 @@ export const outboundQueue = new Queue<OutboundMessageJob>(
 );
 
 // ── reminders queue ───────────────────────────────────────────────────────
-export const remindersQueue = new Queue<ReminderJobPayload>(
+export const remindersQueue = new Queue<RemindersQueuePayload>(
   QUEUE_NAMES.REMINDERS,
   {
     connection: producerRedis,
