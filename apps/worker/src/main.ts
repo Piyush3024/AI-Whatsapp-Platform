@@ -1,29 +1,13 @@
-// ============================================================
-// WORKER ENTRY POINT
-//
-// Boot sequence:
-// 1. Env validation (Zod — fails fast if missing vars)
-// 2. Redis health check
-// 3. Prisma connect
-// 4. Start all BullMQ workers
-// 5. Attach SIGINT/SIGTERM handlers for graceful shutdown
-//
-// Graceful shutdown sequence:
-// 1. Stop accepting new jobs (worker.close())
-// 2. Wait for in-flight jobs to complete
-// 3. Disconnect Prisma
-// 4. Quit Redis
-// 5. process.exit(0)
-// ============================================================
-
-import "./config/env.js"; // Validate env first — before anything else
+import "./config/env.js";
 import { processInboundMessage } from "./processors/whatsapp-inbound.processor.js";
 import { processAiReply } from "./processors/ai-reply.processor.js";
 import { processEmbedding } from "./processors/embeddings.processor.js";
+import { processFollowUpJob } from "./processors/follow-ups.processor.js";
 import type {
   InboundMessageJob,
   AiReplyJob,
   EmbeddingJob,
+  FollowUpJob,
 } from "./types/job-payloads.js";
 import { processOutboundMessage } from "./processors/whatsapp-outbound.processor.js";
 import type { OutboundMessageJob } from "./types/job-payloads.js";
@@ -39,11 +23,6 @@ import {
 } from "./processors/reminders.processor.js";
 import { remindersQueue } from "./lib/queues.js";
 
-// ============================================================
-// UNHANDLED ERROR HANDLERS
-// Official BullMQ production docs se — mandatory
-// ============================================================
-
 process.on("uncaughtException", (err: Error) => {
   logger.error({ err }, "Uncaught exception — worker will exit");
   process.exit(1);
@@ -57,18 +36,11 @@ process.on(
   },
 );
 
-// ============================================================
-// WORKER REGISTRY
-// Phase 2 mein processors import karke yahan register honge
-// Abhi placeholder processors hain — real logic Phase 2 mein
-// ============================================================
-
 const workers: Worker[] = [];
 
 function createWorkers(): Worker[] {
   const created: Worker[] = [];
 
-  // Placeholder processor — Phase 2 mein replace hoga
   const placeholder = async (job: {
     id?: string;
     name: string;
@@ -80,7 +52,6 @@ function createWorkers(): Worker[] {
     );
   };
 
-  // whatsapp-inbound worker
   const inboundWorker = new Worker<InboundMessageJob>(
     QUEUE_NAMES.WHATSAPP_INBOUND,
     processInboundMessage,
@@ -90,7 +61,6 @@ function createWorkers(): Worker[] {
     },
   );
 
-  // ai-reply worker — lower concurrency (OpenAI rate limits)
   const aiReplyWorker = new Worker<AiReplyJob>(
     QUEUE_NAMES.AI_REPLY,
     processAiReply,
@@ -100,7 +70,6 @@ function createWorkers(): Worker[] {
     },
   );
 
-  // whatsapp-outbound worker
   const outboundWorker = new Worker<OutboundMessageJob>(
     QUEUE_NAMES.WHATSAPP_OUTBOUND,
     processOutboundMessage,
@@ -110,7 +79,6 @@ function createWorkers(): Worker[] {
     },
   );
 
-  // reminders worker
   const remindersWorker = new Worker<ReminderJobPayload>(
     QUEUE_NAMES.REMINDERS,
     processReminderJob,
@@ -120,14 +88,15 @@ function createWorkers(): Worker[] {
     },
   );
 
-  // follow_ups worker
-  const followUpsWorker = new Worker(QUEUE_NAMES.FOLLOW_UPS, placeholder, {
-    connection: redisConnection,
-    concurrency: 5,
-  });
+  const followUpsWorker = new Worker<FollowUpJob>(
+    QUEUE_NAMES.FOLLOW_UPS,
+    processFollowUpJob,
+    {
+      connection: redisConnection,
+      concurrency: 5,
+    },
+  );
 
-  // embeddings worker — heavy CPU/IO, low concurrency
-  // embeddings worker — heavy CPU/IO, low concurrency
   const embeddingsWorker = new Worker<EmbeddingJob>(
     QUEUE_NAMES.EMBEDDINGS,
     processEmbedding,
@@ -137,7 +106,6 @@ function createWorkers(): Worker[] {
     },
   );
 
-  // analytics worker
   const analyticsWorker = new Worker(QUEUE_NAMES.ANALYTICS, placeholder, {
     connection: redisConnection,
     concurrency: 5,
@@ -156,17 +124,9 @@ function createWorkers(): Worker[] {
   return created;
 }
 
-// ============================================================
-// ATTACH EVENT LISTENERS TO ALL WORKERS
-// Official BullMQ docs: error listener MANDATORY
-// Without it — worker silently stops processing on error
-// ============================================================
-
 function attachWorkerListeners(workerList: Worker[]): void {
   for (const worker of workerList) {
     const queueName = worker.name;
-
-    // MANDATORY — without this worker stops processing on error
     worker.on("error", (err: Error) => {
       logger.error({ err, queue: queueName }, "Worker error");
     });
@@ -192,18 +152,13 @@ await remindersQueue.add(
   "sweep-due-reminders",
   { sweep: true },
   {
-    repeat: { every: 60_000 }, // har 60 seconds
-    jobId: "sweeper-due-reminders", // fixed jobId = no duplicates on restart
+    repeat: { every: 60_000 },
+    jobId: "sweeper-due-reminders",
     removeOnComplete: true,
     removeOnFail: false,
   },
 );
 logger.info("Reminders sweeper repeatable job registered");
-
-// ============================================================
-// GRACEFUL SHUTDOWN
-// Official BullMQ docs pattern — SIGINT + SIGTERM
-// ============================================================
 
 async function gracefulShutdown(signal: string): Promise<void> {
   logger.info(
@@ -212,19 +167,14 @@ async function gracefulShutdown(signal: string): Promise<void> {
   );
 
   try {
-    // Step 1: Stop all workers from picking up new jobs
-    // worker.close() waits for in-flight jobs to complete
     logger.info("Closing all workers...");
     await Promise.all(workers.map((w) => w.close()));
     logger.info("All workers closed");
 
-    // Step 2: Close outbound queues
     await closeQueues();
 
-    // Step 3: Disconnect Prisma
     await disconnectPrisma();
 
-    // Step 4: Close Redis
     await closeRedis();
 
     logger.info("Graceful shutdown complete");
@@ -235,27 +185,17 @@ async function gracefulShutdown(signal: string): Promise<void> {
   }
 }
 
-// ============================================================
-// MAIN BOOT FUNCTION
-// ============================================================
-
 async function main(): Promise<void> {
-  logger.info("🚀 Worker starting...");
+  logger.info("Worker starting...");
 
-  // Step 1: Redis health check
   await checkRedisHealth();
-
-  // Step 2: Prisma connect
   await connectPrisma();
 
-  // Step 3: Create and register all workers
   const created = createWorkers();
   workers.push(...created);
 
-  // Step 4: Attach event listeners
   attachWorkerListeners(workers);
 
-  // Step 5: Register shutdown handlers
   process.on("SIGINT", () => void gracefulShutdown("SIGINT"));
   process.on("SIGTERM", () => void gracefulShutdown("SIGTERM"));
 
@@ -264,11 +204,10 @@ async function main(): Promise<void> {
       workers: workers.map((w) => w.name),
       count: workers.length,
     },
-    "✅ All workers started successfully",
+    "All workers started successfully",
   );
 }
 
-// Boot
 main().catch((err: Error) => {
   logger.error({ err }, "Fatal error during worker startup");
   process.exit(1);
