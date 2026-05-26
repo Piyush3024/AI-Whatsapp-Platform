@@ -1,19 +1,8 @@
-import {
-  IsString,
-  IsOptional,
-  IsEnum,
-  IsInt,
-  Min,
-  Max,
-  // IsIn,
-} from 'class-validator';
+import { IsString, IsOptional, IsEnum, IsInt, Min, Max } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { CustomerOptInStatus } from '@whatsapp-ai/db/generated/prisma';
 
-/**
- * Enum for sortable fields
- */
 export enum CustomerSortBy {
   CREATED_AT = 'createdAt',
   NAME = 'name',
@@ -21,23 +10,11 @@ export enum CustomerSortBy {
   UPDATED_AT = 'updatedAt',
 }
 
-/**
- * Enum for sort order
- */
 export enum SortOrder {
   ASC = 'asc',
   DESC = 'desc',
 }
 
-/**
- * DTO for querying customers with pagination, search, and filters.
- *
- * Best Practices:
- * - All fields optional (query params)
- * - Defaults applied for pagination
- * - Search is case-insensitive
- * - Validation with sensible limits
- */
 export class CustomerQueryDto {
   @ApiPropertyOptional({
     description: 'Page number (1-indexed)',
@@ -112,9 +89,6 @@ export class CustomerQueryDto {
   sortOrder?: SortOrder = SortOrder.DESC;
 }
 
-/**
- * Response type for paginated customer list
- */
 export interface PaginatedCustomerResponse {
   items: CustomerResponse[];
   meta: {
@@ -125,9 +99,6 @@ export interface PaginatedCustomerResponse {
   };
 }
 
-/**
- * Customer response type
- */
 export interface CustomerResponse {
   id: string;
   tenantId: string;
@@ -142,9 +113,6 @@ export interface CustomerResponse {
   updatedAt: Date;
 }
 
-/**
- * Customer stats response type
- */
 export interface CustomerStatsResponse {
   total: number;
   optedIn: number;

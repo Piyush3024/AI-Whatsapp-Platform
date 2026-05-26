@@ -11,17 +11,7 @@ import {
 import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { CustomerOptInStatus } from '@whatsapp-ai/db/generated/prisma';
-// import { v4 as isValidUUID } from 'uuid';
 
-/**
- * DTO for creating a new customer.
- *
- * Best Practices:
- * - Phone is required (E.164 format - international standard)
- * - Email is optional but validated if provided
- * - Tags are transformed to array if string provided
- * - All strings trimmed of whitespace
- */
 export class CreateCustomerDto {
   @ApiProperty({
     description: 'Phone number in E.164 format (e.g., +9779801234567)',

@@ -11,15 +11,6 @@ import { Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { CustomerOptInStatus } from '@whatsapp-ai/db/generated/prisma';
 
-/**
- * DTO for updating an existing customer.
- *
- * Best Practices:
- * - All fields optional (PATCH semantics)
- * - Same validation as create
- * - Phone update allowed but uniqueness checked in service
- * - Only provided fields are updated
- */
 export class UpdateCustomerDto {
   @ApiPropertyOptional({
     description: 'Phone number in E.164 format',

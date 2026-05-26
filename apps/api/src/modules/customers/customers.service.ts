@@ -19,16 +19,6 @@ import {
   CustomerResponse,
 } from './dto/index.js';
 
-/**
- * Customer service for managing customers.
- *
- * Best Practices:
- * - All queries include tenantId for RLS
- * - Soft deletes respected via PrismaService extension
- * - Pagination with proper metadata
- * - Search across multiple fields
- * - Stats aggregation for dashboard
- */
 @Injectable()
 export class CustomersService {
   private readonly logger = new Logger(CustomersService.name);
@@ -38,9 +28,6 @@ export class CustomersService {
     private readonly cls: ClsService,
   ) {}
 
-  /**
-   * Find all customers with pagination, search, and filters.
-   */
   async findAll(query: CustomerQueryDto): Promise<PaginatedCustomerResponse> {
     const {
       page = 1,
@@ -53,12 +40,9 @@ export class CustomersService {
     } = query;
 
     const skip = (page - 1) * limit;
-    // const tenantId = this.prisma.getTenantId();
 
-    // Build where clause
     const where: Record<string, unknown> = {};
 
-    // Search across multiple fields
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
@@ -68,21 +52,16 @@ export class CustomersService {
       ];
     }
 
-    // Filter by status
     if (status) {
       where.optInStatus = status;
     }
-
-    // Filter by tag (stored as JSON array)
     if (tag) {
       where.tags = { array_contains: tag.toLowerCase() };
     }
 
-    // Build orderBy
     const orderBy: Record<string, 'asc' | 'desc'> = {};
     orderBy[sortBy] = sortOrder;
 
-    // Execute query with count in transaction
     const [items, total] = await this.prisma.db.$transaction([
       this.prisma.db.customer.findMany({
         where,
@@ -117,9 +96,6 @@ export class CustomersService {
     };
   }
 
-  /**
-   * Find a single customer by ID.
-   */
   async findOne(id: string): Promise<CustomerResponse> {
     const tenantId = this.prisma.getTenantId();
 
@@ -153,16 +129,11 @@ export class CustomersService {
     return this.transformCustomer(customer);
   }
 
-  /**
-   * Create a new customer.
-   */
   async create(dto: CreateCustomerDto): Promise<CustomerResponse> {
     const tenantId = this.prisma.getTenantId();
 
-    // Normalize phone (remove spaces, ensure E.164)
     const normalizedPhone = this.normalizePhone(dto.phone);
 
-    // Check for duplicate phone within tenant
     const existing = await this.prisma.db.customer.findFirst({
       where: {
         tenantId,
@@ -209,13 +180,9 @@ export class CustomersService {
     return this.transformCustomer(customer);
   }
 
-  /**
-   * Update an existing customer.
-   */
   async update(id: string, dto: UpdateCustomerDto): Promise<CustomerResponse> {
     const tenantId = this.prisma.getTenantId();
 
-    // First check if customer exists
     const existing = await this.prisma.db.customer.findFirst({
       where: { id, tenantId },
       select: { id: true, phone: true },
@@ -228,7 +195,6 @@ export class CustomersService {
       });
     }
 
-    // If phone is being changed, check for duplicates
     if (dto.phone && dto.phone !== existing.phone) {
       const normalizedPhone = this.normalizePhone(dto.phone);
       const duplicate = await this.prisma.db.customer.findFirst({
@@ -250,7 +216,6 @@ export class CustomersService {
       dto.phone = normalizedPhone;
     }
 
-    // Build update data (only include provided fields)
     const updateData: Record<string, unknown> = {};
     if (dto.name !== undefined) updateData.name = dto.name;
     if (dto.email !== undefined) updateData.email = dto.email;
@@ -289,9 +254,6 @@ export class CustomersService {
     return this.transformCustomer(customer);
   }
 
-  /**
-   * Soft delete a customer.
-   */
   async remove(id: string): Promise<void> {
     const tenantId = this.prisma.getTenantId();
 
@@ -307,7 +269,6 @@ export class CustomersService {
       });
     }
 
-    // PrismaService soft-delete extension handles deletedAt
     await this.prisma.db.customer.delete({
       where: { id },
     });
@@ -315,20 +276,15 @@ export class CustomersService {
     this.logger.log(`Customer deleted: ${id} for tenant: ${tenantId}`);
   }
 
-  /**
-   * Get customer statistics for dashboard.
-   */
   async getStats(): Promise<CustomerStatsResponse> {
     const tenantId = this.prisma.getTenantId();
 
-    // Calculate date boundaries
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const startOfWeek = new Date(now);
     startOfWeek.setDate(now.getDate() - now.getDay());
     startOfWeek.setHours(0, 0, 0, 0);
 
-    // Execute aggregation queries
     const [
       totalResult,
       optedInResult,
@@ -371,9 +327,6 @@ export class CustomersService {
     };
   }
 
-  /**
-   * Get conversations for a customer.
-   */
   async getConversations(
     customerId: string,
     query: { page?: number; limit?: number },
@@ -383,7 +336,6 @@ export class CustomersService {
     const limit = query.limit ?? 20;
     const skip = (page - 1) * limit;
 
-    // Verify customer exists
     const customer = await this.prisma.db.customer.findFirst({
       where: { id: customerId, tenantId },
       select: { id: true },
@@ -434,14 +386,8 @@ export class CustomersService {
     };
   }
 
-  /**
-   * Normalize phone number to E.164 format.
-   */
   private normalizePhone(phone: string): string {
-    // Remove all spaces and special characters except +
     let normalized = phone.replace(/[\s\-()]/g, '');
-
-    // Ensure it starts with +
     if (!normalized.startsWith('+')) {
       normalized = '+' + normalized;
     }
@@ -449,9 +395,6 @@ export class CustomersService {
     return normalized;
   }
 
-  /**
-   * Transform Prisma customer to response format.
-   */
   private transformCustomer(
     customer: Record<string, unknown>,
   ): CustomerResponse {

@@ -33,16 +33,6 @@ import {
 import { Roles } from '../../common/decorators/roles.decorator.js';
 import { UserRole } from '@whatsapp-ai/db/generated/prisma';
 
-/**
- * Customer controller for managing customers.
- *
- * Best Practices:
- * - All authenticated (no @Public decorator)
- * - ADMIN/OWNER required for create/update/delete
- * - Pagination via query params
- * - Swagger docs for all endpoints
- * - Throttle limits applied
- */
 @ApiTags('Customers')
 @ApiBearerAuth()
 @Controller({ path: 'customers', version: '1' })
