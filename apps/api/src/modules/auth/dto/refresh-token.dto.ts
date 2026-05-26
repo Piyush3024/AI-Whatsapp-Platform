@@ -1,12 +1,9 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-/**
- * RefreshTokenDto — Naya access token lene ke liye refresh token bhejo.
- */
 export class RefreshTokenDto {
   @ApiProperty({
-    description: 'Refresh token jo login/register pe mila tha',
+    description: 'Refresh token that is generated during login/register',
   })
   @IsString()
   @IsNotEmpty()

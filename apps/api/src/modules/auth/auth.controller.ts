@@ -22,20 +22,6 @@ import { Public } from '../../common/decorators/public.decorator.js';
 import { CurrentUser } from '../../common/decorators/current-user.decorator.js';
 import type { CurrentUserPayload } from '../../common/decorators/current-user.decorator.js';
 
-/**
- * AuthController — Authentication endpoints
- *
- * Saare auth routes /api/v1/auth/* pe available hain.
- *
- * Public routes (@Public() lagaya hai):
- *  POST /auth/register  — Naya account banana
- *  POST /auth/login     — Login karna
- *  POST /auth/refresh   — Naye tokens lena (refresh token se)
- *
- * Protected routes (JWT required):
- *  POST /auth/logout    — Logout karna
- *  GET  /auth/me        — Current user info
- */
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -46,7 +32,6 @@ export class AuthController {
   @Public()
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  // Strict rate limiting — 10 req/min brute force se protect karta hai
   @Throttle({ strict: { limit: 10, ttl: 60_000 } })
   @ApiOperation({
     summary: 'Naya tenant + owner account register karo',
@@ -81,7 +66,6 @@ export class AuthController {
   @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  // Refresh token body mein aata hai — jwt-refresh strategy handle karta hai
   @UseGuards(AuthGuard('jwt-refresh'))
   @ApiOperation({
     summary: 'Refresh token se naye access + refresh tokens lo',

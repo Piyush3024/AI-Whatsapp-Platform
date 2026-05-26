@@ -1,14 +1,11 @@
 import { IsEmail, IsNotEmpty, IsString, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-/**
- * LoginDto — Email + Password se login karne ke liye.
- */
 export class LoginDto {
   @ApiProperty({
     example: 'rahul@sharmasalon.com',
   })
-  @IsEmail({}, { message: 'Valid email address daalo' })
+  @IsEmail({}, { message: 'Please enter a valid email address' })
   @MaxLength(255)
   email!: string;
 
@@ -17,6 +14,6 @@ export class LoginDto {
   })
   @IsString()
   @IsNotEmpty()
-  @MaxLength(72) // bcrypt 72 char limit
+  @MaxLength(72)
   password!: string;
 }
