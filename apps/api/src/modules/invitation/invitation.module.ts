@@ -1,6 +1,3 @@
-// MailModule @Global() hai — import karna zaruri nahi.
-// JwtModule AppModule mein global registered hai.
-
 import { Module } from '@nestjs/common';
 import { InvitationService } from './invitation.service.js';
 import { InvitationController } from './invitation.controller.js';

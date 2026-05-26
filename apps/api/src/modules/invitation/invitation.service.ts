@@ -1,25 +1,3 @@
-// apps/api/src/modules/invitation/invitation.service.ts
-//
-// Invitation Flow:
-//
-//  1. OWNER/ADMIN → POST /invitations
-//     - Duplicate check (same email + tenant + INVITED)
-//     - Crypto-random token (32 bytes hex = 64 chars)
-//     - DB mein Invitation record create karo (48h expiry)
-//     - Resend se email bhejo
-//
-//  2. Anyone → GET /invitations/validate?token=xxx
-//     - Token valid hai? Expired? Already used?
-//     - Frontend isko "Accept" page render karne ke liye use karta hai
-//
-//  3. Anyone → POST /invitations/accept
-//     - Token verify karo
-//     - Email se User exist karta hai? → sirf TenantMember add karo
-//     - Naya user? → User + TenantMember banao, password hash karo
-//     - Invitation status ACTIVE karo
-//     - Welcome email bhejo
-//     - Auth tokens return karo (auto-login)
-
 import {
   Injectable,
   Logger,
@@ -40,7 +18,7 @@ import type { JwtPayload } from '../auth/strategies/jwt.strategy.js';
 
 const BCRYPT_ROUNDS = 12;
 const INVITE_EXPIRY_HOURS = 48;
-const TOKEN_BYTES = 32; // 32 bytes = 64-char hex — cryptographically secure
+const TOKEN_BYTES = 32;
 
 @Injectable()
 export class InvitationService {
@@ -53,14 +31,11 @@ export class InvitationService {
     private readonly config: ConfigService,
   ) {}
 
-  // ── Create Invitation ────────────────────────────────────────────────────
-
   async createInvitation(
     tenantId: string,
     inviterUserId: string,
     dto: CreateInvitationDto,
   ): Promise<{ id: string; email: string; expiresAt: Date }> {
-    // Inviter info fetch karo for email
     const inviter = await this.prisma.db.user.findUnique({
       where: { id: inviterUserId },
       select: { name: true },
@@ -73,7 +48,6 @@ export class InvitationService {
 
     if (!tenant) throw new NotFoundException('Tenant not found');
 
-    // Check 1: Invited email already active member hai?
     const existingMember = await this.prisma.db.tenantMember.findFirst({
       where: {
         tenantId,
@@ -84,34 +58,30 @@ export class InvitationService {
 
     if (existingMember) {
       throw new ConflictException(
-        `${dto.email} already is tenant ka member hai.`,
+        `${dto.email} already a member of this tenant`,
       );
     }
-
-    // Check 2: Pending invitation already exist karta hai?
     const existingInvite = await this.prisma.db.invitation.findFirst({
       where: {
         tenantId,
         email: dto.email,
         status: 'INVITED',
-        expiresAt: { gt: new Date() }, // sirf unexpired
+        expiresAt: { gt: new Date() },
       },
     });
 
     if (existingInvite) {
       throw new ConflictException(
-        `${dto.email} ke liye already ek pending invitation hai. Pehle revoke karo.`,
+        `${dto.email} has already pending invitation. Please revoke`,
       );
     }
 
-    // Generate cryptographically secure token
     const token = randomBytes(TOKEN_BYTES).toString('hex');
 
     const expiresAt = new Date(
       Date.now() + INVITE_EXPIRY_HOURS * 60 * 60 * 1000,
     );
 
-    // DB mein invitation create karo
     const invitation = await this.prisma.db.invitation.create({
       data: {
         tenantId,
@@ -123,7 +93,6 @@ export class InvitationService {
       },
     });
 
-    // Email bhejo — fire after DB commit
     try {
       await this.mail.sendInvitation({
         toEmail: dto.email,
@@ -134,9 +103,8 @@ export class InvitationService {
         expiresAt,
       });
     } catch (err) {
-      // Email fail hone pe invitation revoke karo — atomic cleanup
       await this.prisma.db.invitation.delete({ where: { id: invitation.id } });
-      throw err; // MailService already logs + throws InternalServerErrorException
+      throw err;
     }
 
     this.logger.log(
@@ -146,8 +114,6 @@ export class InvitationService {
 
     return { id: invitation.id, email: invitation.email, expiresAt };
   }
-
-  // ── List Invitations ─────────────────────────────────────────────────────
 
   async listInvitations(tenantId: string) {
     return this.prisma.db.invitation.findMany({
@@ -163,9 +129,6 @@ export class InvitationService {
       },
     });
   }
-
-  // ── Validate Token ───────────────────────────────────────────────────────
-  // Frontend "Accept" page calls this to show invite details before user fills form
 
   async validateToken(token: string): Promise<{
     email: string;
@@ -183,13 +146,11 @@ export class InvitationService {
     }
 
     if (invitation.status !== 'INVITED') {
-      throw new BadRequestException('Ye invitation already use ho chuka hai');
+      throw new BadRequestException('Invitation already used');
     }
 
     if (invitation.expiresAt < new Date()) {
-      throw new BadRequestException(
-        'Invitation expire ho gaya hai. Naya invite maango.',
-      );
+      throw new BadRequestException('Invitation expired. Request new invite.');
     }
 
     return {
@@ -200,10 +161,7 @@ export class InvitationService {
     };
   }
 
-  // ── Accept Invitation ────────────────────────────────────────────────────
-
   async acceptInvitation(dto: AcceptInvitationDto): Promise<AuthTokens> {
-    // Step 1: Token validate karo (reuse validateToken logic)
     const invitation = await this.prisma.db.invitation.findUnique({
       where: { token: dto.token },
       include: { tenant: { select: { id: true, name: true } } },
@@ -214,16 +172,13 @@ export class InvitationService {
     }
 
     if (invitation.status !== 'INVITED') {
-      throw new BadRequestException('Ye invitation already use ho chuka hai');
+      throw new BadRequestException('Invitation already used');
     }
 
     if (invitation.expiresAt < new Date()) {
-      throw new BadRequestException(
-        'Invitation expire ho gaya hai. Naya invite maango.',
-      );
+      throw new BadRequestException('Invitation expired. Request new invite.');
     }
 
-    // Step 2: User already exist karta hai is email se?
     const existingUser = await this.prisma.db.user.findUnique({
       where: { email: invitation.email },
     });
@@ -233,8 +188,6 @@ export class InvitationService {
     let userId: string;
 
     if (existingUser) {
-      // User exist karta hai — sirf TenantMember add karo
-      // (user dusre tenant ka member ho sakta hai)
       userId = existingUser.id;
 
       const alreadyMember = await this.prisma.db.tenantMember.findFirst({
@@ -242,15 +195,13 @@ export class InvitationService {
       });
 
       if (alreadyMember) {
-        // Invitation outdated — mark used anyway
         await this.prisma.db.invitation.update({
           where: { id: invitation.id },
           data: { status: 'ACTIVE' },
         });
-        throw new ConflictException('Aap already is tenant ke member hain.');
+        throw new ConflictException('Already a member of this tenant');
       }
 
-      // TenantMember + invitation update — transaction mein
       await this.prisma.$transaction(async (tx) => {
         await tx.tenantMember.create({
           data: {
@@ -267,7 +218,6 @@ export class InvitationService {
         });
       });
     } else {
-      // Step 3: Naya user banao
       const result = await this.prisma.$transaction(async (tx) => {
         const newUser = await tx.user.create({
           data: {
@@ -302,7 +252,6 @@ export class InvitationService {
       'Invitation accepted — member added',
     );
 
-    // Step 4: Welcome email bhejo (non-blocking — don't fail acceptance on email error)
     this.mail
       .sendWelcome({
         toEmail: invitation.email,
@@ -316,7 +265,6 @@ export class InvitationService {
         );
       });
 
-    // Step 5: Auto-login — tokens generate karo
     return this._generateTokens({
       sub: userId,
       tenantId: invitation.tenantId,
@@ -324,8 +272,6 @@ export class InvitationService {
       email: invitation.email,
     });
   }
-
-  // ── Revoke Invitation ────────────────────────────────────────────────────
 
   async revokeInvitation(
     tenantId: string,
@@ -340,12 +286,9 @@ export class InvitationService {
     }
 
     if (invitation.status !== 'INVITED') {
-      throw new BadRequestException(
-        'Sirf pending invitations revoke ki ja sakti hain',
-      );
+      throw new BadRequestException('Only pending invitations can be revoked');
     }
 
-    // Hard delete — invitation table soft delete nahi karta (schema mein deletedAt nahi)
     await this.prisma.db.invitation.delete({
       where: { id: invitationId },
     });
@@ -355,12 +298,6 @@ export class InvitationService {
       'Invitation revoked',
     );
   }
-
-  // ── Private: Token Generator ─────────────────────────────────────────────
-  // auth.service.ts se duplicate avoid karne ke liye — InvitationService
-  // ko AuthService inject karna circular dependency risk hai.
-  // Pattern: shared token logic ko AuthService mein rakhna better hota —
-  // lekin abhi simple rakhte hain.
 
   private async _generateTokens(payload: JwtPayload): Promise<AuthTokens> {
     const accessExpiresIn = this.config.get<string>('jwt.expiresIn') ?? '15m';

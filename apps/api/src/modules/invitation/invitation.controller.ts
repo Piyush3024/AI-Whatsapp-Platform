@@ -1,5 +1,3 @@
-// apps/api/src/modules/invitation/invitation.controller.ts
-
 import {
   Controller,
   Post,
@@ -28,8 +26,6 @@ import type { JwtPayload } from '../auth/strategies/jwt.strategy.js';
 export class InvitationController {
   constructor(private readonly invitationService: InvitationService) {}
 
-  // ── Create Invitation (OWNER / ADMIN only) ───────────────────────────────
-
   @Post()
   @Roles('OWNER', 'ADMIN')
   @Throttle({ strict: { limit: 10, ttl: 60_000 } })
@@ -44,25 +40,17 @@ export class InvitationController {
     );
   }
 
-  // ── List Invitations (OWNER / ADMIN only) ────────────────────────────────
-
   @Get()
   @Roles('OWNER', 'ADMIN')
   async listInvitations(@CurrentUser() user: JwtPayload) {
     return this.invitationService.listInvitations(user.tenantId);
   }
 
-  // ── Validate Token (@Public — no JWT) ────────────────────────────────────
-  // Frontend "Accept" page calls this to show invite metadata before form fill
-
   @Public()
   @Get('validate')
   async validateToken(@Query('token') token: string) {
     return this.invitationService.validateToken(token);
   }
-
-  // ── Accept Invitation (@Public — no JWT) ─────────────────────────────────
-  // Returns auth tokens → auto-login after account creation
 
   @Public()
   @Post('accept')
@@ -71,8 +59,6 @@ export class InvitationController {
   async acceptInvitation(@Body() dto: AcceptInvitationDto) {
     return this.invitationService.acceptInvitation(dto);
   }
-
-  // ── Revoke Invitation (OWNER / ADMIN only) ───────────────────────────────
 
   @Delete(':id')
   @Roles('OWNER', 'ADMIN')
