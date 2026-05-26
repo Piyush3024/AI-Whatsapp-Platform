@@ -28,6 +28,7 @@ import { KnowledgeBaseModule } from './modules/knowledge-base/knowledge-base.mod
 import { BillingModule } from './modules/billing/billing.module.js';
 import { MailModule } from './modules/mail/mail.module.js';
 import { InvitationModule } from './modules/invitation/invitation.module.js';
+import { AnalyticsModule } from './modules/analytics/analytics.module.js';
 
 @Module({
   imports: [
@@ -163,6 +164,7 @@ import { InvitationModule } from './modules/invitation/invitation.module.js';
     KnowledgeBaseModule,
     BillingModule,
     InvitationModule,
+    AnalyticsModule,
   ],
 
   controllers: [HealthController],
