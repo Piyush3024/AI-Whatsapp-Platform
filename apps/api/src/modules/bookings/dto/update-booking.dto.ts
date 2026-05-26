@@ -3,21 +3,11 @@ import {
   IsOptional,
   IsUUID,
   IsDateString,
-  // IsEnum,
   MaxLength,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-// import { BookingStatus } from '@whatsapp-ai/db/generated/prisma';
 
-/**
- * DTO for updating an existing booking.
- *
- * Best Practices:
- * - All fields optional (PATCH semantics)
- * - Cannot change serviceIds (would need separate endpoint)
- * - Cannot change customerId
- */
 export class UpdateBookingDto {
   @ApiPropertyOptional({
     description: 'Staff ID (UUID)',

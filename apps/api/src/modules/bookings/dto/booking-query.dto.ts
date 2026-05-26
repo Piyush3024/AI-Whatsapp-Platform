@@ -12,26 +12,17 @@ import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { BookingStatus, BookingSource } from '@whatsapp-ai/db/generated/prisma';
 
-/**
- * Enum for sortable fields
- */
 export enum BookingSortBy {
   CREATED_AT = 'createdAt',
   START_TIME = 'startTime',
   STATUS = 'status',
 }
 
-/**
- * Enum for sort order
- */
 export enum SortOrder {
   ASC = 'asc',
   DESC = 'desc',
 }
 
-/**
- * DTO for querying bookings with pagination, search, and filters.
- */
 export class BookingQueryDto {
   @ApiPropertyOptional({ description: 'Page number', default: 1, minimum: 1 })
   @IsOptional()
@@ -113,9 +104,6 @@ export class BookingQueryDto {
   sortOrder?: SortOrder = SortOrder.ASC;
 }
 
-/**
- * DTO for calendar view query
- */
 export class CalendarQueryDto {
   @ApiPropertyOptional({ description: 'Start date (ISO 8601)', required: true })
   @IsNotEmpty({ message: 'Start date is required' })

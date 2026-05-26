@@ -6,7 +6,6 @@ import {
   IsUUID,
   IsDateString,
   IsEnum,
-  // Min,
   MaxLength,
   ArrayMinSize,
 } from 'class-validator';
@@ -14,16 +13,6 @@ import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { BookingSource } from '@whatsapp-ai/db/generated/prisma';
 
-/**
- * DTO for creating a new booking.
- *
- * Best Practices:
- * - Customer required (must exist)
- * - At least one service required
- * - Staff optional but validated if provided
- * - startTime must be in future
- * - Duration calculated from services
- */
 export class CreateBookingDto {
   @ApiProperty({
     description: 'Customer ID (UUID)',

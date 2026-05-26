@@ -5,9 +5,6 @@ import { BookingsService } from './bookings.service.js';
 import { PrismaModule } from '../../prisma/prisma.module.js';
 import { RemindersModule } from '../reminders/reminders.module.js';
 
-/**
- * Bookings module for managing bookings.
- */
 @Module({
   imports: [
     PrismaModule,

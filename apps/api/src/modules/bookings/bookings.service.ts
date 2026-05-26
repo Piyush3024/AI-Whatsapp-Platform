@@ -25,15 +25,6 @@ import type { Queue } from 'bullmq';
 import { QUEUE_NAMES } from '../../constants/queues.js';
 import type { FollowUpJob } from '../../constants/job-payloads.js';
 
-/**
- * Booking service for managing bookings.
- *
- * Best Practices:
- * - All queries include tenantId for RLS
- * - Transaction for create (Booking + BookingServices)
- * - Staff availability + conflict checking
- * - Audit logging for status changes
- */
 @Injectable()
 export class BookingsService {
   private readonly logger = new Logger(BookingsService.name);
@@ -44,9 +35,6 @@ export class BookingsService {
     @InjectQueue(QUEUE_NAMES.FOLLOW_UPS) private readonly followUpsQueue: Queue,
   ) {}
 
-  /**
-   * Find all bookings with pagination, search, and filters.
-   */
   async findAll(query: BookingQueryDto) {
     const {
       page = 1,
@@ -65,7 +53,6 @@ export class BookingsService {
     const skip = (page - 1) * limit;
     const tenantId = this.prisma.getTenantId();
 
-    // Build where clause
     const where: Prisma.BookingWhereInput = { tenantId };
 
     if (status) where.status = status;
@@ -80,11 +67,9 @@ export class BookingsService {
       if (dateTo) where.startTime.lte = new Date(dateTo);
     }
 
-    // Build orderBy
     const orderBy: Prisma.BookingOrderByWithRelationInput = {};
     orderBy[sortBy] = sortOrder;
 
-    // Execute query with count
     const [bookings, total] = await this.prisma.db.$transaction([
       this.prisma.db.booking.findMany({
         where,
@@ -118,9 +103,6 @@ export class BookingsService {
     };
   }
 
-  /**
-   * Find a single booking by ID.
-   */
   async findOne(id: string) {
     const tenantId = this.prisma.getTenantId();
 
@@ -152,14 +134,10 @@ export class BookingsService {
     return this.transformBooking(booking);
   }
 
-  /**
-   * Create a new booking with services.
-   */
   async create(dto: CreateBookingDto) {
     const tenantId = this.prisma.getTenantId();
     const startTime = new Date(dto.startTime);
 
-    // 1. Verify customer exists
     const customer = await this.prisma.db.customer.findFirst({
       where: { id: dto.customerId, tenantId },
       select: { id: true },
@@ -172,7 +150,6 @@ export class BookingsService {
       });
     }
 
-    // 2. Verify all services exist, active, and belong to tenant
     const services = await this.prisma.db.service.findMany({
       where: {
         id: { in: dto.serviceIds },
@@ -192,12 +169,10 @@ export class BookingsService {
       });
     }
 
-    // 3. Calculate totalAmount and totalDuration
     const totalAmount = services.reduce((sum, s) => sum + s.price, 0);
     const totalDuration = services.reduce((sum, s) => sum + s.duration, 0);
     const endTime = new Date(startTime.getTime() + totalDuration * 60 * 1000);
 
-    // 4. Verify staff exists if provided
     if (dto.staffId) {
       const staff = await this.prisma.db.staff.findFirst({
         where: { id: dto.staffId, tenantId, isActive: true },
@@ -211,7 +186,6 @@ export class BookingsService {
         });
       }
 
-      // 5. Check staff availability and conflicts
       await this.checkStaffAvailability(
         dto.staffId,
         startTime,
@@ -220,9 +194,7 @@ export class BookingsService {
       );
     }
 
-    // 6. Create booking with services in transaction
     const booking = await this.prisma.db.$transaction(async (tx) => {
-      // Create booking
       const newBooking = await tx.booking.create({
         data: {
           tenantId,
@@ -239,7 +211,6 @@ export class BookingsService {
         },
       });
 
-      // Create booking services
       await tx.bookingService.createMany({
         data: services.map((service) => ({
           tenantId,
@@ -250,7 +221,6 @@ export class BookingsService {
         })),
       });
 
-      // Log audit
       await tx.auditLog.create({
         data: {
           tenantId,
@@ -273,9 +243,6 @@ export class BookingsService {
     return this.findOne(booking.id);
   }
 
-  /**
-   * Update an existing booking.
-   */
   async update(id: string, dto: UpdateBookingDto) {
     const tenantId = this.prisma.getTenantId();
 
@@ -299,7 +266,6 @@ export class BookingsService {
       await this.remindersService.scheduleRemindersForBooking(id);
     }
 
-    // If changing staff or time, check conflicts
     if (dto.staffId || dto.startTime) {
       const newStaffId = dto.staffId ?? existing.staffId;
       const newStartTime = dto.startTime
@@ -317,7 +283,6 @@ export class BookingsService {
       }
     }
 
-    // Build update data
     const updateData: Prisma.BookingUpdateInput = {};
 
     if (dto.staffId !== undefined) {
@@ -346,9 +311,6 @@ export class BookingsService {
     return this.findOne(id);
   }
 
-  /**
-   * Update booking status only.
-   */
   async updateStatus(id: string, status: BookingStatus) {
     const tenantId = this.prisma.getTenantId();
 
@@ -375,13 +337,10 @@ export class BookingsService {
     const previousStatus = existing.status;
 
     await this.prisma.db.$transaction(async (tx) => {
-      // Update status
       await tx.booking.update({
         where: { id },
         data: { status },
       });
-
-      // Audit log
       await tx.auditLog.create({
         data: {
           tenantId,
@@ -404,9 +363,6 @@ export class BookingsService {
     return this.findOne(id);
   }
 
-  /**
-   * Soft delete a booking.
-   */
   async remove(id: string) {
     const tenantId = this.prisma.getTenantId();
 
@@ -427,9 +383,6 @@ export class BookingsService {
     this.logger.log(`Booking deleted: ${id}`);
   }
 
-  /**
-   * Get booking statistics for dashboard.
-   */
   async getStats() {
     const tenantId = this.prisma.getTenantId();
     const now = new Date();
@@ -492,9 +445,6 @@ export class BookingsService {
     };
   }
 
-  /**
-   * Get calendar view of bookings.
-   */
   async getCalendar(query: {
     dateFrom: string;
     dateTo: string;
@@ -537,9 +487,6 @@ export class BookingsService {
     };
   }
 
-  /**
-   * Check staff availability and conflicts.
-   */
   private async checkStaffAvailability(
     staffId: string,
     startTime: Date,
@@ -547,7 +494,6 @@ export class BookingsService {
     tenantId: string,
     excludeBookingId?: string,
   ) {
-    // Check staff schedule for the day
     type DayOfWeekKey =
       | 'SUNDAY'
       | 'MONDAY'
@@ -567,17 +513,13 @@ export class BookingsService {
     ];
     const dayOfWeek = dayOfWeekKeys[startTime.getDay()];
 
-    // Check regular schedule
     const schedule = await this.prisma.db.staffSchedule.findFirst({
       where: { staffId, dayOfWeek: { equals: dayOfWeek } },
     });
 
-    // Check override
     const override = await this.prisma.db.staffScheduleOverride.findFirst({
       where: { staffId, date: startTime },
     });
-
-    // If no schedule or override says not working
     if (
       (!schedule || !schedule.isWorking) &&
       (!override || !override.isWorking)
@@ -588,7 +530,6 @@ export class BookingsService {
       });
     }
 
-    // Check for conflicting bookings
     const conflictWhere: Prisma.BookingWhereInput = {
       staffId,
       id: excludeBookingId ? { not: excludeBookingId } : undefined,
@@ -627,9 +568,6 @@ export class BookingsService {
     }
   }
 
-  /**
-   * Transform booking to response format.
-   */
   private transformBooking(booking: Record<string, unknown>) {
     const services =
       (booking.services as Array<{
@@ -662,11 +600,6 @@ export class BookingsService {
     };
   }
 
-  /**
-   * Schedule post-appointment follow-ups via BullMQ delayed jobs.
-   * post_appointment → 4 hours after completion
-   * re_booking       → 30 days after completion
-   */
   private async scheduleFollowUps(
     bookingId: string,
     tenantId: string,
@@ -685,7 +618,6 @@ export class BookingsService {
 
     if (!booking || !booking.customer) return;
 
-    // Opted-out customers ko follow-up nahi
     if (booking.customer.optInStatus === 'OPTED_OUT') {
       this.logger.log(
         `Follow-up skipped — customer opted out: ${booking.customer.id}`,
@@ -709,7 +641,6 @@ export class BookingsService {
       customerPhone: booking.customer.phone,
     };
 
-    // post_appointment — 4h delay
     await this.followUpsQueue.add(
       'send-follow-up',
       {
@@ -719,7 +650,7 @@ export class BookingsService {
       } satisfies FollowUpJob,
       {
         delay: FOUR_HOURS_MS,
-        jobId: `follow-up-post-${bookingId}`, // dedup — restart pe duplicate nahi
+        jobId: `follow-up-post-${bookingId}`,
         attempts: 3,
         backoff: { type: 'exponential', delay: 2_000 },
         removeOnComplete: { age: 24 * 3600 },
@@ -727,7 +658,6 @@ export class BookingsService {
       },
     );
 
-    // re_booking — 30d delay
     await this.followUpsQueue.add(
       'send-follow-up',
       {
