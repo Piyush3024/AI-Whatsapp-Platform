@@ -3,6 +3,7 @@ import { processInboundMessage } from "./processors/whatsapp-inbound.processor.j
 import { processAiReply } from "./processors/ai-reply.processor.js";
 import { processEmbedding } from "./processors/embeddings.processor.js";
 import { processFollowUpJob } from "./processors/follow-ups.processor.js";
+import { processAnalyticsJob } from "./processors/analytics.processor.js";
 import type {
   InboundMessageJob,
   AiReplyJob,
@@ -11,7 +12,7 @@ import type {
 } from "./types/job-payloads.js";
 import { processOutboundMessage } from "./processors/whatsapp-outbound.processor.js";
 import type { OutboundMessageJob } from "./types/job-payloads.js";
-import { closeQueues } from "./lib/queues.js";
+import { closeQueues, analyticsQueue } from "./lib/queues.js";
 import { Worker } from "bullmq";
 import { redisConnection, checkRedisHealth, closeRedis } from "./lib/redis.js";
 import { connectPrisma, disconnectPrisma } from "./lib/prisma.js";
@@ -41,16 +42,16 @@ const workers: Worker[] = [];
 function createWorkers(): Worker[] {
   const created: Worker[] = [];
 
-  const placeholder = async (job: {
-    id?: string;
-    name: string;
-    data: unknown;
-  }) => {
-    logger.info(
-      { jobId: job.id, jobName: job.name },
-      "Job received — processor not implemented yet",
-    );
-  };
+  // const placeholder = async (job: {
+  //   id?: string;
+  //   name: string;
+  //   data: unknown;
+  // }) => {
+  //   logger.info(
+  //     { jobId: job.id, jobName: job.name },
+  //     "Job received — processor not implemented yet",
+  //   );
+  // };
 
   const inboundWorker = new Worker<InboundMessageJob>(
     QUEUE_NAMES.WHATSAPP_INBOUND,
@@ -106,11 +107,14 @@ function createWorkers(): Worker[] {
     },
   );
 
-  const analyticsWorker = new Worker(QUEUE_NAMES.ANALYTICS, placeholder, {
-    connection: redisConnection,
-    concurrency: 5,
-  });
-
+  const analyticsWorker = new Worker(
+    QUEUE_NAMES.ANALYTICS,
+    processAnalyticsJob,
+    {
+      connection: redisConnection,
+      concurrency: 3,
+    },
+  );
   created.push(
     inboundWorker,
     aiReplyWorker,
@@ -159,6 +163,18 @@ await remindersQueue.add(
   },
 );
 logger.info("Reminders sweeper repeatable job registered");
+
+await analyticsQueue.add(
+  "aggregate-usage",
+  {},
+  {
+    repeat: { every: 5 * 60_000 },
+    jobId: "sweeper-aggregate-usage",
+    removeOnComplete: true,
+    removeOnFail: false,
+  },
+);
+logger.info("Analytics aggregation sweeper registered");
 
 async function gracefulShutdown(signal: string): Promise<void> {
   logger.info(

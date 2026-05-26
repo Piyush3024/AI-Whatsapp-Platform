@@ -115,11 +115,22 @@ export const followUpsQueue = new Queue<FollowUpJob>(QUEUE_NAMES.FOLLOW_UPS, {
   },
 });
 
+export const analyticsQueue = new Queue(QUEUE_NAMES.ANALYTICS, {
+  connection: producerRedis,
+  defaultJobOptions: {
+    attempts: 3,
+    backoff: { type: "exponential", delay: 2_000 },
+    removeOnComplete: { age: 24 * 3600 },
+    removeOnFail: { age: 7 * 24 * 3600 },
+  },
+});
+
 // ── Graceful close ────────────────────────────────────────────────────────
 export async function closeQueues(): Promise<void> {
   await aiReplyQueue.close();
   await outboundQueue.close();
   await remindersQueue.close();
+  await analyticsQueue.close();
   await followUpsQueue.close();
   await producerRedis.quit();
 }
