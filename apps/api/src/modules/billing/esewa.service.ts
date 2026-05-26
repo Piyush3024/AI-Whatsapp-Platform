@@ -1,5 +1,3 @@
-// apps/api/src/modules/billing/esewa.service.ts
-
 import {
   Injectable,
   NotFoundException,
@@ -18,8 +16,6 @@ import {
 } from '../../lib/esewa.util.js';
 import type { InitiateEsewaPaymentDto } from './dto/initiate-esewa-payment.dto.js';
 import type { EsewaVerifyDto } from './dto/esewa-verify.dto.js';
-
-// ── eSewa URLs ─────────────────────────────────────────────────────────────
 
 const ESEWA_URLS = {
   sandbox: 'https://rc-epay.esewa.com.np/api/epay/main/v2/form',
@@ -47,49 +43,32 @@ export class EsewaService {
     this.mode = this.config.getOrThrow<'sandbox' | 'live'>('esewa.mode');
   }
 
-  // ── Initiate Payment ────────────────────────────────────────────────────
-  //
-  // Flow:
-  //   1. Plan fetch + validate
-  //   2. Unique transactionUuid generate karo (stored in Invoice.metadata)
-  //   3. HMAC-SHA256 signature generate karo
-  //   4. Payload return karo → frontend form banake eSewa pe submit karega
-  //
-  // No Invoice record yet — sirf pending state. Invoice verify() mein banega.
-
   async initiatePayment(
     tenantId: string,
     userId: string,
     dto: InitiateEsewaPaymentDto,
   ): Promise<{ transactionUuid: string; payload: EsewaPaymentPayload }> {
-    // Plan fetch karo
     const plan = await this.prisma.db.plan.findFirst({
       where: { id: dto.planId, isActive: true, deletedAt: null },
     });
 
     if (!plan) throw new NotFoundException('Plan not found');
 
-    // Plan NPR currency mein hona chahiye
     if (plan.currency !== 'NPR') {
       throw new BadRequestException(
         'eSewa only supports NPR currency. Use Stripe for other currencies.',
       );
     }
 
-    // Tenant + member fetch
     const tenant = await this.prisma.db.tenant.findFirst({
       where: { id: tenantId, deletedAt: null },
     });
     if (!tenant) throw new NotFoundException('Tenant not found');
 
-    // Unique transaction UUID — eSewa isko transaction_uuid kehta hai
-    // Ye hum Invoice.metadata mein store karenge for verification
     const transactionUuid = randomUUID();
 
-    // Paisa → NPR string (eSewa format)
     const amountStr = paisaToEsewaAmount(plan.price);
 
-    // HMAC-SHA256 signature
     const signature = generateEsewaSignature(
       amountStr,
       transactionUuid,
@@ -112,18 +91,6 @@ export class EsewaService {
       esewa_url: ESEWA_URLS[this.mode],
     };
 
-    // Pending intent record — Invoice nahi, sirf metadata track karo
-    // Actual Invoice verify() mein banega (after eSewa confirms)
-    // Subscription bhi verify() mein banega
-    //
-    // Hum tenantId + planId + transactionUuid ek temp record mein store karte hain
-    // taaki verify() mein plan resolve ho sake without JWT
-    // (eSewa callback mein JWT nahi hota — browser redirect hai)
-    //
-    // Approach: Subscription table mein pending row banao status='pending_esewa'
-    // Verify mein update karenge to 'active'
-
-    // Existing pending subscription check karo — no duplicates
     const existingPending = await this.prisma.db.subscription.findFirst({
       where: {
         tenantId,
@@ -133,15 +100,11 @@ export class EsewaService {
     });
 
     if (existingPending) {
-      // Old pending row update karo with new transactionUuid
       await this.prisma.db.subscription.update({
         where: { id: existingPending.id },
         data: {
           planId: plan.id,
-          // transactionUuid ko metadata mein store karo
-          // Subscription schema mein metadata field nahi hai
-          // Isliye stripeSubscriptionId field reuse karte hain as esewaTransactionUuid
-          // (field name mismatch — acceptable tradeoff: schema change avoid karna)
+
           stripeSubscriptionId: `esewa_${transactionUuid}`,
           currentPeriodStart: new Date(),
           currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -168,25 +131,9 @@ export class EsewaService {
     return { transactionUuid, payload };
   }
 
-  // ── Verify Callback ─────────────────────────────────────────────────────
-  //
-  // eSewa redirects: GET /billing/esewa/verify?data=<base64_json>
-  //
-  // Steps:
-  //   1. Base64 decode → JSON parse
-  //   2. Signature verify (tamper check)
-  //   3. Status check — must be "COMPLETE"
-  //   4. Idempotency — already processed invoice check
-  //   5. Subscription activate + Invoice create
-  //   6. Tenant ACTIVE karo
-  //
-  // Note: Ye endpoint @Public() hai — JWT nahi hoga (browser redirect)
-  // Security: eSewa signature verify hi authentication hai
-
   async verifyPayment(
     dto: EsewaVerifyDto,
   ): Promise<{ success: boolean; message: string }> {
-    // Step 1: Decode Base64 → JSON
     let callbackData: ReturnType<typeof decodeEsewaCallbackData>;
     try {
       callbackData = decodeEsewaCallbackData(dto.data);
@@ -205,11 +152,8 @@ export class EsewaService {
       'eSewa callback received',
     );
 
-    // Step 2: Signature verification — tamper check
-    // eSewa's response itself is signed — verify it
     const signedFields = callbackData.signed_field_names.split(',');
 
-    // Build the data string from signed fields in order
     const dataToVerify = signedFields
       .map(
         (field) =>
@@ -224,7 +168,6 @@ export class EsewaService {
       this.secretKey,
     );
 
-    // Verify using our dedicated function
     const isValid = verifyEsewaSignature(
       callbackData.total_amount,
       callbackData.transaction_uuid,
@@ -246,7 +189,6 @@ export class EsewaService {
       throw new BadRequestException('eSewa signature verification failed');
     }
 
-    // Step 3: Status must be COMPLETE
     if (callbackData.status !== 'COMPLETE') {
       this.logger.warn(
         {
@@ -261,7 +203,6 @@ export class EsewaService {
       };
     }
 
-    // Step 4: Idempotency — already processed check
     const alreadyProcessed = await this.prisma.db.invoice.findFirst({
       where: { stripeInvoiceId: `esewa_${callbackData.transaction_code}` },
     });
@@ -274,7 +215,6 @@ export class EsewaService {
       return { success: true, message: 'Payment already processed' };
     }
 
-    // Step 5: Find the pending subscription by transactionUuid
     const pendingSub = await this.prisma.db.subscription.findFirst({
       where: {
         stripeSubscriptionId: `esewa_${callbackData.transaction_uuid}`,
@@ -294,30 +234,24 @@ export class EsewaService {
       );
     }
 
-    // eSewa amount format: "1,500.0" — clean karo for storage
     const cleanAmount = parseFloat(callbackData.total_amount.replace(/,/g, ''));
-    // Back to paisa (integer)
+
     const amountPaisa = Math.round(cleanAmount * 100);
 
-    // Step 6: Activate subscription + create Invoice — atomic transaction
     await this.prisma.db.$transaction([
-      // Subscription activate karo
       this.prisma.db.subscription.update({
         where: { id: pendingSub.id },
         data: {
           status: 'active',
-          stripeSubscriptionId: null, // clear the temp esewa_ field
+          stripeSubscriptionId: null,
           currentPeriodStart: new Date(),
           currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         },
       }),
-
-      // Invoice create karo
       this.prisma.db.invoice.create({
         data: {
           tenantId: pendingSub.tenantId,
           subscriptionId: pendingSub.id,
-          // stripeInvoiceId field reuse — esewa transaction code store
           stripeInvoiceId: `esewa_${callbackData.transaction_code}`,
           totalAmount: amountPaisa,
           currency: 'NPR',
@@ -342,7 +276,6 @@ export class EsewaService {
         },
       }),
 
-      // Tenant ACTIVE karo
       this.prisma.db.tenant.update({
         where: { id: pendingSub.tenantId },
         data: { status: 'ACTIVE' },

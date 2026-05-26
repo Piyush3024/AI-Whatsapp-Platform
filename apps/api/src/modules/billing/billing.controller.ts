@@ -1,5 +1,3 @@
-// apps/api/src/modules/billing/billing.controller.ts
-
 import {
   Controller,
   Get,
@@ -37,10 +35,6 @@ export class BillingController {
     private readonly esewaService: EsewaService,
   ) {}
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // PLANS
-  // ──────────────────────────────────────────────────────────────────────────
-
   @Public()
   @SkipThrottle()
   @Get('plans')
@@ -48,18 +42,10 @@ export class BillingController {
     return this.billingService.getPlans();
   }
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // SUBSCRIPTION
-  // ──────────────────────────────────────────────────────────────────────────
-
   @Get('subscription')
   async getSubscription(@CurrentUser() user: JwtPayload) {
     return this.billingService.getCurrentSubscription(user.tenantId);
   }
-
-  // ──────────────────────────────────────────────────────────────────────────
-  // STRIPE — Checkout + Portal + Webhook
-  // ──────────────────────────────────────────────────────────────────────────
 
   @Post('stripe/checkout')
   @Roles('OWNER', 'ADMIN')
@@ -85,8 +71,6 @@ export class BillingController {
     return this.billingService.createPortalSession(user.tenantId, dto);
   }
 
-  // Stripe webhook — @Public() + @SkipThrottle()
-  // rawBody mandatory for HMAC verification
   @Public()
   @SkipThrottle()
   @Post('stripe/webhook')
@@ -103,12 +87,6 @@ export class BillingController {
     return { received: true };
   }
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // ESEWA — Initiate + Verify
-  // ──────────────────────────────────────────────────────────────────────────
-
-  // Step 1: Business owner initiates eSewa payment (JWT protected)
-  // Returns signed payload → frontend auto-submits HTML form to eSewa
   @Post('esewa/initiate')
   @Roles('OWNER', 'ADMIN')
   @Throttle({ strict: { limit: 10, ttl: 60_000 } })
@@ -119,9 +97,6 @@ export class BillingController {
     return this.esewaService.initiatePayment(user.tenantId, user.sub, dto);
   }
 
-  // Step 2: eSewa redirects here after payment (browser redirect — no JWT)
-  // eSewa sends: GET /billing/esewa/verify?data=<base64_json>
-  // Security: eSewa HMAC signature verification inside service
   @Public()
   @SkipThrottle()
   @Get('esewa/verify')
@@ -129,10 +104,6 @@ export class BillingController {
   async verifyEsewaPayment(@Query() dto: EsewaVerifyDto) {
     return this.esewaService.verifyPayment(dto);
   }
-
-  // ──────────────────────────────────────────────────────────────────────────
-  // INVOICES (common — both Stripe + eSewa invoices)
-  // ──────────────────────────────────────────────────────────────────────────
 
   @Get('invoices')
   async getInvoices(

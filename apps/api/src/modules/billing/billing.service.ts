@@ -1,5 +1,3 @@
-// apps/api/src/modules/billing/billing.service.ts
-
 import {
   Injectable,
   NotFoundException,
@@ -24,14 +22,11 @@ export class BillingService {
     this.stripe = new Stripe(
       this.config.getOrThrow<string>('stripe.secretKey'),
       {
-        // Latest stable API version (2026)
         apiVersion: '2026-04-22.dahlia',
         typescript: true,
       },
     );
   }
-
-  // ── Plans ──────────────────────────────────────────────────
 
   async getPlans() {
     return this.prisma.db.plan.findMany({
@@ -39,8 +34,6 @@ export class BillingService {
       orderBy: { price: 'asc' },
     });
   }
-
-  // ── Subscription ───────────────────────────────────────────
 
   async getCurrentSubscription(tenantId: string) {
     const subscription = await this.prisma.db.subscription.findFirst({
@@ -56,14 +49,11 @@ export class BillingService {
     return subscription;
   }
 
-  // ── Checkout Session ───────────────────────────────────────
-
   async createCheckoutSession(
     tenantId: string,
     userId: string,
     dto: CreateCheckoutSessionDto,
   ) {
-    // Plan exist karta hai check karo
     const plan = await this.prisma.db.plan.findFirst({
       where: { id: dto.planId, isActive: true, deletedAt: null },
     });
@@ -72,7 +62,6 @@ export class BillingService {
       throw new NotFoundException('Plan not found');
     }
 
-    // Tenant + user info fetch karo
     const tenant = await this.prisma.db.tenant.findFirst({
       where: { id: tenantId, deletedAt: null },
     });
@@ -90,7 +79,6 @@ export class BillingService {
       throw new NotFoundException('Tenant member not found');
     }
 
-    // Existing Stripe customer check karo
     const existingSub = await this.prisma.db.subscription.findFirst({
       where: { tenantId, deletedAt: null },
       orderBy: { createdAt: 'desc' },
@@ -98,7 +86,6 @@ export class BillingService {
 
     let stripeCustomerId = existingSub?.stripeCustomerId ?? null;
 
-    // Stripe customer create karo agar nahi hai
     if (!stripeCustomerId) {
       const customer = await this.stripe.customers.create({
         email: member.user.email,
@@ -111,8 +98,6 @@ export class BillingService {
       stripeCustomerId = customer.id;
     }
 
-    // Plan mein stripePriceId hona chahiye
-    // Plan.limits JSON mein stripePriceId store hai
     const planLimits = plan.limits as Record<string, unknown>;
     const stripePriceId = planLimits['stripePriceId'] as string | undefined;
 
@@ -122,7 +107,6 @@ export class BillingService {
       );
     }
 
-    // Checkout session create karo
     const session = await this.stripe.checkout.sessions.create({
       customer: stripeCustomerId,
       mode: 'subscription',
@@ -155,8 +139,6 @@ export class BillingService {
     return { sessionId: session.id, url: session.url };
   }
 
-  // ── Customer Portal Session ────────────────────────────────
-
   async createPortalSession(tenantId: string, dto: CreatePortalSessionDto) {
     const subscription = await this.prisma.db.subscription.findFirst({
       where: { tenantId, deletedAt: null },
@@ -176,8 +158,6 @@ export class BillingService {
 
     return { url: session.url };
   }
-
-  // ── Invoices ───────────────────────────────────────────────
 
   async getInvoices(tenantId: string, page: number = 1, limit: number = 20) {
     const skip = (page - 1) * limit;
@@ -206,8 +186,6 @@ export class BillingService {
     };
   }
 
-  // ── Webhook Handler ────────────────────────────────────────
-
   async handleWebhook(rawBody: Buffer, signature: string): Promise<void> {
     const webhookSecret = this.config.getOrThrow<string>(
       'stripe.webhookSecret',
@@ -216,7 +194,6 @@ export class BillingService {
     let event: Stripe.Event;
 
     try {
-      // Raw body mandatory — JSON parse se signature fail hoti hai
       event = this.stripe.webhooks.constructEvent(
         rawBody,
         signature,
@@ -238,7 +215,6 @@ export class BillingService {
       'Stripe webhook received',
     );
 
-    // Route to handler — idempotent (duplicate events safely ignored)
     switch (event.type) {
       case 'checkout.session.completed':
         await this.handleCheckoutSessionCompleted(event.data.object);
@@ -267,8 +243,6 @@ export class BillingService {
         );
     }
   }
-
-  // ── Webhook Sub-handlers ───────────────────────────────────
 
   private async handleCheckoutSessionCompleted(
     session: Stripe.Checkout.Session,
@@ -302,7 +276,6 @@ export class BillingService {
         ? session.customer
         : (session.customer?.id ?? null);
 
-    // Stripe se period fetch karo
     const stripeSub =
       await this.stripe.subscriptions.retrieve(stripeSubscriptionId);
 
@@ -322,7 +295,6 @@ export class BillingService {
       ? new Date(item.current_period_end * 1000)
       : new Date();
 
-    // Idempotent — same session double fire hone pe duplicate nahi banega
     const existing = await this.prisma.db.subscription.findFirst({
       where: { tenantId, stripeSubscriptionId },
     });
@@ -353,7 +325,6 @@ export class BillingService {
       });
     }
 
-    // Tenant ACTIVE karo
     await this.prisma.db.tenant.update({
       where: { id: tenantId },
       data: { status: 'ACTIVE' },
@@ -422,7 +393,6 @@ export class BillingService {
       },
     });
 
-    // Tenant status SUSPENDED karo
     await this.prisma.db.tenant.update({
       where: { id: tenantId },
       data: { status: 'SUSPENDED' },
@@ -437,7 +407,6 @@ export class BillingService {
   private async handleInvoicePaid(
     stripeInvoice: Stripe.Invoice,
   ): Promise<void> {
-    // stripeInvoiceId unique check — idempotency
     const existing = await this.prisma.db.invoice.findFirst({
       where: { stripeInvoiceId: stripeInvoice.id },
     });
@@ -475,13 +444,12 @@ export class BillingService {
       return;
     }
 
-    // Invoice record create karo
     await this.prisma.db.invoice.create({
       data: {
         tenantId: subscription.tenantId,
         subscriptionId: subscription.id,
         stripeInvoiceId: stripeInvoice.id,
-        // amount_paid in cents → paisa (already integer)
+
         totalAmount: stripeInvoice.amount_paid,
         currency: stripeInvoice.currency.toUpperCase(),
         status: 'PAID',
@@ -529,7 +497,6 @@ export class BillingService {
 
     if (!subscription) return;
 
-    // Status sync karo
     await this.prisma.db.subscription.update({
       where: { id: subscription.id },
       data: { status: 'past_due' },

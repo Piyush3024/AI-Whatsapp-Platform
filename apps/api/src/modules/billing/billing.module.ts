@@ -1,5 +1,3 @@
-// apps/api/src/modules/billing/billing.module.ts
-
 import { Module } from '@nestjs/common';
 import { BillingService } from './billing.service.js';
 import { EsewaService } from './esewa.service.js';
