@@ -14,10 +14,6 @@ export class AnalyticsService {
     return this.cls.get<string>('tenantId');
   }
 
-  /**
-   * Build UTC date range from ISO date strings.
-   * 'from' → start of day UTC, 'to' → end of day UTC.
-   */
   private buildDateRange(
     from?: string,
     to?: string,
@@ -32,10 +28,6 @@ export class AnalyticsService {
     return range;
   }
 
-  // ---------------------------------------------------------------------------
-  // GET /analytics/overview
-  // High-level all-time stats for the tenant
-  // ---------------------------------------------------------------------------
   async getOverview() {
     const tenantId = this.tenantId;
 
@@ -53,7 +45,6 @@ export class AnalyticsService {
       this.prisma.db.staff.count({ where: { tenantId, isActive: true } }),
     ]);
 
-    // Revenue: sum of confirmed/completed bookings (stored in paisa)
     const revenueResult = await this.prisma.db.booking.aggregate({
       where: {
         tenantId,
@@ -72,10 +63,6 @@ export class AnalyticsService {
     };
   }
 
-  // ---------------------------------------------------------------------------
-  // GET /analytics/usage
-  // DailyUsageAggregate rows with optional date range filter
-  // ---------------------------------------------------------------------------
   async getUsage(query: AnalyticsDateRangeDto) {
     const tenantId = this.tenantId;
     const dateRange = this.buildDateRange(query.from, query.to);
@@ -91,16 +78,10 @@ export class AnalyticsService {
     return rows;
   }
 
-  // ---------------------------------------------------------------------------
-  // GET /analytics/messages
-  // Inbound / outbound message counts grouped by date
-  // ---------------------------------------------------------------------------
   async getMessageStats(query: AnalyticsDateRangeDto) {
     const tenantId = this.tenantId;
     const dateRange = this.buildDateRange(query.from, query.to);
 
-    // Prisma groupBy on date requires raw SQL for date truncation.
-    // Using $queryRaw for clean date-bucketed aggregation.
     const params: (string | Date)[] = [tenantId];
     const conditions: string[] = ['"tenantId" = $1', '"deletedAt" IS NULL'];
 
@@ -132,7 +113,6 @@ export class AnalyticsService {
       ...params,
     );
 
-    // bigint → number serialization
     return rows.map((r) => ({
       date: r.date,
       direction: r.direction,
@@ -140,10 +120,6 @@ export class AnalyticsService {
     }));
   }
 
-  // ---------------------------------------------------------------------------
-  // GET /analytics/bookings
-  // Booking stats: by status, by location, revenue breakdown
-  // ---------------------------------------------------------------------------
   async getBookingStats(query: AnalyticsDateRangeDto) {
     const tenantId = this.tenantId;
     const dateRange = this.buildDateRange(query.from, query.to);
@@ -161,7 +137,6 @@ export class AnalyticsService {
       ...locationFilter,
     };
 
-    // Group by status
     const byStatus = await this.prisma.db.booking.groupBy({
       by: ['status'],
       where: baseWhere,
@@ -169,7 +144,6 @@ export class AnalyticsService {
       _sum: { totalAmount: true },
     });
 
-    // Group by location
     const byLocation = await this.prisma.db.booking.groupBy({
       by: ['locationId'],
       where: baseWhere,
@@ -177,7 +151,6 @@ export class AnalyticsService {
       _sum: { totalAmount: true },
     });
 
-    // Resolve location names for display
     const locationIds = byLocation
       .map((r) => r.locationId)
       .filter(Boolean) as string[];
@@ -187,7 +160,6 @@ export class AnalyticsService {
     });
     const locationMap = new Map(locations.map((l) => [l.id, l.name]));
 
-    // Total revenue across confirmed/completed
     const revenueResult = await this.prisma.db.booking.aggregate({
       where: {
         ...baseWhere,
