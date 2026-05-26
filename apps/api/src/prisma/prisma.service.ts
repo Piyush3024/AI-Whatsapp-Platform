@@ -98,13 +98,6 @@ function buildExtendedPrismaClient(baseClient: PrismaClient, cls: ClsService) {
   });
 }
 
-/**
- * PrismaService
- *
- * Extends PrismaClient using the driver adapter pattern.
- * Use this.db for all database queries so soft-delete and tenant RLS context
- * are applied consistently.
- */
 @Injectable()
 export class PrismaService
   extends PrismaClient
