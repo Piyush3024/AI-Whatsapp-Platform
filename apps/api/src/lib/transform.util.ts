@@ -1,8 +1,5 @@
 import { type TransformFnParams } from 'class-transformer';
 
-/**
- * Transform string 'true'/'false' to boolean
- */
 export const parseToBoolean = (
   params: TransformFnParams,
 ): boolean | undefined => {
@@ -29,9 +26,6 @@ export const parseToBoolean = (
   return undefined;
 };
 
-/**
- * Transform comma-separated string to array
- */
 export const parseToArray = (params: TransformFnParams): string[] => {
   const value = params.value as unknown;
 
@@ -53,9 +47,6 @@ export const parseToArray = (params: TransformFnParams): string[] => {
   return [];
 };
 
-/**
- * Transform date string to Date object
- */
 export const parseToDate = (params: TransformFnParams): Date | undefined => {
   const value = params.value as unknown;
 
@@ -75,9 +66,6 @@ export const parseToDate = (params: TransformFnParams): Date | undefined => {
   return undefined;
 };
 
-/**
- * Transform and trim string
- */
 export const trimString = (params: TransformFnParams): string => {
   const value = params.value as unknown;
   if (typeof value === 'string') {

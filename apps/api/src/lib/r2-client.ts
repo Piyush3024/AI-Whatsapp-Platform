@@ -1,20 +1,14 @@
-// ============================================================
-// Imports
-// ============================================================
 import {
   S3Client,
   PutObjectCommand,
   DeleteObjectCommand,
   HeadObjectCommand,
-  GetObjectCommand, // ✅ FIX: Added missing import
+  GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { randomUUID } from 'node:crypto';
 import { extname } from 'node:path';
 
-// ============================================================
-// Types
-// ============================================================
 export interface UploadResult {
   key: string;
   url: string;
@@ -28,15 +22,8 @@ export interface R2ClientConfig {
   publicUrl: string;
 }
 
-// ============================================================
-// Constants
-// ============================================================
 const KB_PREFIX = 'kb';
-// const MAX_RETRIES = 3;
 
-// ============================================================
-// Singleton S3 Client
-// ============================================================
 let s3Client: S3Client | null = null;
 
 function getS3Client(): S3Client {
@@ -53,18 +40,12 @@ function getS3Client(): S3Client {
   return s3Client;
 }
 
-// ============================================================
-// Helper: Generate Tenant-Scoped Key
-// ============================================================
 function generateObjectKey(tenantId: string, fileName: string): string {
   const extension = extname(fileName).slice(1) || 'bin';
   const uuid = randomUUID();
   return `tenants/${tenantId}/${KB_PREFIX}/${uuid}.${extension}`;
 }
 
-// ============================================================
-// Main R2 Client Class
-// ============================================================
 export class R2Client {
   private readonly config: R2ClientConfig;
 
@@ -89,9 +70,6 @@ export class R2Client {
     };
   }
 
-  // ============================================================
-  // Upload File
-  // ============================================================
   async uploadFile(
     fileBuffer: Buffer,
     tenantId: string,
@@ -110,7 +88,6 @@ export class R2Client {
       await client.send(command);
       return { key, url: `${this.config.publicUrl}/${key}` };
     } catch (error) {
-      // ✅ FIX: Type guard for 'unknown' error
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       throw new Error(
@@ -119,9 +96,6 @@ export class R2Client {
     }
   }
 
-  // ============================================================
-  // Delete File
-  // ============================================================
   async deleteFile(tenantId: string, fileKey: string): Promise<void> {
     const client = getS3Client();
     const command = new DeleteObjectCommand({
@@ -131,7 +105,6 @@ export class R2Client {
     try {
       await client.send(command);
     } catch (error) {
-      // ✅ FIX: Type guard for 'unknown' error
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       throw new Error(
@@ -140,9 +113,6 @@ export class R2Client {
     }
   }
 
-  // ============================================================
-  // Check if File Exists
-  // ============================================================
   async fileExists(tenantId: string, fileKey: string): Promise<boolean> {
     const client = getS3Client();
     const command = new HeadObjectCommand({
@@ -153,7 +123,6 @@ export class R2Client {
       await client.send(command);
       return true;
     } catch (error) {
-      // ✅ FIX: Type guard for 'unknown' error + NoSuchKey check
       if (error instanceof Error && error.name === 'NoSuchKey') {
         return false;
       }
@@ -165,16 +134,10 @@ export class R2Client {
     }
   }
 
-  // ============================================================
-  // Generate Public URL
-  // ============================================================
   getFileUrl(fileKey: string): string {
     return `${this.config.publicUrl}/${fileKey}`;
   }
 
-  // ============================================================
-  // Generate Presigned URL
-  // ============================================================
   async getPresignedUrl(
     fileKey: string,
     expiresIn: number = 3600,
@@ -187,7 +150,6 @@ export class R2Client {
     try {
       return await getSignedUrl(client, command, { expiresIn });
     } catch (error) {
-      // ✅ FIX: Type guard for 'unknown' error
       const errorMessage =
         error instanceof Error ? error.message : String(error);
       throw new Error(
@@ -197,9 +159,6 @@ export class R2Client {
   }
 }
 
-// ============================================================
-// Singleton Instance
-// ============================================================
 let r2ClientInstance: R2Client | null = null;
 
 export function getR2Client(): R2Client {
@@ -208,5 +167,3 @@ export function getR2Client(): R2Client {
   }
   return r2ClientInstance;
 }
-
-// ✅ FIX: Removed duplicate export (types already exported above)

@@ -1,8 +1,3 @@
-// ============================================================
-// API-side job payload types
-// Worker ke job-payloads.ts se match karna MANDATORY hai
-// ============================================================
-
 export interface FollowUpJob {
   tenantId: string;
   bookingId: string;

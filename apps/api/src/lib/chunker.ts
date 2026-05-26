@@ -1,12 +1,6 @@
-// ============================================================
-// Imports
-// ============================================================
 import SmartParser from 'pdf-parse-new/lib/SmartPDFParser';
 import mammoth from 'mammoth';
 
-// ============================================================
-// Types
-// ============================================================
 export interface Chunk {
   content: string;
   chunkIndex: number;
@@ -17,36 +11,21 @@ export interface Chunk {
   };
 }
 
-// ============================================================
-// Constants
-// ============================================================
 const DEFAULT_CHUNK_SIZE = Number(process.env.KB_CHUNK_SIZE_TOKENS || 512);
 const DEFAULT_OVERLAP = Number(process.env.KB_CHUNK_OVERLAP_TOKENS || 102);
 
 const smartParser = new SmartParser();
 
-// ============================================================
-// Helper: Count Tokens (Simple Estimation)
-// ============================================================
 function countTokens(text: string): number {
-  //   const tokens = text.split(/[\s\p{P}\p{S}]/u).filter(Boolean);
-  //   return tokens.length;
   return Math.ceil(text.length / 4);
 }
-
-// ============================================================
-// Helper: Normalize Text
-// ============================================================
 function normalizeText(text: string): string {
   return text
-    .replace(/[ \t]+/g, ' ') // collapse horizontal whitespace only
-    .replace(/\n{3,}/g, '\n\n') // max 2 consecutive newlines (preserve paragraphs)
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
 
-// ============================================================
-// Helper: Extract Text from Buffer
-// ============================================================
 async function extractText(buffer: Buffer, fileType: string): Promise<string> {
   switch (fileType) {
     case 'application/pdf': {
@@ -64,9 +43,6 @@ async function extractText(buffer: Buffer, fileType: string): Promise<string> {
   }
 }
 
-// ============================================================
-// Main: Chunk Text
-// ============================================================
 export async function chunkText(
   buffer: Buffer,
   fileType: string,

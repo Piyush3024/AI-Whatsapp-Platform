@@ -1,22 +1,3 @@
-// apps/api/src/modules/billing/lib/esewa.util.ts
-//
-// eSewa epay v2 — HMAC-SHA256 Signature Utility
-//
-// eSewa uses a tamper-proof signature to prevent users from
-// modifying form fields (e.g. changing amount) before submission.
-//
-// Algorithm:
-//   data   = "total_amount={amt},transaction_uuid={uuid},product_code={code}"
-//   key    = ESEWA_SECRET_KEY (UTF-8 bytes)
-//   hash   = HMAC-SHA256(key, data)
-//   result = Base64(hash)
-//
-// CRITICAL rules (any deviation = eSewa rejects the payment):
-//   1. Field order is FIXED: total_amount → transaction_uuid → product_code
-//   2. NO spaces after commas
-//   3. Amount format MUST be exactly 2 decimal places ("1500.00" not "1500")
-//   4. Output is Base64 — NOT hex
-
 import { createHmac } from 'crypto';
 
 /**

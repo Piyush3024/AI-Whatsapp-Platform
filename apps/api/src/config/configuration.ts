@@ -1,16 +1,3 @@
-/**
- * Typed configuration factory for @nestjs/config.
- *
- * Loaded via ConfigModule.forRoot({ load: [configuration] }).
- * Provides a single typed config object injectable via:
- *   ConfigService.get<AppConfig>('app')
- *   ConfigService.get<DbConfig>('database')
- *   etc.
- *
- * This means NO magic strings scattered across services — only typed
- * config keys resolved here once, at startup.
- */
-
 export interface AppConfig {
   nodeEnv: string;
   port: number;
@@ -71,7 +58,6 @@ export default () => ({
   app: {
     nodeEnv: process.env.NODE_ENV ?? 'development',
     port: parseInt(process.env.PORT ?? '3001', 10),
-    // Supports comma-separated origins: "https://app.com,https://admin.app.com"
     corsOrigin: (process.env.CORS_ORIGIN ?? 'http://localhost:3000')
       .split(',')
       .map((o) => o.trim()),

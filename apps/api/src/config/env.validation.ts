@@ -1,17 +1,5 @@
 import Joi from 'joi';
-/**
- * Joi validation schema for all environment variables.
- *
- * This runs at application startup via ConfigModule.forRoot({ validationSchema }).
- * If any required variable is missing or has the wrong type/value, the app
- * will REFUSE to start and print a clear error — catching config mistakes
- * before they cause mysterious runtime failures in production.
- *
- * Rules:
- * - Required vars have no .default() — missing them is a hard error.
- * - Optional vars have .default() — safe to omit in development.
- * - Secrets are validated for presence only (never log their values).
- */
+
 export const envValidationSchema = Joi.object({
   // ── Application ──────────────────────────────────────────────────────────
   NODE_ENV: Joi.string()
