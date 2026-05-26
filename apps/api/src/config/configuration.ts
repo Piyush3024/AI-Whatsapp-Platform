@@ -32,6 +32,13 @@ export interface JwtConfig {
   refreshExpiresIn: string;
 }
 
+export interface MailConfig {
+  resendApiKey: string;
+  fromAddress: string;
+  appUrl: string;
+  appName: string;
+}
+
 export interface WhatsAppConfig {
   verifyToken: string;
   appSecret: string;
@@ -107,6 +114,13 @@ export default () => ({
     failureUrl: process.env.ESEWA_FAILURE_URL!,
     mode: (process.env.ESEWA_MODE ?? 'sandbox') as 'sandbox' | 'live',
   } satisfies EsewaConfig,
+
+  mail: {
+    resendApiKey: process.env.RESEND_API_KEY!,
+    fromAddress: process.env.MAIL_FROM_ADDRESS!,
+    appUrl: process.env.MAIL_APP_URL!,
+    appName: process.env.MAIL_APP_NAME ?? 'WhatsApp AI Platform',
+  } satisfies MailConfig,
 
   throttle: {
     ttlMs: parseInt(process.env.THROTTLE_TTL_MS ?? '60000', 10),

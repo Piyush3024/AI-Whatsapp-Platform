@@ -62,6 +62,12 @@ export const envValidationSchema = Joi.object({
   ESEWA_FAILURE_URL: Joi.string().uri().required(),
   ESEWA_MODE: Joi.string().valid('sandbox', 'live').default('sandbox'),
 
+  // ── Mail / Resend ─────────────────────────────────────────────────────────
+  RESEND_API_KEY: Joi.string().pattern(/^re_/).required(),
+  MAIL_FROM_ADDRESS: Joi.string().email().required(),
+  MAIL_APP_URL: Joi.string().uri().required(),
+  MAIL_APP_NAME: Joi.string().default('WhatsApp AI Platform'),
+
   // ── Rate Limiting (optional — has sane defaults) ──────────────────────────
   THROTTLE_TTL_MS: Joi.number().integer().default(60_000), // 1 minute window
   THROTTLE_LIMIT: Joi.number().integer().default(120), // 120 req/min
