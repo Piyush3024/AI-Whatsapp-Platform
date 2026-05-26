@@ -20,6 +20,10 @@ import {
   Service,
 } from '@whatsapp-ai/db/generated/prisma';
 import { RemindersService } from '../reminders/reminders.service.js';
+import { InjectQueue } from '@nestjs/bullmq';
+import type { Queue } from 'bullmq';
+import { QUEUE_NAMES } from '../../constants/queues.js';
+import type { FollowUpJob } from '../../constants/job-payloads.js';
 
 /**
  * Booking service for managing bookings.
@@ -37,6 +41,7 @@ export class BookingsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly remindersService: RemindersService,
+    @InjectQueue(QUEUE_NAMES.FOLLOW_UPS) private readonly followUpsQueue: Queue,
   ) {}
 
   /**
@@ -363,6 +368,10 @@ export class BookingsService {
       await this.remindersService.cancelRemindersForBooking(id);
     }
 
+    if (status === BookingStatus.COMPLETED) {
+      await this.scheduleFollowUps(id, tenantId);
+    }
+
     const previousStatus = existing.status;
 
     await this.prisma.db.$transaction(async (tx) => {
@@ -651,5 +660,91 @@ export class BookingsService {
         duration: bs.duration,
       })),
     };
+  }
+
+  /**
+   * Schedule post-appointment follow-ups via BullMQ delayed jobs.
+   * post_appointment → 4 hours after completion
+   * re_booking       → 30 days after completion
+   */
+  private async scheduleFollowUps(
+    bookingId: string,
+    tenantId: string,
+  ): Promise<void> {
+    const booking = await this.prisma.db.booking.findFirst({
+      where: { id: bookingId, tenantId },
+      include: {
+        customer: {
+          select: { id: true, phone: true, name: true, optInStatus: true },
+        },
+        services: {
+          include: { service: { select: { name: true } } },
+        },
+      },
+    });
+
+    if (!booking || !booking.customer) return;
+
+    // Opted-out customers ko follow-up nahi
+    if (booking.customer.optInStatus === 'OPTED_OUT') {
+      this.logger.log(
+        `Follow-up skipped — customer opted out: ${booking.customer.id}`,
+      );
+      return;
+    }
+
+    const serviceNames = booking.services
+      .map((bs) => bs.service.name)
+      .join(', ');
+
+    const customerName = booking.customer.name ?? 'valued customer';
+
+    const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
+    const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+    const baseJob: Omit<FollowUpJob, 'followUpType' | 'messageBody'> = {
+      tenantId,
+      bookingId,
+      customerId: booking.customer.id,
+      customerPhone: booking.customer.phone,
+    };
+
+    // post_appointment — 4h delay
+    await this.followUpsQueue.add(
+      'send-follow-up',
+      {
+        ...baseJob,
+        followUpType: 'post_appointment',
+        messageBody: `Hi ${customerName}! Thank you for visiting us today for ${serviceNames}. We hope you had a great experience. How was your service? 😊`,
+      } satisfies FollowUpJob,
+      {
+        delay: FOUR_HOURS_MS,
+        jobId: `follow-up-post-${bookingId}`, // dedup — restart pe duplicate nahi
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 2_000 },
+        removeOnComplete: { age: 24 * 3600 },
+        removeOnFail: { age: 7 * 24 * 3600 },
+      },
+    );
+
+    // re_booking — 30d delay
+    await this.followUpsQueue.add(
+      'send-follow-up',
+      {
+        ...baseJob,
+        followUpType: 're_booking',
+        messageBody: `Hi ${customerName}! It's been a month since your last visit. We'd love to see you again! Book your next appointment by replying to this message. 📅`,
+      } satisfies FollowUpJob,
+      {
+        delay: THIRTY_DAYS_MS,
+        jobId: `follow-up-rebooking-${bookingId}`,
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 2_000 },
+        removeOnComplete: { age: 24 * 3600 },
+        removeOnFail: { age: 7 * 24 * 3600 },
+      },
+    );
+
+    this.logger.log(`Follow-ups scheduled for booking: ${bookingId}`);
   }
 }
