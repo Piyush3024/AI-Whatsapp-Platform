@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { Button } from "@repo/ui/components/button";
 import {
@@ -24,14 +23,8 @@ import {
   FormMessage,
 } from "@repo/ui/components/form";
 import { Input } from "@repo/ui/components/input";
-import { useLogin } from "@/services/auth.service";
-
-const loginSchema = z.object({
-  email: z.string().email("Valid email required"),
-  password: z.string().min(1, "Password required"),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
+import { LoginFormValues, loginSchema } from "./schema/login-schema";
+import { useLogin } from "./hooks/use-login";
 
 export default function LoginPage() {
   const { mutate: login, isPending } = useLogin();

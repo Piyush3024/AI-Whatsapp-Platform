@@ -4,8 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
-
 import { Button } from "@repo/ui/components/button";
 import {
   Card,
@@ -24,16 +22,8 @@ import {
   FormMessage,
 } from "@repo/ui/components/form";
 import { Input } from "@repo/ui/components/input";
-import { useRegister } from "@/services/auth.service";
-
-const registerSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  tenantName: z.string().min(2, "Business name must be at least 2 characters"),
-  email: z.string().email("Valid email required"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-});
-
-type RegisterFormValues = z.infer<typeof registerSchema>;
+import { useRegister } from "./hooks/use-register";
+import { registerSchema, RegisterFormValues } from "./schema/register.schema";
 
 export default function RegisterPage() {
   const { mutate: register, isPending } = useRegister();
@@ -42,7 +32,7 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
-      tenantName: "",
+      businessName: "",
       email: "",
       password: "",
     },
@@ -87,7 +77,7 @@ export default function RegisterPage() {
             />
             <FormField
               control={form.control}
-              name="tenantName"
+              name="businessName"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Business name</FormLabel>
