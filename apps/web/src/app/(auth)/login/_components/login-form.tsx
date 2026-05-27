@@ -25,9 +25,12 @@ import {
 import { Input } from "@repo/ui/components/input";
 import { LoginFormValues, loginSchema } from "../schema/login.schema";
 import { useLogin } from "../hooks/use-login";
+import { useState } from "react";
+import { Icons } from "@repo/ui/components/icons";
 
 export function LoginForm() {
   const { mutate: login, isPending } = useLogin();
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -72,7 +75,7 @@ export function LoginForm() {
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="password"
               render={({ field }) => (
@@ -89,8 +92,49 @@ export function LoginForm() {
                   <FormMessage />
                 </FormItem>
               )}
+            /> */}
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        autoComplete="new-password"
+                        className="pr-10"
+                        {...field}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-0 top-0 text-muted-foreground hover:text-foreground hover:bg-transparent cursor-pointer"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                      >
+                        {showPassword ? (
+                          <Icons.eyeOff className="size-4" />
+                        ) : (
+                          <Icons.eye className="size-4" />
+                        )}
+                        <span className="sr-only">
+                          {showPassword ? "Hide password" : "Show password"}
+                        </span>
+                      </Button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <Button type="submit" className="w-full" disabled={isPending}>
+            <Button
+              type="submit"
+              className="w-full cursor-pointer"
+              disabled={isPending}
+            >
               {isPending ? "Signing in…" : "Sign in"}
             </Button>
           </form>

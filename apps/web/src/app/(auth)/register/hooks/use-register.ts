@@ -2,15 +2,21 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/auth.store";
 import { register } from "@/services/auth.service";
+import { setCookie } from "@/lib/cookies";
+import type { RegisterFormValues } from "../schema/register.schema";
 
 export function useRegister() {
   const { setAuth } = useAuthStore();
   const router = useRouter();
 
   return useMutation({
-    mutationFn: register,
+    mutationFn: (values: RegisterFormValues) => {
+      const { ...registerData } = values;
+      return register(registerData);
+    },
     onSuccess: (data) => {
-      setAuth(data.user, data.accessToken);
+      setCookie("refresh_token", data.refreshToken, 7);
+      setAuth(data.user, data.accessToken, data.refreshToken);
       router.push("/dashboard");
     },
   });

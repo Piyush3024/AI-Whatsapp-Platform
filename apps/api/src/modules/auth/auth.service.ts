@@ -17,6 +17,14 @@ export interface AuthTokens {
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    role: UserRole;
+    tenantId: string;
+    createdAt: string;
+  };
 }
 
 const BCRYPT_ROUNDS = 12;
@@ -80,12 +88,24 @@ export class AuthService {
       'AuthService',
     );
 
-    return this._generateAndStoreTokens({
+    const tokens = await this._generateAndStoreTokens({
       sub: user.id,
       tenantId: tenant.id,
       role: UserRole.OWNER,
       email: user.email,
     });
+
+    return {
+      ...tokens,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: UserRole.OWNER,
+        tenantId: tenant.id,
+        createdAt: user.createdAt.toISOString(),
+      },
+    };
   }
 
   async login(dto: LoginDto): Promise<AuthTokens> {
@@ -116,12 +136,24 @@ export class AuthService {
 
     this.logger.log(`User logged in: ${user.id}`, 'AuthService');
 
-    return this._generateAndStoreTokens({
+    const tokens = await this._generateAndStoreTokens({
       sub: user.id,
       tenantId: member.tenantId,
       role: member.role,
       email: user.email,
     });
+
+    return {
+      ...tokens,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: member.role,
+        tenantId: member.tenantId,
+        createdAt: user.createdAt.toISOString(),
+      },
+    };
   }
 
   async refresh(
@@ -139,7 +171,28 @@ export class AuthService {
 
     this.logger.log(`Tokens refreshed for user: ${userId}`, 'AuthService');
 
-    return this._generateAndStoreTokens({ sub: userId, tenantId, role, email });
+    const tokens = await this._generateAndStoreTokens({
+      sub: userId,
+      tenantId,
+      role,
+      email,
+    });
+
+    const userRecord = await this.prisma.db.user.findUnique({
+      where: { id: userId },
+    });
+
+    return {
+      ...tokens,
+      user: {
+        id: userId,
+        email,
+        name: userRecord?.name ?? '',
+        role: role as UserRole,
+        tenantId,
+        createdAt: userRecord?.createdAt.toISOString() ?? '',
+      },
+    };
   }
 
   async logout(userId: string, tenantId: string): Promise<void> {
@@ -179,7 +232,7 @@ export class AuthService {
 
   private async _generateAndStoreTokens(
     payload: JwtPayload,
-  ): Promise<AuthTokens> {
+  ): Promise<Omit<AuthTokens, 'user'>> {
     const accessExpiresIn: string =
       this.config.get<string>('jwt.expiresIn') ?? '15m';
     const refreshExpiresIn: string =

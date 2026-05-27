@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Button } from "@repo/ui/components/button";
@@ -22,11 +23,14 @@ import {
   FormMessage,
 } from "@repo/ui/components/form";
 import { Input } from "@repo/ui/components/input";
+import { Icons } from "@repo/ui/components/icons";
 import { useRegister } from "../hooks/use-register";
 import { registerSchema, RegisterFormValues } from "../schema/register.schema";
 
 export function RegisterForm() {
   const { mutate: register, isPending } = useRegister();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -35,6 +39,7 @@ export function RegisterForm() {
       businessName: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
@@ -113,18 +118,80 @@ export function RegisterForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="••••••••"
-                      autoComplete="new-password"
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        autoComplete="new-password"
+                        className="pr-10"
+                        {...field}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-0 top-0 text-muted-foreground hover:text-foreground hover:bg-transparent cursor-pointer"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                      >
+                        {showPassword ? (
+                          <Icons.eyeOff className="size-4" />
+                        ) : (
+                          <Icons.eye className="size-4" />
+                        )}
+                        <span className="sr-only">
+                          {showPassword ? "Hide password" : "Show password"}
+                        </span>
+                      </Button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isPending}>
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm password</FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        autoComplete="new-password"
+                        className="pr-10"
+                        {...field}
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-0 top-0 text-muted-foreground hover:text-foreground hover:bg-transparent cursor-pointer"
+                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                      >
+                        {showConfirmPassword ? (
+                          <Icons.eyeOff className="size-4" />
+                        ) : (
+                          <Icons.eye className="size-4" />
+                        )}
+                        <span className="sr-only">
+                          {showConfirmPassword
+                            ? "Hide password"
+                            : "Show password"}
+                        </span>
+                      </Button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button
+              type="submit"
+              className="w-full cursor-pointer"
+              disabled={isPending}
+            >
               {isPending ? "Creating account…" : "Create account"}
             </Button>
           </form>

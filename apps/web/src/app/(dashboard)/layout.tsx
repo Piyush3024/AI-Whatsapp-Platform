@@ -9,8 +9,6 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Refresh token cookie check — gate for dashboard
-  // Actual token validation happens in useAuthInit on client
   const cookieStore = await cookies();
   const hasRefreshToken = cookieStore.has("refresh_token");
 

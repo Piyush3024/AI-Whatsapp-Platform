@@ -265,12 +265,30 @@ export class InvitationService {
         );
       });
 
-    return this._generateTokens({
+    const tokens = await this._generateTokens({
       sub: userId,
       tenantId: invitation.tenantId,
       role: invitation.role,
       email: invitation.email,
     });
+
+    const userRecord = await this.prisma.db.user.findUnique({
+      where: { id: userId },
+      select: { id: true, name: true, email: true, createdAt: true },
+    });
+
+    return {
+      ...tokens,
+      user: {
+        id: userId,
+        email: invitation.email,
+        name: userRecord?.name ?? dto.name,
+        role: invitation.role,
+        tenantId: invitation.tenantId,
+        createdAt:
+          userRecord?.createdAt.toISOString() ?? new Date().toISOString(),
+      },
+    };
   }
 
   async revokeInvitation(
@@ -299,7 +317,9 @@ export class InvitationService {
     );
   }
 
-  private async _generateTokens(payload: JwtPayload): Promise<AuthTokens> {
+  private async _generateTokens(
+    payload: JwtPayload,
+  ): Promise<Omit<AuthTokens, 'user'>> {
     const accessExpiresIn = this.config.get<string>('jwt.expiresIn') ?? '15m';
     const refreshExpiresIn =
       this.config.get<string>('jwt.refreshExpiresIn') ?? '7d';
