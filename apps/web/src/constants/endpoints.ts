@@ -22,4 +22,14 @@ export const API_ENDPOINTS = {
     refresh: "/auth/refresh",
     me: "/auth/me",
   },
+
+  /**
+   * Analytics-related endpoints
+   */
+  analytics: {
+    overview: "/analytics/overview",
+    messages: "/analytics/messages",
+    bookings: "/analytics/bookings",
+    usage: "/analytics/usage",
+  },
 } as const;
