@@ -1,0 +1,97 @@
+import {
+  IconAlertTriangle,
+  IconArmchair,
+  IconBook,
+  IconCalendar,
+  IconCheck,
+  IconChevronDown,
+  IconChevronLeft,
+  IconChevronRight,
+  IconEdit,
+  IconEye,
+  IconEyeOff,
+  IconInfoCircle,
+  IconLoader2,
+  IconLogout,
+  IconMenu2,
+  IconMessageCircle,
+  IconPlus,
+  IconSearch,
+  IconSettings,
+  IconTool,
+  IconTrash,
+  IconUsers,
+  IconX,
+  IconHome,
+  IconBell,
+  IconPhone,
+  IconMail,
+  IconUpload,
+  IconDownload,
+  IconRefresh,
+  IconFilter,
+  IconDotsVertical,
+  IconCopy,
+  IconExternalLink,
+  IconChevronUp,
+  IconArrowLeft,
+  IconArrowRight,
+  IconCircleCheck,
+  IconCircleX,
+  type IconProps,
+} from "@tabler/icons-react";
+
+export type Icon = React.ComponentType<IconProps>;
+
+export const Icons = {
+  // Navigation
+  home: IconHome,
+  calendar: IconCalendar,
+  users: IconUsers,
+  settings: IconSettings,
+  whatsapp: IconMessageCircle,
+  analytics: IconArmchair,
+  knowledgeBase: IconBook,
+  services: IconTool,
+  notifications: IconBell,
+
+  // Actions
+  logout: IconLogout,
+  menu: IconMenu2,
+  close: IconX,
+  search: IconSearch,
+  add: IconPlus,
+  edit: IconEdit,
+  delete: IconTrash,
+  check: IconCheck,
+  eye: IconEye,
+  eyeOff: IconEyeOff,
+  upload: IconUpload,
+  download: IconDownload,
+  refresh: IconRefresh,
+  filter: IconFilter,
+  copy: IconCopy,
+  externalLink: IconExternalLink,
+
+  // Navigation arrows
+  chevronDown: IconChevronDown,
+  chevronUp: IconChevronUp,
+  chevronLeft: IconChevronLeft,
+  chevronRight: IconChevronRight,
+  arrowLeft: IconArrowLeft,
+  arrowRight: IconArrowRight,
+
+  // Contact
+  phone: IconPhone,
+  mail: IconMail,
+
+  // UI / Feedback
+  spinner: IconLoader2,
+  warning: IconAlertTriangle,
+  info: IconInfoCircle,
+  dotsVertical: IconDotsVertical,
+  circleCheck: IconCircleCheck,
+  circleX: IconCircleX,
+} as const;
+
+export type IconName = keyof typeof Icons;
