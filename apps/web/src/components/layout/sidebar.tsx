@@ -2,18 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  BarChart3,
-  BookOpen,
-  Calendar,
-  Home,
-  MessageSquare,
-  Settings,
-  Users,
-  Wrench,
-  X,
-} from "lucide-react";
-
+import { navItems, bottomNavItems } from "@/constants/nav-items";
+import { Icons } from "@repo/ui/components/icons";
 import { Button } from "@repo/ui/components/button";
 import { Separator } from "@repo/ui/components/separator";
 import {
@@ -23,21 +13,6 @@ import {
 } from "@repo/ui/components/tooltip";
 import { cn } from "@repo/ui/lib/utils";
 import { useUIStore } from "@/store/ui.store";
-
-const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: Home },
-  { href: "/bookings", label: "Bookings", icon: Calendar },
-  { href: "/customers", label: "Customers", icon: Users },
-  { href: "/staff", label: "Staff", icon: Users },
-  { href: "/services", label: "Services", icon: Wrench },
-  { href: "/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/knowledge-base", label: "Knowledge Base", icon: BookOpen },
-  { href: "/whatsapp", label: "WhatsApp", icon: MessageSquare },
-] as const;
-
-const bottomNavItems = [
-  { href: "/settings", label: "Settings", icon: Settings },
-] as const;
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -63,7 +38,7 @@ export function Sidebar() {
         {/* Header */}
         <div className="flex h-16 items-center justify-between px-4 border-b">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <MessageSquare className="size-6 text-primary" />
+            <Icons.whatsapp className="size-6 text-primary" />
             <span className="font-semibold text-sm">WA AI Platform</span>
           </Link>
           <Button
@@ -72,7 +47,7 @@ export function Sidebar() {
             className="lg:hidden"
             onClick={() => setSidebarOpen(false)}
           >
-            <X className="size-4" />
+            <Icons.close className="size-4" />
           </Button>
         </div>
 
