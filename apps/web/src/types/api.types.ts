@@ -38,3 +38,15 @@ export interface AuthTokens {
   accessToken: string;
   user: User;
 }
+
+export interface LoginDto {
+  email: string;
+  password: string;
+}
+
+export interface RegisterDto {
+  name: string;
+  businessName: string;
+  email: string;
+  password: string;
+}

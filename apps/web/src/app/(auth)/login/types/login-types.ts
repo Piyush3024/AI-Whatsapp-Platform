@@ -1,4 +1,1 @@
-export interface LoginDto {
-  email: string;
-  password: string;
-}
+export type { LoginDto } from "@/types/api.types";

@@ -1,7 +1,5 @@
 import apiClient from "@/lib/api-client";
-import type { AuthTokens } from "@/types/api.types";
-import { RegisterDto } from "@/app/(auth)/register/types/register-types";
-import { LoginDto } from "@/app/(auth)/login/types/login-types";
+import type { AuthTokens, LoginDto, RegisterDto } from "@/types/api.types";
 import { API_ENDPOINTS } from "@/constants/endpoints";
 
 export const login = async (dto: LoginDto): Promise<AuthTokens> => {

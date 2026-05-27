@@ -1,6 +1,1 @@
-export interface RegisterDto {
-  email: string;
-  password: string;
-  name: string;
-  businessName: string;
-}
+export type { RegisterDto } from "@/types/api.types";

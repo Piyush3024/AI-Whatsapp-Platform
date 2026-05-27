@@ -11,9 +11,9 @@ import {
   DropdownMenuTrigger,
 } from "@repo/ui/components/dropdown-menu";
 import { Icons } from "@repo/ui/components/icons";
-import { useAuthStore } from "@/store/auth.store";
+import { useAuthStore } from "@/stores/auth.store";
 import { useLogout } from "@/app/(auth)/logout/hooks/use-logout";
-import { useUIStore } from "@/store/ui.store";
+import { useUIStore } from "@/stores/ui.store";
 
 function getInitials(name: string): string {
   return name
