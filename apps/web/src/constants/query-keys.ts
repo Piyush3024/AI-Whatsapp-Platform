@@ -29,4 +29,14 @@ export const QUERY_KEYS = {
     bookings: ["analytics", "bookings"] as const,
     usage: ["analytics", "usage"] as const,
   },
+
+  /**
+   * Bookings-related queries
+   */
+
+  bookings: {
+    all: ["bookings"] as const,
+    list: (params: unknown) => ["bookings", "list", params] as const,
+    detail: (id: string) => ["bookings", "detail", id] as const,
+  },
 } as const;

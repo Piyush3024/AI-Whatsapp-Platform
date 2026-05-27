@@ -32,4 +32,17 @@ export const API_ENDPOINTS = {
     bookings: "/analytics/bookings",
     usage: "/analytics/usage",
   },
+
+  /**
+   * Bookings-related endpoints
+   */
+
+  bookings: {
+    list: "/bookings",
+    detail: (id: string) => `/bookings/${id}`,
+    create: "/bookings",
+    update: (id: string) => `/bookings/${id}`,
+    updateStatus: (id: string) => `/bookings/${id}/status`,
+    delete: (id: string) => `/bookings/${id}`,
+  },
 } as const;
