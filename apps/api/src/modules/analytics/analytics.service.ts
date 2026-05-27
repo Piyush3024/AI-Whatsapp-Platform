@@ -29,6 +29,7 @@ export class AnalyticsService {
   }
 
   async getOverview() {
+    console.log('Hey this is the test');
     const tenantId = this.tenantId;
 
     const [

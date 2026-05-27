@@ -1,3 +1,5 @@
+import { OverviewStats } from "./_components/overview-stats";
+
 export default function DashboardPage() {
   return (
     <div>
@@ -5,6 +7,9 @@ export default function DashboardPage() {
       <p className="text-muted-foreground mt-1">
         Welcome to WhatsApp AI Platform
       </p>
+      <div className="mt-6">
+        <OverviewStats />
+      </div>
     </div>
   );
 }

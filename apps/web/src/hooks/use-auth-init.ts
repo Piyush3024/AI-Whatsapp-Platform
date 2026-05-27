@@ -31,7 +31,7 @@ export function useAuthInit() {
           clearAuth();
           setInitialized();
           if (pathname && pathname.startsWith("/dashboard")) {
-            router.push("/login");
+            setTimeout(() => router.push("/login"), 0);
           }
         }
         return;
@@ -56,18 +56,16 @@ export function useAuthInit() {
           // Rotate the cookie with the fresh refresh token
           setCookie("refresh_token", newRefreshToken, 7);
 
-          // Auto-redirect away from auth pages if already logged in
           if (pathname === "/login" || pathname === "/register") {
-            router.push("/dashboard");
+            setTimeout(() => router.push("/dashboard"), 0);
           }
         }
       } catch {
         if (!cancelled) {
           clearAuth();
           eraseCookie("refresh_token");
-          // Only redirect to login if on a protected route
           if (pathname && pathname.startsWith("/dashboard")) {
-            router.push("/login");
+            setTimeout(() => router.push("/login"), 0);
           }
         }
       } finally {

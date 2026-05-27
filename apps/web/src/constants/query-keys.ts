@@ -19,4 +19,14 @@ export const QUERY_KEYS = {
   auth: {
     currentUser: ["auth", "current-user"] as const,
   },
+
+  /**
+   * Analytics-related queries
+   */
+  analytics: {
+    overview: ["analytics", "overview"] as const,
+    messages: ["analytics", "messages"] as const,
+    bookings: ["analytics", "bookings"] as const,
+    usage: ["analytics", "usage"] as const,
+  },
 } as const;

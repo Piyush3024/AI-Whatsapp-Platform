@@ -51,3 +51,13 @@ export interface RegisterDto {
   email: string;
   password: string;
 }
+
+// Analytics types
+export interface AnalyticsOverview {
+  totalBookings: number;
+  totalCustomers: number;
+  totalRevenuePaisa: number; // paisa (integer) — display mein divide by 100
+  totalMessages: number;
+  activeStaff: number;
+  totalLocations: number;
+}
