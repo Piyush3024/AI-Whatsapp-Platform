@@ -10,34 +10,24 @@ import {
   ValidateIf,
 } from 'class-validator';
 
-/**
- * CreateScheduleOverrideDto — Specific date pe exception set karo.
- *
- * Use cases:
- * - Staff ki chutti (isWorking: false)
- * - Special hours kisi date pe (isWorking: true, custom startTime/endTime)
- * - Holiday
- *
- * Rule: Agar isWorking: true hai toh startTime aur endTime required hain.
- */
 export class CreateScheduleOverrideDto {
   @ApiProperty({
     example: '2026-06-15',
-    description: 'Date jis din override apply hoga (YYYY-MM-DD format)',
+    description: 'Date (YYYY-MM-DD)  at which override is being applied',
   })
   @IsDateString()
   date!: string;
 
   @ApiProperty({
     example: false,
-    description: 'Kya staff is date pe kaam karega?',
+    description: 'Staff working or not',
   })
   @IsBoolean()
   isWorking!: boolean;
 
   @ApiPropertyOptional({
     example: '10:00',
-    description: 'Custom start time — sirf agar isWorking: true ho',
+    description: 'Custom start time (HH:MM) — only if isWorking: true',
   })
   @ValidateIf((o: CreateScheduleOverrideDto) => o.isWorking === true)
   @IsString()
@@ -49,7 +39,7 @@ export class CreateScheduleOverrideDto {
 
   @ApiPropertyOptional({
     example: '15:00',
-    description: 'Custom end time — sirf agar isWorking: true ho',
+    description: 'Custom end time (HH:MM) — only if isWorking: true',
   })
   @ValidateIf((o: CreateScheduleOverrideDto) => o.isWorking === true)
   @IsString()
@@ -61,7 +51,7 @@ export class CreateScheduleOverrideDto {
 
   @ApiPropertyOptional({
     example: 'Eid holiday',
-    description: 'Override ka reason (optional)',
+    description: 'Override reason (optional)',
   })
   @IsOptional()
   @IsString()

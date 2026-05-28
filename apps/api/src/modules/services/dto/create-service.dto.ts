@@ -14,7 +14,7 @@ import {
 export class CreateServiceDto {
   @ApiProperty({
     example: 'Haircut & Styling',
-    description: 'Service ka naam',
+    description: 'Name of Service',
   })
   @IsString()
   @IsNotEmpty()
@@ -23,7 +23,7 @@ export class CreateServiceDto {
 
   @ApiPropertyOptional({
     example: 'Professional haircut with wash and blow dry',
-    description: 'Service ki description',
+    description: 'Description of Service',
   })
   @IsOptional()
   @IsString()
@@ -37,9 +37,9 @@ export class CreateServiceDto {
     maximum: 480,
   })
   @IsInt()
-  @Min(5, { message: 'Duration kam se kam 5 minutes hona chahiye' })
+  @Min(5, { message: 'Duration must be at least 5 minutes' })
   @Max(480, {
-    message: 'Duration zyada se zyada 480 minutes (8 hours) ho sakta hai',
+    message: 'Duration must be at most 480 minutes',
   })
   duration!: number;
 
@@ -49,7 +49,7 @@ export class CreateServiceDto {
     minimum: 0,
   })
   @IsInt()
-  @Min(0, { message: 'Price negative nahi ho sakta' })
+  @Min(0, { message: 'Price cannot be negative' })
   price!: number;
 
   @ApiPropertyOptional({
@@ -64,7 +64,7 @@ export class CreateServiceDto {
 
   @ApiPropertyOptional({
     example: 'uuid-of-location',
-    description: 'Kaunsi location pe available hai (null = sab locations)',
+    description: 'Location where service is available (null = all locations)',
   })
   @IsOptional()
   @IsUUID()
@@ -72,7 +72,7 @@ export class CreateServiceDto {
 
   @ApiPropertyOptional({
     example: true,
-    description: 'Service active hai? Default true.',
+    description: 'Service active or not',
     default: true,
   })
   @IsOptional()

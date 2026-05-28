@@ -11,9 +11,6 @@ import {
 import { Type } from 'class-transformer';
 import { DayOfWeek } from '@whatsapp-ai/db/generated/prisma';
 
-/**
- * Ek din ki schedule entry.
- */
 export class ScheduleItemDto {
   @ApiProperty({ enum: DayOfWeek, example: DayOfWeek.MONDAY })
   @IsEnum(DayOfWeek)
@@ -40,20 +37,6 @@ export class ScheduleItemDto {
   isWorking!: boolean;
 }
 
-/**
- * SetStaffScheduleDto — Staff ki weekly recurring schedule set karo.
- *
- * PUT endpoint — full replacement.
- * Saate 7 din bhejne chahiye.
- *
- * Example:
- * {
- *   "schedule": [
- *     { "dayOfWeek": "MONDAY", "startTime": "09:00", "endTime": "18:00", "isWorking": true },
- *     { "dayOfWeek": "SUNDAY", "startTime": "09:00", "endTime": "14:00", "isWorking": false }
- *   ]
- * }
- */
 export class SetStaffScheduleDto {
   @ApiProperty({
     type: [ScheduleItemDto],

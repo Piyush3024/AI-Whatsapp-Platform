@@ -29,21 +29,11 @@ import { Roles } from '../../common/decorators/roles.decorator.js';
 import type { CurrentUserPayload } from '../../common/decorators/current-user.decorator.js';
 import { UserRole } from '@whatsapp-ai/db/generated/prisma';
 
-/**
- * StaffController — /api/v1/staff/*
- *
- * Role requirements:
- *  - GET endpoints  → sab authenticated users
- *  - POST/PATCH/PUT → OWNER ya ADMIN
- *  - DELETE         → OWNER ya ADMIN
- */
 @ApiTags('staff')
 @ApiBearerAuth('access-token')
 @Controller('staff')
 export class StaffController {
   constructor(private readonly staffService: StaffService) {}
-
-  // ── Staff CRUD ────────────────────────────────────────────────────────────
 
   @Get()
   @ApiOperation({ summary: 'Saare staff members list karo' })
@@ -99,8 +89,6 @@ export class StaffController {
     return this.staffService.remove(user.tenantId, staffId);
   }
 
-  // ── Schedule ──────────────────────────────────────────────────────────────
-
   @Get(':id/schedule')
   @ApiOperation({ summary: 'Staff ki weekly schedule dekho' })
   getSchedule(
@@ -120,8 +108,6 @@ export class StaffController {
   ) {
     return this.staffService.setSchedule(user.tenantId, staffId, dto);
   }
-
-  // ── Overrides ─────────────────────────────────────────────────────────────
 
   @Get(':id/overrides')
   @ApiOperation({ summary: 'Staff ke schedule overrides list karo' })

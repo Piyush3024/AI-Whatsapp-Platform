@@ -33,7 +33,7 @@ export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Saari services list karo' })
+  @ApiOperation({ summary: 'List all services' })
   @ApiQuery({ name: 'includeInactive', required: false, type: Boolean })
   @ApiQuery({ name: 'locationId', required: false, type: String })
   findAll(
@@ -50,7 +50,7 @@ export class ServicesController {
 
   @Post()
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @ApiOperation({ summary: 'Naya service banao' })
+  @ApiOperation({ summary: 'Create new service' })
   create(
     @CurrentUser() user: CurrentUserPayload,
     @Body() dto: CreateServiceDto,
@@ -59,7 +59,7 @@ export class ServicesController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Service by ID lo' })
+  @ApiOperation({ summary: 'Get service by ID' })
   findOne(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) serviceId: string,
@@ -69,7 +69,7 @@ export class ServicesController {
 
   @Patch(':id')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @ApiOperation({ summary: 'Service update karo' })
+  @ApiOperation({ summary: 'Update service' })
   update(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) serviceId: string,
@@ -81,7 +81,7 @@ export class ServicesController {
   @Delete(':id')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Service soft delete karo' })
+  @ApiOperation({ summary: 'Soft delete service' })
   remove(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) serviceId: string,
