@@ -26,9 +26,6 @@ import { Roles } from '../../common/decorators/roles.decorator.js';
 import type { CurrentUserPayload } from '../../common/decorators/current-user.decorator.js';
 import { UserRole } from '@whatsapp-ai/db/generated/prisma';
 
-/**
- * ServicesController — /api/v1/services/*
- */
 @ApiTags('services')
 @ApiBearerAuth('access-token')
 @Controller('services')

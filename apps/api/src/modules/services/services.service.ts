@@ -3,24 +3,12 @@ import { PrismaService } from '../../prisma/prisma.service.js';
 import type { CreateServiceDto } from './dto/create-service.dto.js';
 import type { UpdateServiceDto } from './dto/update-service.dto.js';
 
-/**
- * ServicesService
- *
- * Business services management:
- * - Service CRUD (create, read, update, soft delete)
- * - Active/inactive filtering
- * - Location-based filtering
- */
 @Injectable()
 export class ServicesService {
   private readonly logger = new Logger(ServicesService.name);
 
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * Tenant ki saari services return karta hai.
-   * By default sirf active services — booking flow ke liye.
-   */
   async findAll(
     tenantId: string,
     options: { includeInactive?: boolean; locationId?: string } = {},
@@ -35,9 +23,6 @@ export class ServicesService {
     });
   }
 
-  /**
-   * Service by ID — tenant check ke saath.
-   */
   async findById(tenantId: string, serviceId: string) {
     const service = await this.prisma.db.service.findFirst({
       where: { id: serviceId, tenantId },
@@ -50,12 +35,7 @@ export class ServicesService {
     return service;
   }
 
-  /**
-   * Naya service create karta hai.
-   * LocationId verify karta hai agar diya hai.
-   */
   async create(tenantId: string, dto: CreateServiceDto) {
-    // Location verify karo agar diya hai
     if (dto.locationId) {
       const location = await this.prisma.db.location.findFirst({
         where: { id: dto.locationId, tenantId },
@@ -88,13 +68,9 @@ export class ServicesService {
     return service;
   }
 
-  /**
-   * Service update karta hai.
-   */
   async update(tenantId: string, serviceId: string, dto: UpdateServiceDto) {
     await this.findById(tenantId, serviceId);
 
-    // Location verify karo agar change ho rahi hai
     if (dto.locationId) {
       const location = await this.prisma.db.location.findFirst({
         where: { id: dto.locationId, tenantId },
@@ -123,9 +99,6 @@ export class ServicesService {
     return updated;
   }
 
-  /**
-   * Service soft delete karta hai.
-   */
   async remove(tenantId: string, serviceId: string) {
     await this.findById(tenantId, serviceId);
 

@@ -11,15 +11,6 @@ import {
   Min,
 } from 'class-validator';
 
-/**
- * CreateServiceDto — Naya service add karne ke liye.
- *
- * Price paisa mein store hota hai (integer) — architecture decision.
- * Example: Rs. 500 → 50000 paisa
- *
- * Duration minutes mein store hota hai.
- * Example: 1 hour → 60 minutes
- */
 export class CreateServiceDto {
   @ApiProperty({
     example: 'Haircut & Styling',
