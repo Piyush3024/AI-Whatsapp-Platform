@@ -23,25 +23,6 @@ import type {
   WhatsAppVerifyQuery,
 } from './dto/webhook-payload.dto.js';
 
-/**
- * WhatsAppWebhookController
- *
- * Do endpoints:
- *
- * GET /api/v1/whatsapp/webhook
- *   — Meta ka verification handshake
- *   — hub.verify_token check karta hai
- *   — hub.challenge return karta hai (plain text/number)
- *
- * POST /api/v1/whatsapp/webhook
- *   — Meta inbound messages + status updates bhejta hai
- *   — WebhookSignatureGuard HMAC verify karta hai
- *   — 200 turant return karta hai
- *   — Async processing BullMQ queue mein
- *
- * @Public() — JWT nahi chahiye webhook pe
- * @SkipThrottle() — Meta ke servers rate limit nahi karne
- */
 @ApiTags('whatsapp')
 @Public()
 @SkipThrottle()
@@ -54,17 +35,6 @@ export class WhatsAppWebhookController {
     private readonly config: ConfigService,
   ) {}
 
-  /**
-   * GET /api/v1/whatsapp/webhook
-   *
-   * Meta pehli baar webhook URL set karte waqt ye request bhejta hai.
-   * Verify token match karo aur hub.challenge return karo.
-   *
-   * Query params:
-   *  hub.mode          = "subscribe"
-   *  hub.verify_token  = tumhara WHATSAPP_VERIFY_TOKEN
-   *  hub.challenge     = Meta ka random string — wahi return karo
-   */
   @Get()
   @ApiOperation({ summary: 'WhatsApp webhook verification (Meta handshake)' })
   verifyWebhook(
@@ -80,7 +50,6 @@ export class WhatsAppWebhookController {
       'WhatsAppWebhookController',
     );
 
-    // Mode aur token dono sahi hone chahiye
     if (
       mode === 'subscribe' &&
       token === this.config.get<string>('whatsapp.verifyToken')
@@ -89,7 +58,7 @@ export class WhatsAppWebhookController {
         'Webhook verification successful',
         'WhatsAppWebhookController',
       );
-      // challenge plain text mein return karo — Meta yahi expect karta hai
+
       reply
         .header('Content-Type', 'text/plain')
         .status(HttpStatus.OK)
@@ -107,18 +76,6 @@ export class WhatsAppWebhookController {
     );
   }
 
-  /**
-   * POST /api/v1/whatsapp/webhook
-   *
-   * Meta yahan actual messages aur status updates bhejta hai.
-   *
-   * Flow:
-   * 1. WebhookSignatureGuard HMAC verify karta hai (before this method)
-   * 2. 200 OK turant return karo — Meta ko 5 seconds mein chahiye
-   * 3. Async processing queue mein push karo
-   *
-   * ⚠️  Kabhi bhi yahan heavy processing mat karo — timeout hoga.
-   */
   @Post()
   @HttpCode(HttpStatus.OK)
   @UseGuards(WebhookSignatureGuard)
@@ -129,8 +86,6 @@ export class WhatsAppWebhookController {
       'WhatsAppWebhookController',
     );
 
-    // Fire and forget — await mat karo response delay hoga
-    // Errors BullMQ retry logic handle karega
     void this.webhookService.processWebhook(payload).catch((error: Error) => {
       this.logger.error(
         `Failed to queue webhook payload: ${error.message}`,
@@ -139,7 +94,6 @@ export class WhatsAppWebhookController {
       );
     });
 
-    // Meta ko turant 200 chahiye — processing async hai
     return { status: 'ok' };
   }
 }

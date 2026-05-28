@@ -7,10 +7,6 @@ import type {
   WhatsAppMessageStatus,
 } from './dto/webhook-payload.dto.js';
 
-/**
- * Queue names — worker ke saath exactly match karna chahiye.
- * Ek jagah define karo, dono jagah import karo.
- */
 export const QUEUE_NAMES = {
   WHATSAPP_INBOUND: 'whatsapp-inbound',
   WHATSAPP_OUTBOUND: 'whatsapp-outbound',
@@ -21,43 +17,21 @@ export const QUEUE_NAMES = {
   ANALYTICS: 'analytics',
 } as const;
 
-/**
- * Inbound message job ka shape — worker yahi expect karta hai.
- */
 export interface InboundMessageJob {
-  phoneNumberId: string; // Tumhara WhatsApp number ID
-  wabaId: string; // WhatsApp Business Account ID
+  phoneNumberId: string;
+  wabaId: string;
   message: WhatsAppMessage;
-  senderPhone: string; // E.164 format
+  senderPhone: string;
   senderName?: string;
   timestamp: string;
 }
 
-/**
- * Status update job ka shape.
- */
 export interface StatusUpdateJob {
   phoneNumberId: string;
   wabaId: string;
   status: WhatsAppMessageStatus;
 }
 
-/**
- * WhatsAppWebhookService
- *
- * Webhook payload ko process karta hai:
- * 1. Entry aur changes iterate karta hai
- * 2. Messages ko WHATSAPP_INBOUND queue mein push karta hai
- * 3. Status updates ko ANALYTICS queue mein push karta hai
- *
- * ⚠️  Yahan koi heavy processing nahi hoti — sirf queue mein push.
- * Heavy work worker mein hogi (Phase 4+).
- *
- * Kyun queue?
- * - Meta 5 seconds mein 200 expect karta hai
- * - AI reply, DB operations sab async hain
- * - Queue retry logic built-in hai — crash hone pe message lost nahi hoga
- */
 @Injectable()
 export class WhatsAppWebhookService {
   private readonly logger = new Logger(WhatsAppWebhookService.name);
@@ -70,24 +44,17 @@ export class WhatsAppWebhookService {
     private readonly analyticsQueue: Queue<StatusUpdateJob>,
   ) {}
 
-  /**
-   * Webhook payload process karta hai.
-   * Har message ke liye ek job queue mein jaata hai.
-   */
   async processWebhook(payload: WhatsAppWebhookPayload): Promise<void> {
     for (const entry of payload.entry) {
       for (const change of entry.changes) {
-        // Sirf 'messages' field handle karte hain
         if (change.field !== 'messages') continue;
 
         const { value } = change;
         const phoneNumberId = value.metadata.phone_number_id;
         const wabaId = entry.id;
 
-        // ── Inbound messages ────────────────────────────────────────────
         if (value.messages && value.messages.length > 0) {
           for (const message of value.messages) {
-            // Sender ka naam contacts se nikalo agar available ho
             const senderName = value.contacts?.find(
               (c) => c.wa_id === message.from,
             )?.profile.name;
@@ -102,18 +69,17 @@ export class WhatsAppWebhookService {
             };
 
             await this.inboundQueue.add('process-inbound', job, {
-              // BullMQ job options — production grade
-              attempts: 3, // 3 baar try karo failure pe
+              attempts: 3,
               backoff: {
                 type: 'exponential',
-                delay: 2_000, // 2s, 4s, 8s
+                delay: 2_000,
               },
               removeOnComplete: {
-                age: 24 * 3600, // 24 hours baad completed jobs remove
-                count: 1000, // Max 1000 completed jobs rakho
+                age: 24 * 3600,
+                count: 1000,
               },
               removeOnFail: {
-                age: 7 * 24 * 3600, // Failed jobs 7 days rakho (debugging)
+                age: 7 * 24 * 3600,
               },
             });
 
@@ -124,7 +90,6 @@ export class WhatsAppWebhookService {
           }
         }
 
-        // ── Status updates ──────────────────────────────────────────────
         if (value.statuses && value.statuses.length > 0) {
           for (const status of value.statuses) {
             const job: StatusUpdateJob = {
@@ -136,8 +101,8 @@ export class WhatsAppWebhookService {
             await this.analyticsQueue.add('message-status-update', job, {
               attempts: 2,
               backoff: { type: 'exponential', delay: 1_000 },
-              removeOnComplete: { age: 3600 }, // 1 hour
-              removeOnFail: { age: 24 * 3600 }, // 24 hours
+              removeOnComplete: { age: 3600 },
+              removeOnFail: { age: 24 * 3600 },
             });
 
             this.logger.debug(

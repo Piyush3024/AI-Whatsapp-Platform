@@ -13,24 +13,6 @@ interface FastifyRequestWithRawBody extends FastifyRequest {
   rawBody?: Buffer;
 }
 
-/**
- * WebhookSignatureGuard — WhatsApp HMAC-SHA256 Signature Verification
- *
- * Meta har POST webhook request pe X-Hub-Signature-256 header bhejta hai.
- * Format: "sha256=<hmac_hash>"
- *
- * Verification process:
- * 1. Raw request body leke HMAC-SHA256 compute karo (WHATSAPP_APP_SECRET se)
- * 2. Meta ka signature header parse karo
- * 3. timingSafeEqual se compare karo — timing attacks prevent karta hai
- *
- * ⚠️  CRITICAL: Raw body chahiye — parsed JSON se hash MATCH NAHI KAREGA.
- * Isliye main.ts mein rawBody: true set kiya hai.
- *
- * ⚠️  timingSafeEqual kyun?
- * Normal === comparison timing leak karta hai — attacker measure kar sakta
- * hai kitne characters match hue. timingSafeEqual hamesha same time leta hai.
- */
 @Injectable()
 export class WebhookSignatureGuard implements CanActivate {
   private readonly logger = new Logger(WebhookSignatureGuard.name);
@@ -42,7 +24,6 @@ export class WebhookSignatureGuard implements CanActivate {
       .switchToHttp()
       .getRequest<FastifyRequestWithRawBody>();
 
-    // ── Step 1: Signature header nikalo ──────────────────────────────────
     const signatureHeader = request.headers['x-hub-signature-256'];
 
     if (typeof signatureHeader !== 'string') {
@@ -53,8 +34,6 @@ export class WebhookSignatureGuard implements CanActivate {
       throw new UnauthorizedException('Missing webhook signature header.');
     }
 
-    // ── Step 2: Raw body nikalo ───────────────────────────────────────────
-    // NestJS rawBody: true se milta hai — Buffer format mein
     const rawBody = request.rawBody;
 
     if (!rawBody) {
@@ -65,7 +44,6 @@ export class WebhookSignatureGuard implements CanActivate {
       throw new UnauthorizedException('Raw body unavailable for verification.');
     }
 
-    // ── Step 3: Expected signature compute karo ───────────────────────────
     const appSecret = this.config.get<string>('whatsapp.appSecret')!;
     const expectedHash = createHmac('sha256', appSecret)
       .update(rawBody)
@@ -73,8 +51,6 @@ export class WebhookSignatureGuard implements CanActivate {
 
     const expectedSignature = `sha256=${expectedHash}`;
 
-    // ── Step 4: timingSafeEqual se compare karo ───────────────────────────
-    // Dono buffers same length ke hone chahiye timingSafeEqual ke liye
     const sigBuffer = Buffer.from(signatureHeader, 'utf8');
     const expectedBuffer = Buffer.from(expectedSignature, 'utf8');
 

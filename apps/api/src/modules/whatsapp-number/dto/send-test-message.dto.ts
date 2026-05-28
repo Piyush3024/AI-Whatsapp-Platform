@@ -7,35 +7,6 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-/**
- * SendTestMessageDto
- *
- * DTO for sending a test message from a WhatsApp number.
- * Used to verify the number is properly configured.
- */
-// export class SendTestMessageDto {
-//   @ApiProperty({
-//     example: '+9779807654321',
-//     description: 'Recipient phone number in E.164 format',
-//   })
-//   @IsString()
-//   @IsNotEmpty()
-//   @Matches(/^\+[1-9]\d{6,14}$/, {
-//     message: 'Phone number E.164 format mein hona chahiye',
-//   })
-//   @MaxLength(15)
-//   recipientPhone!: string;
-
-//   @ApiProperty({
-//     example: 'This is a test message from WhatsApp AI Platform',
-//     description: 'Test message content',
-//   })
-//   @IsString()
-//   @IsNotEmpty({ message: 'Test message content zaroorat hai' })
-//   @MinLength(1)
-//   @MaxLength(4096) // WhatsApp text limit
-//   message!: string;
-// }
 export class SendTestMessageDto {
   @ApiProperty({
     example: '+9779807654321',

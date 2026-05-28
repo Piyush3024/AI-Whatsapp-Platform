@@ -7,12 +7,6 @@ import {
 } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-/**
- * UpdateWhatsAppNumberDto
- *
- * All fields optional — PATCH semantics.
- * Only provided fields will be updated.
- */
 export class UpdateWhatsAppNumberDto {
   @ApiPropertyOptional({
     example: 'Business Main Line',

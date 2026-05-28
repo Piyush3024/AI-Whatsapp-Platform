@@ -9,22 +9,15 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-/**
- * CreateWhatsAppNumberDto
- *
- * Validates incoming data for adding a new WhatsApp Business number.
- * Phone number gets normalized to E.164 format via service layer.
- */
 export class CreateWhatsAppNumberDto {
   @ApiProperty({
     example: '+9779801234567',
     description: 'WhatsApp number in E.164 format (with country code)',
   })
   @IsString()
-  @IsNotEmpty({ message: 'Phone number zaroorat hai' })
+  @IsNotEmpty({ message: 'Phone number is required' })
   @Matches(/^\+[1-9]\d{6,14}$/, {
-    message:
-      'Phone number E.164 format mein hona chahiye (e.g., +9779801234567)',
+    message: 'Phone number is required in E.164 format (e.g., +9779801234567)',
   })
   @MaxLength(15)
   phoneNumber!: string;
@@ -34,7 +27,7 @@ export class CreateWhatsAppNumberDto {
     description: 'Display name for this WhatsApp number',
   })
   @IsString()
-  @IsNotEmpty({ message: 'Display name zaroorat hai' })
+  @IsNotEmpty({ message: 'Display name is required' })
   @MaxLength(100)
   displayName!: string;
 

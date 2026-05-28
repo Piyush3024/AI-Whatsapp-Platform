@@ -10,11 +10,6 @@ import {
 import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-/**
- * QueryWhatsAppNumberDto
- *
- * Supports filtering and pagination for WhatsApp number listing.
- */
 export class QueryWhatsAppNumberDto {
   @ApiPropertyOptional({ example: 20, default: 20 })
   @IsOptional()

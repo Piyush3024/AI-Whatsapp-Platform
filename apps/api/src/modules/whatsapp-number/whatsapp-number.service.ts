@@ -20,19 +20,6 @@ import {
   WhatsAppVerificationStatus,
 } from '@whatsapp-ai/db/generated/prisma';
 
-// import { QUEUE_NAMES } from '../../constants/queues.js';
-
-/**
- * WhatsAppNumberService
- *
- * Business logic for WhatsApp Business number management.
- *
- * Key Responsibilities:
- * - CRUD operations with E.164 phone validation
- * - One default number per tenant
- * - Verification status tracking
- * - Test message queuing
- */
 @Injectable()
 export class WhatsAppNumberService {
   private readonly logger = new Logger(WhatsAppNumberService.name);
@@ -43,14 +30,10 @@ export class WhatsAppNumberService {
     @InjectQueue('whatsapp-outbound') private readonly outboundQueue: Queue,
   ) {}
 
-  /**
-   * Create a new WhatsApp number for the tenant
-   */
   async create(
     dto: CreateWhatsAppNumberDto,
     tenantId: string,
   ): Promise<Prisma.WhatsAppNumberGetPayload<object>> {
-    // ── Step 1: Normalize phone to E.164 ─────────────────────────────────
     let phoneE164: string;
     try {
       const parsed = parsePhoneToE164(dto.phoneNumber);
@@ -61,18 +44,16 @@ export class WhatsAppNumberService {
       );
     }
 
-    // ── Step 2: Check for duplicate ───────────────────────────────────────
     const existing = await this.prisma.db.whatsAppNumber.findUnique({
       where: { phoneNumber: phoneE164 },
     });
 
     if (existing) {
       throw new ConflictException(
-        'Is WhatsApp number ka already hamare platform par registered hai',
+        'This WhatsApp number is already registered on our platform',
       );
     }
 
-    // ── Step 3: Check location if provided ────────────────────────────────
     if (dto.locationId) {
       const location = await this.prisma.db.location.findUnique({
         where: { id: dto.locationId },
@@ -82,7 +63,6 @@ export class WhatsAppNumberService {
       }
     }
 
-    // ── Step 4: If isDefault, unset other defaults ─────────────────────────
     if (dto.isDefault) {
       await this.prisma.db.whatsAppNumber.updateMany({
         where: { tenantId, isActive: true },
@@ -90,7 +70,6 @@ export class WhatsAppNumberService {
       });
     }
 
-    // ── Step 5: Create the WhatsApp number ─────────────────────────────────
     const whatsappNumber = await this.prisma.db.whatsAppNumber.create({
       data: {
         tenantId,
@@ -113,9 +92,6 @@ export class WhatsAppNumberService {
     return whatsappNumber;
   }
 
-  /**
-   * Find all WhatsApp numbers for a tenant with filters
-   */
   async findAll(
     query: QueryWhatsAppNumberDto,
     tenantId: string,
@@ -158,9 +134,6 @@ export class WhatsAppNumberService {
     };
   }
 
-  /**
-   * Find single WhatsApp number by ID
-   */
   async findOne(
     id: string,
     tenantId: string,
@@ -183,7 +156,6 @@ export class WhatsAppNumberService {
       throw new NotFoundException(`WhatsApp number not found: ${id}`);
     }
 
-    // Tenant isolation check
     if (whatsappNumber.tenantId !== tenantId) {
       throw new NotFoundException(`WhatsApp number not found: ${id}`);
     }
@@ -191,25 +163,18 @@ export class WhatsAppNumberService {
     return whatsappNumber;
   }
 
-  /**
-   * Update a WhatsApp number
-   */
   async update(
     id: string,
     dto: UpdateWhatsAppNumberDto,
     tenantId: string,
   ): Promise<Prisma.WhatsAppNumberGetPayload<object>> {
-    // Verify exists + tenant ownership
     const existing = await this.findOne(id, tenantId);
 
-    // If setting as default, unset others
     if (dto.isActive === true && existing.isDefault) {
-      // Already default, no action needed
+      // No action is required if the number is already default
     }
 
-    // If unsetting default, handle carefully
     if (dto.isActive === false && existing.isDefault) {
-      // Don't allow deactivating default without setting another as default
       const otherActive = await this.prisma.db.whatsAppNumber.findFirst({
         where: {
           tenantId,
@@ -248,14 +213,9 @@ export class WhatsAppNumberService {
     return updated;
   }
 
-  /**
-   * Soft delete a WhatsApp number
-   */
   async remove(id: string, tenantId: string): Promise<void> {
-    // Verify exists + tenant ownership
     const existing = await this.findOne(id, tenantId);
 
-    // Check if it's the last active number
     if (existing.isActive) {
       const count = await this.prisma.db.whatsAppNumber.count({
         where: { tenantId, isActive: true },
@@ -278,16 +238,12 @@ export class WhatsAppNumberService {
     );
   }
 
-  /**
-   * Send a test message from this WhatsApp number
-   */
   async sendTestMessage(
     id: string,
     recipientPhone: string,
     message: string,
     tenantId: string,
   ): Promise<{ jobId: string }> {
-    // Verify exists + tenant ownership
     const whatsappNumber = await this.findOne(id, tenantId);
 
     if (!whatsappNumber.isActive) {
@@ -300,7 +256,6 @@ export class WhatsAppNumberService {
       );
     }
 
-    // Normalize recipient phone
     let recipientE164: string;
     try {
       recipientE164 = parsePhoneToE164(recipientPhone).e164;
@@ -310,7 +265,6 @@ export class WhatsAppNumberService {
       );
     }
 
-    // Queue the test message job
     const job = await this.outboundQueue.add('send-test-message', {
       tenantId,
       whatsAppNumberId: id,
@@ -326,9 +280,6 @@ export class WhatsAppNumberService {
     return { jobId: job.id! };
   }
 
-  /**
-   * Update verification status (called after Meta API verification)
-   */
   async updateVerificationStatus(
     id: string,
     status: WhatsAppVerificationStatus,

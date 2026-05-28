@@ -1,14 +1,3 @@
-/**
- * WhatsApp Cloud API Webhook Payload Types
- *
- * Meta jo payload bhejta hai uska exact shape yahan define kiya hai.
- * Ye types Meta ke official documentation se match karte hain.
- *
- * Reference: https://developers.facebook.com/docs/whatsapp/cloud-api/webhooks/payload-examples
- */
-
-// ── Message types ──────────────────────────────────────────────────────────
-
 export interface WhatsAppTextMessage {
   body: string;
 }
@@ -53,12 +42,10 @@ export interface WhatsAppInteractiveMessage {
   list_reply?: WhatsAppButtonReply;
 }
 
-// ── Core message object ────────────────────────────────────────────────────
-
 export interface WhatsAppMessage {
-  id: string; // Meta message ID — unique
-  from: string; // Sender ka phone number (E.164 format)
-  timestamp: string; // Unix timestamp string
+  id: string;
+  from: string;
+  timestamp: string;
   type:
     | 'text'
     | 'image'
@@ -77,15 +64,13 @@ export interface WhatsAppMessage {
   interactive?: WhatsAppInteractiveMessage;
   context?: {
     from: string;
-    id: string; // Reply kiye gaye message ka ID
+    id: string;
   };
 }
 
-// ── Status update ──────────────────────────────────────────────────────────
-
 export interface WhatsAppMessageStatus {
-  id: string; // Message ID
-  recipient_id: string; // Receiver ka phone number
+  id: string;
+  recipient_id: string;
   status: 'sent' | 'delivered' | 'read' | 'failed';
   timestamp: string;
   errors?: Array<{
@@ -94,8 +79,6 @@ export interface WhatsAppMessageStatus {
   }>;
 }
 
-// ── Contact/Profile info ───────────────────────────────────────────────────
-
 export interface WhatsAppContact {
   profile: {
     name: string;
@@ -103,41 +86,31 @@ export interface WhatsAppContact {
   wa_id: string;
 }
 
-// ── Value object (inside each change) ─────────────────────────────────────
-
 export interface WhatsAppWebhookValue {
   messaging_product: 'whatsapp';
   metadata: {
     display_phone_number: string;
-    phone_number_id: string; // Tumhara WhatsApp number ID
+    phone_number_id: string;
   };
   contacts?: WhatsAppContact[];
   messages?: WhatsAppMessage[];
   statuses?: WhatsAppMessageStatus[];
 }
 
-// ── Change object ──────────────────────────────────────────────────────────
-
 export interface WhatsAppWebhookChange {
   value: WhatsAppWebhookValue;
   field: 'messages';
 }
 
-// ── Entry object ───────────────────────────────────────────────────────────
-
 export interface WhatsAppWebhookEntry {
-  id: string; // WhatsApp Business Account ID
+  id: string;
   changes: WhatsAppWebhookChange[];
 }
-
-// ── Root payload ───────────────────────────────────────────────────────────
 
 export interface WhatsAppWebhookPayload {
   object: 'whatsapp_business_account';
   entry: WhatsAppWebhookEntry[];
 }
-
-// ── Verify query params (GET request) ─────────────────────────────────────
 
 export interface WhatsAppVerifyQuery {
   'hub.mode': string;
