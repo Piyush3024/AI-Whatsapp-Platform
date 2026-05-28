@@ -1,12 +1,6 @@
-// ============================================================
-// Imports
-// ============================================================
 import { IsString, IsNotEmpty, MaxLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-// ============================================================
-// DTO: Create Document
-// ============================================================
 export class CreateDocumentDto {
   @ApiProperty({
     description: 'Title of the document',

@@ -1,11 +1,5 @@
-// ============================================================
-// Imports
-// ============================================================
 import { DocumentStatus } from '@whatsapp-ai/db/generated/prisma';
 
-// ============================================================
-// Interfaces
-// ============================================================
 // Main Document Interface
 export interface KnowledgeBaseDocument {
   id: string;

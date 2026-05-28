@@ -1,14 +1,8 @@
-// ============================================================
-// Imports
-// ============================================================
 import { IsOptional, IsInt, Min, Max, IsEnum } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { DocumentStatus } from '@whatsapp-ai/db/generated/prisma';
 import { ApiProperty } from '@nestjs/swagger';
 
-// ============================================================
-// DTO: Query Documents
-// ============================================================
 export class QueryDocumentDto {
   @ApiProperty({
     description: 'Page number for pagination',

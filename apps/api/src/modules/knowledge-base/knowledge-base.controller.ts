@@ -1,6 +1,3 @@
-// ============================================================
-// Imports
-// ============================================================
 import {
   Controller,
   Post,
@@ -26,17 +23,11 @@ import { KnowledgeBaseService } from './knowledge-base.service.js';
 import { CreateDocumentDto } from './dto/create-document.dto.js';
 import { QueryDocumentDto } from './dto/query-document.dto.js';
 
-// ============================================================
-// Controller
-// ============================================================
 @Controller('knowledge-base/documents')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class KnowledgeBaseController {
   constructor(private readonly knowledgeBaseService: KnowledgeBaseService) {}
 
-  // ==========================================================
-  // Upload Document
-  // ==========================================================
   @Post()
   @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.STAFF)
   @UseInterceptors(FileInterceptor('file'))
@@ -52,27 +43,18 @@ export class KnowledgeBaseController {
     );
   }
 
-  // ==========================================================
-  // List Documents
-  // ==========================================================
   @Get()
   @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.STAFF)
   async listDocuments(@Query() query: QueryDocumentDto) {
     return this.knowledgeBaseService.listDocuments(query);
   }
 
-  // ==========================================================
-  // Get Single Document
-  // ==========================================================
   @Get(':id')
   @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.STAFF)
   async getDocument(@Param('id', ParseUUIDPipe) id: string) {
     return this.knowledgeBaseService.getDocument(id);
   }
 
-  // ==========================================================
-  // Delete Document
-  // ==========================================================
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @Roles(UserRole.OWNER, UserRole.ADMIN)

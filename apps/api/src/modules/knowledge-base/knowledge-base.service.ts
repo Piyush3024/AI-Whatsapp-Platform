@@ -1,6 +1,3 @@
-// ============================================================
-// Imports
-// ============================================================
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ClsService } from 'nestjs-cls';
 import { PrismaService } from '../../prisma/prisma.service.js';
@@ -12,9 +9,6 @@ import { QUEUE_NAMES } from '../../constants/queues.js';
 import { CreateDocumentDto } from './dto/create-document.dto.js';
 import { QueryDocumentDto } from './dto/query-document.dto.js';
 
-// ============================================================
-// Service
-// ============================================================
 @Injectable()
 export class KnowledgeBaseService {
   constructor(
@@ -25,9 +19,6 @@ export class KnowledgeBaseService {
     private readonly embeddingsQueue: Queue,
   ) {}
 
-  // ==========================================================
-  // Upload Document
-  // ==========================================================
   async uploadDocument(
     dto: CreateDocumentDto,
     fileBuffer: Buffer,
@@ -35,10 +26,8 @@ export class KnowledgeBaseService {
   ) {
     const tenantId = this.cls.get<string>('tenantId');
 
-    // 1. Validate file
     const validation = await validateFile(fileBuffer, dto.fileName);
 
-    // 2. Upload to R2
     const { key, url } = await this.r2Client.uploadFile(
       fileBuffer,
       tenantId,
@@ -46,7 +35,6 @@ export class KnowledgeBaseService {
       mimeType,
     );
 
-    // 3. Create DB record
     const document = await this.prisma.db.knowledgeBaseDocument.create({
       data: {
         tenantId,
@@ -61,7 +49,6 @@ export class KnowledgeBaseService {
       },
     });
 
-    // 4. Queue embedding job
     await this.embeddingsQueue.add('generate-embeddings', {
       tenantId,
       documentId: document.id,
@@ -72,9 +59,6 @@ export class KnowledgeBaseService {
     return document;
   }
 
-  // ==========================================================
-  // List Documents
-  // ==========================================================
   async listDocuments(query: QueryDocumentDto) {
     const tenantId = this.cls.get<string>('tenantId');
     const { page = 1, limit = 10, status } = query;
@@ -91,9 +75,6 @@ export class KnowledgeBaseService {
     });
   }
 
-  // ==========================================================
-  // Get Single Document
-  // ==========================================================
   async getDocument(id: string) {
     const tenantId = this.cls.get<string>('tenantId');
     const document = await this.prisma.db.knowledgeBaseDocument.findUnique({
@@ -111,9 +92,6 @@ export class KnowledgeBaseService {
     return document;
   }
 
-  // ==========================================================
-  // Delete Document
-  // ==========================================================
   async deleteDocument(id: string) {
     const tenantId = this.cls.get<string>('tenantId');
     await this.prisma.db.knowledgeBaseDocument.update({
