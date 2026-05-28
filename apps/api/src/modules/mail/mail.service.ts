@@ -1,17 +1,3 @@
-// apps/api/src/modules/mail/mail.service.ts
-//
-// Global MailService — Resend SDK wrapper
-//
-// Pattern: typed methods per email type (sendInvitation, sendWelcome, etc.)
-// No raw resend.emails.send() calls outside this service — all email logic here.
-//
-// Resend v6 usage:
-//   const resend = new Resend(apiKey);
-//   const { data, error } = await resend.emails.send({ ... });
-//
-// Error handling: Resend returns { data, error } — never throws.
-// We log + throw InternalServerErrorException on error.
-
 import {
   Injectable,
   Logger,
@@ -37,11 +23,6 @@ export class MailService {
       this.config.get<string>('mail.appName') ?? 'WhatsApp AI Platform';
     this.appUrl = this.config.getOrThrow<string>('mail.appUrl');
   }
-
-  // ── Send Team Invitation ─────────────────────────────────────────────────
-  //
-  // Sent when OWNER/ADMIN invites a new team member.
-  // Token-based — recipient clicks link → accept endpoint → account created.
 
   async sendInvitation(opts: {
     toEmail: string;
@@ -80,10 +61,6 @@ export class MailService {
     );
   }
 
-  // ── Send Welcome Email ───────────────────────────────────────────────────
-  //
-  // Sent after invitation accepted + account created.
-
   async sendWelcome(opts: {
     toEmail: string;
     name: string;
@@ -104,8 +81,6 @@ export class MailService {
 
     this.logger.log({ to: opts.toEmail }, 'Welcome email sent');
   }
-
-  // ── Core Send ────────────────────────────────────────────────────────────
 
   private async send(opts: {
     to: string;
@@ -134,10 +109,6 @@ export class MailService {
       'Email sent via Resend',
     );
   }
-
-  // ── HTML Builders ─────────────────────────────────────────────────────────
-  // Plain HTML strings — no template engine dependency.
-  // Production: replace with React Email components if needed.
 
   private buildInvitationHtml(opts: {
     tenantName: string;
