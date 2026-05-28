@@ -7,17 +7,10 @@ import {
   MaxLength,
 } from 'class-validator';
 
-/**
- * CreateLocationDto — Naya business location banana.
- *
- * Example: Sharma Salon ke 2 branches —
- *  - "Thamel Branch" (isDefault: true)
- *  - "Patan Branch"
- */
 export class CreateLocationDto {
   @ApiProperty({
     example: 'Thamel Branch',
-    description: 'Location ka naam',
+    description: 'Location Name',
   })
   @IsString()
   @IsNotEmpty()
@@ -35,7 +28,7 @@ export class CreateLocationDto {
 
   @ApiPropertyOptional({
     example: '+9779801234567',
-    description: 'Location ka phone number (E.164 format)',
+    description: 'Location Phone Number (E.164 format)',
   })
   @IsOptional()
   @IsString()
@@ -44,7 +37,8 @@ export class CreateLocationDto {
 
   @ApiPropertyOptional({
     example: false,
-    description: 'Ye default location hai? Sirf ek hi default ho sakta hai',
+    description:
+      'Is this the default location? Only one default can be selected.',
     default: false,
   })
   @IsOptional()

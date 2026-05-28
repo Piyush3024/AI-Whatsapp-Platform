@@ -11,9 +11,6 @@ import {
 import { Type } from 'class-transformer';
 import { DayOfWeek } from '@whatsapp-ai/db/generated/prisma';
 
-/**
- * Ek din ka business hours — HH:MM format.
- */
 export class BusinessHourItemDto {
   @ApiProperty({
     enum: DayOfWeek,
@@ -52,24 +49,10 @@ export class BusinessHourItemDto {
   isOpen!: boolean;
 }
 
-/**
- * SetBusinessHoursDto — Ek location ke saare business hours ek saath set karo.
- *
- * PUT endpoint use karta hai — full replacement.
- * Saare 7 din bhejne chahiye — missing days delete ho jaayenge.
- *
- * Example:
- * {
- *   "hours": [
- *     { "dayOfWeek": "MONDAY", "openTime": "09:00", "closeTime": "18:00", "isOpen": true },
- *     { "dayOfWeek": "SUNDAY", "openTime": "09:00", "closeTime": "14:00", "isOpen": false }
- *   ]
- * }
- */
 export class SetBusinessHoursDto {
   @ApiProperty({
     type: [BusinessHourItemDto],
-    description: 'Saare days ke business hours — 7 days complete bhejo',
+    description: 'All days business hours — 7 days complete bhejo',
   })
   @IsArray()
   @ValidateNested({ each: true })

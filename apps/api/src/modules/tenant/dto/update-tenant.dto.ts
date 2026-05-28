@@ -8,19 +8,10 @@ import {
   MinLength,
 } from 'class-validator';
 
-/**
- * UpdateTenantDto — Tenant business settings update karne ke liye.
- *
- * Sab fields optional hain — PATCH pattern follow karta hai.
- * Sirf jo fields bhejo wahi update honge — baaki same rahenge.
- *
- * Slug update allowed nahi hai — once set, permanent rehta hai.
- * (URL stability ke liye — external links break nahi honge)
- */
 export class UpdateTenantDto {
   @ApiPropertyOptional({
     example: 'Sharma Salon & Spa',
-    description: 'Business ka display naam',
+    description: 'Business Display Name',
   })
   @IsOptional()
   @IsString()

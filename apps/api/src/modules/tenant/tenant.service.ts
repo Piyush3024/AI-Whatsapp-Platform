@@ -13,30 +13,12 @@ import type { CreateLocationDto } from './dto/create-location.dto.js';
 import type { UpdateLocationDto } from './dto/update-location.dto.js';
 import type { SetBusinessHoursDto } from './dto/set-business-hours.dto.js';
 
-/**
- * TenantService
- *
- * Saari tenant management business logic yahan hai:
- * - Tenant info get/update
- * - Member management (list, role change, remove)
- * - Location CRUD
- * - Business hours bulk upsert
- *
- * RLS automatically handle ho raha hai PrismaService mein —
- * yahan explicitly tenantId filter karna zaroori nahi for tenant-scoped tables.
- * Lekin hum explicitly daalte hain clarity ke liye.
- */
 @Injectable()
 export class TenantService {
   private readonly logger = new Logger(TenantService.name);
 
   constructor(private readonly prisma: PrismaService) {}
 
-  // ── Tenant ───────────────────────────────────────────────────────────────
-
-  /**
-   * Current tenant ki full info return karta hai.
-   */
   async getTenant(tenantId: string) {
     const tenant = await this.prisma.tenant.findUnique({
       where: { id: tenantId },
@@ -58,12 +40,7 @@ export class TenantService {
     return tenant;
   }
 
-  /**
-   * Tenant settings update karta hai.
-   * Sirf OWNER aur ADMIN kar sakte hain.
-   */
   async updateTenant(tenantId: string, dto: UpdateTenantDto) {
-    // Tenant exist karta hai? (RLS already ensure karta hai but explicit check better hai)
     await this.getTenant(tenantId);
 
     const updated = await this.prisma.db.tenant.update({
@@ -87,11 +64,6 @@ export class TenantService {
     return updated;
   }
 
-  // ── Members ───────────────────────────────────────────────────────────────
-
-  /**
-   * Tenant ke saare active members list karta hai.
-   */
   async getMembers(tenantId: string) {
     return this.prisma.db.tenantMember.findMany({
       where: { tenantId },
@@ -105,25 +77,16 @@ export class TenantService {
     });
   }
 
-  /**
-   * Member ka role change karta hai.
-   * Sirf OWNER kar sakta hai.
-   * OWNER apna khud ka role change nahi kar sakta — tenant orphan ho jaayega.
-   */
   async updateMemberRole(
     tenantId: string,
     requestingUserId: string,
     targetUserId: string,
     dto: UpdateMemberRoleDto,
   ) {
-    // Apna role change karna allowed nahi
     if (requestingUserId === targetUserId) {
-      throw new BadRequestException(
-        'Aap apna khud ka role change nahi kar sakte.',
-      );
+      throw new BadRequestException('You cannot change your own role.');
     }
 
-    // Target member exist karta hai?
     const member = await this.prisma.db.tenantMember.findFirst({
       where: { tenantId, userId: targetUserId },
     });
@@ -132,10 +95,9 @@ export class TenantService {
       throw new NotFoundException('Member not found in this tenant.');
     }
 
-    // Ek tenant mein sirf ek OWNER ho sakta hai
     if (dto.role === UserRole.OWNER) {
       throw new BadRequestException(
-        'Tenant mein sirf ek OWNER ho sakta hai. Pehle current OWNER ka role change karo.',
+        "Only one owner can exist in a tenant. Change the current owner's role first.",
       );
     }
 
@@ -153,11 +115,6 @@ export class TenantService {
     return updated;
   }
 
-  /**
-   * Member ko tenant se remove karta hai (soft delete).
-   * OWNER ko remove nahi kar sakte.
-   * Apne aap ko remove nahi kar sakte.
-   */
   async removeMember(
     tenantId: string,
     requestingUserId: string,
@@ -165,7 +122,7 @@ export class TenantService {
   ) {
     if (requestingUserId === targetUserId) {
       throw new BadRequestException(
-        'Aap khud ko tenant se remove nahi kar sakte.',
+        'You cannot remove yourself from the tenant.',
       );
     }
 
@@ -178,10 +135,11 @@ export class TenantService {
     }
 
     if (member.role === UserRole.OWNER) {
-      throw new ForbiddenException('OWNER ko tenant se remove nahi kar sakte.');
+      throw new ForbiddenException(
+        'You cannot remove an owner from the tenant.',
+      );
     }
 
-    // Soft delete — deletedAt set ho jaata hai
     await this.prisma.db.tenantMember.delete({
       where: { id: member.id },
     });
@@ -194,11 +152,6 @@ export class TenantService {
     return { message: 'Member successfully removed.' };
   }
 
-  // ── Locations ─────────────────────────────────────────────────────────────
-
-  /**
-   * Tenant ki saari locations return karta hai.
-   */
   async getLocations(tenantId: string) {
     return this.prisma.db.location.findMany({
       where: { tenantId },
@@ -206,9 +159,6 @@ export class TenantService {
     });
   }
 
-  /**
-   * Location by ID — tenant check ke saath.
-   */
   async getLocationById(tenantId: string, locationId: string) {
     const location = await this.prisma.db.location.findFirst({
       where: { id: locationId, tenantId },
@@ -221,13 +171,7 @@ export class TenantService {
     return location;
   }
 
-  /**
-   * Naya location create karta hai.
-   * Agar isDefault: true diya aur pehle se ek default hai —
-   * purana default ko unset kar deta hai (sirf ek default allowed).
-   */
   async createLocation(tenantId: string, dto: CreateLocationDto) {
-    // Agar ye default bana rahe ho toh purana default unset karo
     if (dto.isDefault) {
       await this.prisma.db.location.updateMany({
         where: { tenantId, isDefault: true },
@@ -253,18 +197,13 @@ export class TenantService {
     return location;
   }
 
-  /**
-   * Location update karta hai.
-   */
   async updateLocation(
     tenantId: string,
     locationId: string,
     dto: UpdateLocationDto,
   ) {
-    // Exist check
     await this.getLocationById(tenantId, locationId);
 
-    // Default update — purana unset karo pehle
     if (dto.isDefault === true) {
       await this.prisma.db.location.updateMany({
         where: { tenantId, isDefault: true, NOT: { id: locationId } },
@@ -283,16 +222,12 @@ export class TenantService {
     });
   }
 
-  /**
-   * Location soft delete karta hai.
-   * Default location delete nahi ho sakti — pehle doosri location ko default banao.
-   */
   async deleteLocation(tenantId: string, locationId: string) {
     const location = await this.getLocationById(tenantId, locationId);
 
     if (location.isDefault) {
       throw new BadRequestException(
-        'Default location delete nahi ho sakti. Pehle kisi aur location ko default banao.',
+        'Default location cannot be deleted. Set another location as default first.',
       );
     }
 
@@ -308,13 +243,7 @@ export class TenantService {
     return { message: 'Location successfully deleted.' };
   }
 
-  // ── Business Hours ────────────────────────────────────────────────────────
-
-  /**
-   * Location ke business hours fetch karta hai.
-   */
   async getBusinessHours(tenantId: string, locationId: string) {
-    // Location exist check
     await this.getLocationById(tenantId, locationId);
 
     return this.prisma.db.locationBusinessHour.findMany({
@@ -323,29 +252,18 @@ export class TenantService {
     });
   }
 
-  /**
-   * Business hours bulk upsert — PUT pattern.
-   * Saare days ek saath set karo.
-   * Existing hours replace ho jaate hain.
-   *
-   * Prisma transaction mein karta hai — partial update nahi hoga.
-   */
   async setBusinessHours(
     tenantId: string,
     locationId: string,
     dto: SetBusinessHoursDto,
   ) {
-    // Location exist check
     await this.getLocationById(tenantId, locationId);
 
-    // Transaction mein — delete all + create all
     await this.prisma.$transaction(async (tx) => {
-      // Pehle saare existing hours delete karo
       await tx.locationBusinessHour.deleteMany({
         where: { tenantId, locationId },
       });
 
-      // Phir naaye hours create karo
       await tx.locationBusinessHour.createMany({
         data: dto.hours.map((hour) => ({
           tenantId,
@@ -363,7 +281,6 @@ export class TenantService {
       'TenantService',
     );
 
-    // Updated hours return karo
     return this.getBusinessHours(tenantId, locationId);
   }
 }

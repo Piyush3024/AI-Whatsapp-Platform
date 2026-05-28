@@ -23,34 +23,21 @@ import { Roles } from '../../common/decorators/roles.decorator.js';
 import type { CurrentUserPayload } from '../../common/decorators/current-user.decorator.js';
 import { UserRole } from '@whatsapp-ai/db/generated/prisma';
 
-/**
- * TenantController
- *
- * Saare tenant management endpoints /api/v1/tenant/* pe hain.
- * Har endpoint JWT protected hai (global JwtAuthGuard se).
- *
- * Role requirements:
- *  - GET endpoints  → sab authenticated users (STAFF bhi)
- *  - PATCH/POST     → OWNER ya ADMIN
- *  - Member mgmt    → sirf OWNER
- */
 @ApiTags('tenant')
 @ApiBearerAuth('access-token')
 @Controller('tenant')
 export class TenantController {
   constructor(private readonly tenantService: TenantService) {}
 
-  // ── Tenant ───────────────────────────────────────────────────────────────
-
   @Get('me')
-  @ApiOperation({ summary: 'Current tenant ki info lo' })
+  @ApiOperation({ summary: 'Take current tenant information' })
   getTenant(@CurrentUser() user: CurrentUserPayload) {
     return this.tenantService.getTenant(user.tenantId);
   }
 
   @Patch('me')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @ApiOperation({ summary: 'Tenant settings update karo' })
+  @ApiOperation({ summary: 'Update tenant settings' })
   updateTenant(
     @CurrentUser() user: CurrentUserPayload,
     @Body() dto: UpdateTenantDto,
@@ -58,17 +45,15 @@ export class TenantController {
     return this.tenantService.updateTenant(user.tenantId, dto);
   }
 
-  // ── Members ───────────────────────────────────────────────────────────────
-
   @Get('members')
-  @ApiOperation({ summary: 'Tenant ke saare members list karo' })
+  @ApiOperation({ summary: 'List all tenant members' })
   getMembers(@CurrentUser() user: CurrentUserPayload) {
     return this.tenantService.getMembers(user.tenantId);
   }
 
   @Patch('members/:userId/role')
   @Roles(UserRole.OWNER)
-  @ApiOperation({ summary: 'Member ka role change karo (OWNER only)' })
+  @ApiOperation({ summary: 'Update member role (OWNER only)' })
   updateMemberRole(
     @CurrentUser() user: CurrentUserPayload,
     @Param('userId', ParseUUIDPipe) targetUserId: string,
@@ -85,7 +70,7 @@ export class TenantController {
   @Delete('members/:userId')
   @Roles(UserRole.OWNER)
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Member ko tenant se remove karo (OWNER only)' })
+  @ApiOperation({ summary: 'Remove member from tenant (OWNER only)' })
   removeMember(
     @CurrentUser() user: CurrentUserPayload,
     @Param('userId', ParseUUIDPipe) targetUserId: string,
@@ -97,17 +82,15 @@ export class TenantController {
     );
   }
 
-  // ── Locations ─────────────────────────────────────────────────────────────
-
   @Get('locations')
-  @ApiOperation({ summary: 'Saari locations list karo' })
+  @ApiOperation({ summary: 'List all tenant locations' })
   getLocations(@CurrentUser() user: CurrentUserPayload) {
     return this.tenantService.getLocations(user.tenantId);
   }
 
   @Post('locations')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @ApiOperation({ summary: 'Naya location banao' })
+  @ApiOperation({ summary: 'Create new location' })
   createLocation(
     @CurrentUser() user: CurrentUserPayload,
     @Body() dto: CreateLocationDto,
@@ -116,7 +99,7 @@ export class TenantController {
   }
 
   @Get('locations/:id')
-  @ApiOperation({ summary: 'Location by ID lo' })
+  @ApiOperation({ summary: 'Get location by ID' })
   getLocation(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) locationId: string,
@@ -126,7 +109,7 @@ export class TenantController {
 
   @Patch('locations/:id')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @ApiOperation({ summary: 'Location update karo' })
+  @ApiOperation({ summary: 'Update location' })
   updateLocation(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) locationId: string,
@@ -138,7 +121,7 @@ export class TenantController {
   @Delete('locations/:id')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Location delete karo (soft delete)' })
+  @ApiOperation({ summary: 'Delete location (soft delete)' })
   deleteLocation(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) locationId: string,
@@ -146,10 +129,8 @@ export class TenantController {
     return this.tenantService.deleteLocation(user.tenantId, locationId);
   }
 
-  // ── Business Hours ────────────────────────────────────────────────────────
-
   @Get('locations/:id/hours')
-  @ApiOperation({ summary: 'Location ke business hours lo' })
+  @ApiOperation({ summary: 'Get location business hours' })
   getBusinessHours(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) locationId: string,
@@ -159,7 +140,7 @@ export class TenantController {
 
   @Put('locations/:id/hours')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @ApiOperation({ summary: 'Business hours set karo (full replacement)' })
+  @ApiOperation({ summary: 'Set location business hours (full replacement)' })
   setBusinessHours(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) locationId: string,
