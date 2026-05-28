@@ -45,4 +45,14 @@ export const API_ENDPOINTS = {
     updateStatus: (id: string) => `/bookings/${id}/status`,
     delete: (id: string) => `/bookings/${id}`,
   },
+
+  customers: {
+    list: "/customers",
+  },
+  staff: {
+    list: "/staff",
+  },
+  services: {
+    list: "/services",
+  },
 } as const;

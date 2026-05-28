@@ -39,4 +39,29 @@ export const QUERY_KEYS = {
     list: (params: unknown) => ["bookings", "list", params] as const,
     detail: (id: string) => ["bookings", "detail", id] as const,
   },
+
+  /**
+   * Customers-related queries
+   */
+
+  customers: {
+    all: ["customers"] as const,
+    list: (params: unknown) => ["customers", "list", params] as const,
+  },
+
+  /**
+   * Staffs-related queries
+   */
+  staff: {
+    all: ["staff"] as const,
+    list: () => ["staff", "list"] as const,
+  },
+
+  /**
+   * Services-related queries
+   */
+  services: {
+    all: ["services"] as const,
+    list: () => ["services", "list"] as const,
+  },
 } as const;
