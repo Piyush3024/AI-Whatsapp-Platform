@@ -25,19 +25,11 @@ import {
   QueryReminderRuleDto,
 } from './dto/index.js';
 
-// ============================================================
-// Request Types
-// ============================================================
-
 interface AuthenticatedUser {
   userId: string;
   tenantId: string;
   role: string;
 }
-
-// ============================================================
-// Controller
-// ============================================================
 
 @ApiTags('Reminders')
 @ApiBearerAuth()
@@ -48,10 +40,6 @@ interface AuthenticatedUser {
 })
 export class RemindersController {
   constructor(private readonly remindersService: RemindersService) {}
-
-  // ============================================================
-  // Reminder Rules
-  // ============================================================
 
   @Post('rules')
   @Roles('OWNER', 'ADMIN')
@@ -132,10 +120,6 @@ export class RemindersController {
     );
     return { success: true, data: result };
   }
-
-  // ============================================================
-  // Scheduled Reminders
-  // ============================================================
 
   @Get('scheduled')
   @HttpCode(HttpStatus.OK)

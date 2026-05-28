@@ -17,10 +17,6 @@ import {
   TenantReminderRule,
 } from '@whatsapp-ai/db/generated/prisma';
 
-// ============================================================
-// Types
-// ============================================================
-
 export type ReminderRuleWithSystem = TenantReminderRule & {
   systemRule: SystemReminderRule | null;
 };
@@ -56,11 +52,6 @@ interface BookingWithDetails {
   } | null;
 }
 
-// ============================================================
-// Constants
-// ============================================================
-
-// Timing unit conversions to minutes
 const TIMING_UNIT_TO_MINUTES: Record<string, number> = {
   minutes: 1,
   hours: 60,
@@ -68,21 +59,16 @@ const TIMING_UNIT_TO_MINUTES: Record<string, number> = {
   weeks: 10080,
 };
 
-// Default reminder timings per type
 const DEFAULT_REMINDER_TIMINGS: Record<
   ReminderRuleType,
   { offset: number; unit: string }
 > = {
-  PRE_APPOINTMENT_24H: { offset: 1440, unit: 'minutes' }, // 24 hours
-  PRE_APPOINTMENT_2H: { offset: 120, unit: 'minutes' }, // 2 hours
-  POST_APPOINTMENT_4H: { offset: 240, unit: 'minutes' }, // 4 hours
-  RE_BOOKING_30D: { offset: 43200, unit: 'minutes' }, // 30 days
-  PAYMENT_1D: { offset: 1440, unit: 'minutes' }, // 1 day
+  PRE_APPOINTMENT_24H: { offset: 1440, unit: 'minutes' },
+  PRE_APPOINTMENT_2H: { offset: 120, unit: 'minutes' },
+  POST_APPOINTMENT_4H: { offset: 240, unit: 'minutes' },
+  RE_BOOKING_30D: { offset: 43200, unit: 'minutes' },
+  PAYMENT_1D: { offset: 1440, unit: 'minutes' },
 };
-
-// ============================================================
-// Reminder Message Templates
-// ============================================================
 
 const REMINDER_TEMPLATES: Record<ReminderRuleType, string> = {
   PRE_APPOINTMENT_24H: `Hi {{customerName}}! This is a reminder that your appointment at {{locationName}} is scheduled for {{appointmentTime}}. We look forward to seeing you!`,
@@ -91,10 +77,6 @@ const REMINDER_TEMPLATES: Record<ReminderRuleType, string> = {
   RE_BOOKING_30D: `Hi {{customerName}}! It's been a while since your last visit to {{locationName}}. We'd love to see you again! Book your next appointment here.`,
   PAYMENT_1D: `Hi {{customerName}}! You have a pending payment of {{amount}} for your appointment at {{locationName}}. Please complete the payment.`,
 };
-
-// ============================================================
-// Service
-// ============================================================
 
 @Injectable()
 export class RemindersService {
@@ -105,15 +87,10 @@ export class RemindersService {
     private readonly remindersQueue: Queue,
   ) {}
 
-  // ============================================================
-  // Reminder Rules CRUD
-  // ============================================================
-
   async createReminderRule(
     tenantId: string,
     dto: CreateReminderRuleDto,
   ): Promise<ReminderRuleWithSystem> {
-    // Check if rule already exists for this type
     const existingRule = await this.prisma.db.tenantReminderRule.findUnique({
       where: {
         tenantId_type: {
@@ -129,7 +106,6 @@ export class RemindersService {
       );
     }
 
-    // Fetch system rule for default template
     const systemRule = await this.prisma.db.systemReminderRule.findUnique({
       where: { type: dto.type },
     });
@@ -259,10 +235,6 @@ export class RemindersService {
     return { deleted: true };
   }
 
-  // ============================================================
-  // Scheduled Reminders
-  // ============================================================
-
   async getScheduledReminders(
     tenantId: string,
     query: {
@@ -339,12 +311,7 @@ export class RemindersService {
     };
   }
 
-  // ============================================================
-  // Schedule Reminders for Booking
-  // ============================================================
-
   async scheduleRemindersForBooking(bookingId: string): Promise<void> {
-    // Fetch booking with all required details
     const booking = await this.prisma.db.booking.findUnique({
       where: { id: bookingId },
       include: {
@@ -363,7 +330,6 @@ export class RemindersService {
       throw new NotFoundException(`Booking '${bookingId}' not found.`);
     }
 
-    // Get all enabled reminder rules for tenant
     const rules = await this.prisma.db.tenantReminderRule.findMany({
       where: {
         tenantId: booking.tenantId,
@@ -375,10 +341,9 @@ export class RemindersService {
     });
 
     if (rules.length === 0) {
-      return; // No reminders configured
+      return;
     }
 
-    // Cancel existing pending reminders for this booking
     await this.prisma.db.scheduledReminder.updateMany({
       where: {
         bookingId,
@@ -389,7 +354,6 @@ export class RemindersService {
       },
     });
 
-    // Calculate and schedule new reminders
     const scheduledReminders: Prisma.ScheduledReminderCreateManyInput[] = [];
 
     for (const rule of rules) {
@@ -400,12 +364,10 @@ export class RemindersService {
         rule.timingUnit ?? 'minutes',
       );
 
-      // Skip if reminder time is in the past
       if (scheduledAt <= new Date()) {
         continue;
       }
 
-      // Build message from template
       const message = this.buildReminderMessage(
         rule.customBody ?? REMINDER_TEMPLATES[rule.type],
         booking,
@@ -421,16 +383,14 @@ export class RemindersService {
       });
     }
 
-    // Bulk create scheduled reminders
     if (scheduledReminders.length > 0) {
       await this.prisma.db.scheduledReminder.createMany({
         data: scheduledReminders,
       });
 
-      // Queue immediate processing for reminders with scheduledAt in the past
       const now = new Date();
       const immediateReminders = scheduledReminders.filter(
-        (r) => r.scheduledAt <= new Date(now.getTime() + 60000), // Within next minute
+        (r) => r.scheduledAt <= new Date(now.getTime() + 60000),
       );
 
       for (const reminder of immediateReminders) {
@@ -450,10 +410,6 @@ export class RemindersService {
     }
   }
 
-  // ============================================================
-  // Cancel Reminders for Booking
-  // ============================================================
-
   async cancelRemindersForBooking(bookingId: string): Promise<void> {
     await this.prisma.db.scheduledReminder.updateMany({
       where: {
@@ -466,13 +422,6 @@ export class RemindersService {
     });
   }
 
-  // ============================================================
-  // Helper Methods
-  // ============================================================
-
-  /**
-   * Calculate reminder scheduled time based on booking start time
-   */
   private calculateReminderTime(
     appointmentTime: Date,
     ruleType: ReminderRuleType,
@@ -482,28 +431,19 @@ export class RemindersService {
     const unitMinutes = TIMING_UNIT_TO_MINUTES[unit] ?? 1;
     const offsetMinutes = offset * unitMinutes;
 
-    // For PRE_* rules: subtract from appointment time
-    // For POST_* rules: add to appointment time or appointment end time
     if (ruleType.startsWith('PRE_')) {
       return new Date(appointmentTime.getTime() - offsetMinutes * 60000);
     } else if (ruleType.startsWith('POST_')) {
-      // POST_APPOINTMENT: add to appointment time
       return new Date(appointmentTime.getTime() + offsetMinutes * 60000);
     } else if (ruleType === 'RE_BOOKING_30D') {
-      // RE_BOOKING: add to current time (for follow-up after past appointment)
-      // We'll handle this differently - scheduled at booking end time + offset
       return new Date(appointmentTime.getTime() + offsetMinutes * 60000);
     } else if (ruleType === 'PAYMENT_1D') {
-      // PAYMENT: add to appointment time
       return new Date(appointmentTime.getTime() + offsetMinutes * 60000);
     }
 
     return new Date(appointmentTime.getTime() - offsetMinutes * 60000);
   }
 
-  /**
-   * Build reminder message with variable substitution
-   */
   private buildReminderMessage(
     template: string,
     booking: BookingWithDetails,
@@ -523,9 +463,6 @@ export class RemindersService {
       .replace(/\{\{staffName\}\}/g, booking.staff?.name ?? 'your therapist');
   }
 
-  /**
-   * Format appointment time for display
-   */
   private formatAppointmentTime(date: Date): string {
     return new Intl.DateTimeFormat('en-NP', {
       weekday: 'long',
