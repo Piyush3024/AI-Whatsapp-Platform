@@ -6,16 +6,12 @@ import { prisma, withTenantContext } from "../lib/prisma.js";
 import { logger, createJobLogger } from "../lib/logger.js";
 import type { StatusUpdateJob } from "../types/job-payloads.js";
 
-// ============================================================
-// Payload Validation
-// ============================================================
-
 const StatusUpdateJobSchema = z.object({
   phoneNumberId: z.string().min(1),
   wabaId: z.string().min(1),
   tenantId: z.string().uuid(),
   status: z.object({
-    id: z.string().min(1), // Meta message ID (metaMessageId in DB)
+    id: z.string().min(1),
     status: z.enum(["sent", "delivered", "read", "failed"]),
     timestamp: z.string(),
     recipient_id: z.string(),
@@ -30,17 +26,12 @@ const StatusUpdateJobSchema = z.object({
   }),
 });
 
-// Meta status → DB MessageStatus enum mapping
 const STATUS_MAP: Record<string, MessageStatus> = {
   sent: MessageStatus.SENT,
   delivered: MessageStatus.DELIVERED,
   read: MessageStatus.READ,
   failed: MessageStatus.FAILED,
 };
-
-// ============================================================
-// Processor Entry Point
-// ============================================================
 
 export async function processAnalyticsJob(job: Job): Promise<void> {
   if (job.name === "aggregate-usage") {
@@ -54,23 +45,12 @@ export async function processAnalyticsJob(job: Job): Promise<void> {
   logger.warn({ jobName: job.name }, "Unknown analytics job name — skipping");
 }
 
-// ============================================================
-// Part 1 — Usage Aggregation Sweeper
-// Runs every 5 minutes via repeatable job.
-// Reads UsageEvents → upserts DailyUsageAggregate counters.
-// ============================================================
-
 async function aggregateUsage(): Promise<void> {
   const now = new Date();
   logger.info({ timestamp: now }, "Starting usage aggregation sweep");
 
   try {
-    // Find all tenants with un-aggregated UsageEvents.
-    // Strategy: aggregate events from the last 2 days to handle timezone edge cases.
-    // DailyUsageAggregate has @@unique([tenantId, date]) — safe to upsert repeatedly.
     const twoDaysAgo = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
-
-    // Fetch distinct tenantIds that have recent events
     const tenantRows = await prisma.usageEvent.findMany({
       where: { createdAt: { gte: twoDaysAgo } },
       select: { tenantId: true },
@@ -109,8 +89,6 @@ async function aggregateTenantUsage(
   from: Date,
   to: Date,
 ): Promise<void> {
-  // Group events by date using raw SQL for DATE_TRUNC + conditional counts
-  // This is a single efficient query vs N queries per day
   const rows = await prisma.$queryRawUnsafe<
     {
       date: Date;
@@ -140,7 +118,6 @@ async function aggregateTenantUsage(
   );
 
   for (const row of rows) {
-    // Prisma upsert — INSERT ... ON CONFLICT DO UPDATE (atomic)
     await prisma.dailyUsageAggregate.upsert({
       where: {
         tenantId_date: {
@@ -157,7 +134,6 @@ async function aggregateTenantUsage(
         bookingsCreated: Number(row.bookings_created),
       },
       update: {
-        // Overwrite with fresh aggregate — idempotent, always correct
         messagesIn: Number(row.messages_in),
         messagesOut: Number(row.messages_out),
         aiCalls: Number(row.ai_calls),
@@ -169,23 +145,17 @@ async function aggregateTenantUsage(
   logger.debug({ tenantId, days: rows.length }, "Tenant usage aggregated");
 }
 
-// ============================================================
-// Part 2 — WhatsApp Message Status Update
-// Updates Message.status in DB when Meta sends delivery callbacks.
-// ============================================================
-
 async function processStatusUpdate(job: Job<StatusUpdateJob>): Promise<void> {
   const { tenantId } = job.data;
   const log = createJobLogger("analytics", job.id, tenantId);
 
-  // Validate payload
   const parsed = StatusUpdateJobSchema.safeParse(job.data);
   if (!parsed.success) {
     log.error(
       { errors: parsed.error.flatten() },
       "Invalid status-update payload — dropping",
     );
-    return; // Don't retry — bad payload
+    return;
   }
 
   const { status } = parsed.data;
@@ -203,7 +173,6 @@ async function processStatusUpdate(job: Job<StatusUpdateJob>): Promise<void> {
 
   try {
     await withTenantContext(tenantId, async (tx) => {
-      // Find message by Meta message ID
       const message = await tx.message.findFirst({
         where: { tenantId, metaMessageId: status.id },
         select: { id: true, status: true },
@@ -217,7 +186,6 @@ async function processStatusUpdate(job: Job<StatusUpdateJob>): Promise<void> {
         return;
       }
 
-      // Status order guard — don't downgrade (read > delivered > sent)
       const STATUS_RANK: Record<string, number> = {
         QUEUED: 0,
         SENT: 1,
@@ -237,7 +205,6 @@ async function processStatusUpdate(job: Job<StatusUpdateJob>): Promise<void> {
         return;
       }
 
-      // Build update data — include error metadata if failed
       const updateData: {
         status: MessageStatus;
         metadata?: Prisma.InputJsonValue;
@@ -263,6 +230,6 @@ async function processStatusUpdate(job: Job<StatusUpdateJob>): Promise<void> {
       { error: error instanceof Error ? error.message : "Unknown error" },
       "Status update failed",
     );
-    throw error; // BullMQ retry
+    throw error;
   }
 }

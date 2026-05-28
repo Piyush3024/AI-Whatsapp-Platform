@@ -1,12 +1,6 @@
 import "dotenv/config";
 import { z } from "zod";
 
-// ============================================================
-// ENV SCHEMA — Zod validation
-// Worker startup pe fail karo agar koi var missing hai
-// Memory se assume nahi karna — explicit validation mandatory
-// ============================================================
-
 const envSchema = z.object({
   // Database
   DATABASE_URL: z
@@ -49,13 +43,13 @@ const envSchema = z.object({
     .pipe(z.number().min(1).max(50)),
 });
 
-// Parse aur validate — throw on failure
+// Parse and validate — throw on failure
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
   console.error("❌ Invalid environment variables:");
   console.error(parsed.error.flatten().fieldErrors);
-  process.exit(1); // Hard fail — misconfigured worker nahi chalna chahiye
+  process.exit(1); // Hard fail — misconfigured worker shouldn't start
 }
 
 export const env = parsed.data;

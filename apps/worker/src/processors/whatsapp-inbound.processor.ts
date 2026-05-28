@@ -4,29 +4,8 @@ import { withTenantContext, type TenantTxClient } from "../lib/prisma.js";
 import { aiReplyQueue } from "../lib/queues.js";
 import type { InboundMessageJob, AiReplyJob } from "../types/job-payloads.js";
 
-// ============================================================
-// WHATSAPP INBOUND PROCESSOR
-//
-// Steps:
-// 1. phoneNumberId → tenantId resolve (no RLS needed — WhatsAppNumber lookup)
-// 2. RLS context set via withTenantContext
-// 3. Customer upsert (phone se find ya create)
-// 4. Conversation find ya create (active = last 24h)
-// 5. Message save (metaMessageId = idempotency key)
-// 6. ai-reply queue mein push
-//
-// Idempotency:
-// Message.metaMessageId @unique hai schema mein —
-// duplicate webhook delivery pe upsert silently skip karega
-//
-// Text-only Phase 2:
-// image/audio/document/location = log + skip (Phase 3 mein handle hoga)
-// ============================================================
-
-// Supported message types jo AI reply de sakta hai
 const AI_SUPPORTED_TYPES = new Set(["text", "interactive", "button"]);
 
-// Active conversation window — 24 hours
 const CONVERSATION_ACTIVE_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 export async function processInboundMessage(
@@ -35,7 +14,6 @@ export async function processInboundMessage(
   const { phoneNumberId, wabaId, message, senderPhone, senderName, timestamp } =
     job.data;
 
-  // Temporary logger — tenantId abhi nahi pata
   const baseLog = createJobLogger("whatsapp-inbound", job.id, "resolving");
 
   baseLog.info(
@@ -48,22 +26,13 @@ export async function processInboundMessage(
     "Processing inbound message",
   );
 
-  // ── Step 1: phoneNumberId → tenantId resolve ──────────────────────────
-  // WhatsApp number table mein lookup — RLS bypass karke (system-level query)
-  // Kyun system query? WhatsAppNumber lookup tenant context se pehle hota hai
-  // isliye empty string tenant context use karte hain
-
   let tenantId: string;
   let whatsappNumberDbId: string;
 
   try {
     const result = await withTenantContext("", async (tx) => {
-      // RLS policies check karte hain app.current_tenant_id
-      // Empty string = system context = RLS bypass for this lookup
-      // Note: WhatsAppNumber.phoneNumber = display number, yahan phoneNumberId (Meta ID) se match karein
       return tx.whatsAppNumber.findFirst({
         where: {
-          // Meta's phone_number_id stored in phoneNumberId field
           phoneNumberId: phoneNumberId,
           isActive: true,
           deletedAt: null,
@@ -76,11 +45,9 @@ export async function processInboundMessage(
     });
 
     if (!result) {
-      // Unknown phoneNumberId — yeh number humari DB mein nahi hai
-      // Job fail karo — retry nahi chahiye (permanent failure)
       throw new Error(
         `No active WhatsAppNumber found for phoneNumberId: ${phoneNumberId}. ` +
-          `Tenant onboarding incomplete ya unknown webhook source.`,
+          `Tenant onboarding incomplete or unknown webhook source.`,
       );
     }
 
@@ -91,20 +58,14 @@ export async function processInboundMessage(
       { err, phoneNumberId },
       "Failed to resolve tenant from phoneNumberId",
     );
-    throw err; // BullMQ retry karega
+    throw err;
   }
 
-  // Ab tenant-aware logger banao
   const log = createJobLogger("whatsapp-inbound", job.id, tenantId);
 
   log.info({ tenantId, whatsappNumberDbId }, "Tenant resolved");
 
-  // ── Step 2-6: Tenant context ke andar sab operations ─────────────────
   await withTenantContext(tenantId, async (tx) => {
-    // ── Step 2: Customer upsert ──────────────────────────────────────────
-    // phone se find karo, nahi mila toh create karo
-    // tenantId + phone = unique constraint schema mein
-
     const customer = await tx.customer.upsert({
       where: {
         tenantId_phone: {
@@ -117,13 +78,11 @@ export async function processInboundMessage(
         phone: senderPhone,
         name: senderName ?? null,
         whatsappId: message.from,
-        optInStatus: "OPTED_IN", // WhatsApp se message aaya = opted in
+        optInStatus: "OPTED_IN",
       },
       update: {
-        // Name update karo agar pehle nahi tha
         ...(senderName && { name: senderName }),
         whatsappId: message.from,
-        // optInStatus change nahi karo — customer ne manually opt-out kiya ho sakta hai
       },
       select: {
         id: true,
@@ -134,13 +93,12 @@ export async function processInboundMessage(
 
     log.info({ customerId: customer.id }, "Customer upserted");
 
-    // Opt-out check — opted-out customer ko AI reply nahi dena
     if (customer.optInStatus === "OPTED_OUT") {
       log.warn(
         { customerId: customer.id, senderPhone },
         "Customer is opted out — skipping AI reply",
       );
-      // Message save karo but ai-reply push mat karo
+
       await saveMessage(
         tx,
         tenantId,
@@ -153,8 +111,6 @@ export async function processInboundMessage(
       return;
     }
 
-    // ── Step 3: Conversation find ya create ───────────────────────────────
-    // Active conversation = last 24h mein same customer + whatsappNumber
     const activeConversationCutoff = new Date(
       Date.now() - CONVERSATION_ACTIVE_WINDOW_MS,
     );
@@ -164,9 +120,7 @@ export async function processInboundMessage(
         tenantId,
         customerId: customer.id,
         whatsappNumberId: whatsappNumberDbId,
-        // Human handoff mein nahi hai
         state: { not: "HUMAN_HANDOFF" },
-        // 24h ke andar updated
         updatedAt: { gte: activeConversationCutoff },
         deletedAt: null,
       },
@@ -175,13 +129,12 @@ export async function processInboundMessage(
     });
 
     if (!conversation) {
-      // Naya conversation start karo
       conversation = await tx.conversation.create({
         data: {
           tenantId,
           customerId: customer.id,
           whatsappNumberId: whatsappNumberDbId,
-          state: "GREETING", // Naya conversation = greeting state
+          state: "GREETING",
           metadata: {},
         },
         select: { id: true, state: true },
@@ -195,7 +148,6 @@ export async function processInboundMessage(
       );
     }
 
-    // ── Step 4: Message save ──────────────────────────────────────────────
     const savedMessage = await saveMessage(
       tx,
       tenantId,
@@ -207,7 +159,6 @@ export async function processInboundMessage(
     );
 
     if (!savedMessage) {
-      // Duplicate message — already processed
       log.warn(
         { metaMessageId: message.id },
         "Duplicate message detected — skipping ai-reply push",
@@ -215,8 +166,6 @@ export async function processInboundMessage(
       return;
     }
 
-    // ── Step 5: AI reply queue mein push ─────────────────────────────────
-    // Sirf supported types ke liye
     if (!AI_SUPPORTED_TYPES.has(message.type)) {
       log.info(
         { messageType: message.type, messageId: savedMessage.id },
@@ -225,7 +174,6 @@ export async function processInboundMessage(
       return;
     }
 
-    // Message content extract karo
     const inboundContent = extractMessageContent(message);
 
     if (!inboundContent) {
@@ -260,11 +208,6 @@ export async function processInboundMessage(
   });
 }
 
-// ============================================================
-// HELPER: Message DB mein save karo
-// metaMessageId @unique — duplicate pe null return karta hai
-// ============================================================
-
 async function saveMessage(
   tx: TenantTxClient,
   tenantId: string,
@@ -274,33 +217,31 @@ async function saveMessage(
   timestamp: string,
   log: ReturnType<typeof createJobLogger>,
 ): Promise<{ id: string } | null> {
-  // Pehle check karo duplicate nahi hai
   const existing = await tx.message.findFirst({
     where: { metaMessageId: message.id },
     select: { id: true },
   });
 
   if (existing) {
-    return null; // Duplicate — skip
+    return null;
   }
 
-  // Naya message create karo
   const content = extractMessageContent(message);
 
   const saved = await tx.message.create({
     data: {
       tenantId,
-      conversationId: conversationId ?? "", // Conversation nahi hai toh empty (opted-out case)
+      conversationId: conversationId ?? "",
       messageType: mapMessageType(message.type),
       direction: "inbound",
       content,
-      status: "DELIVERED", // Meta ne deliver kar diya — hum receive kar liye
+      status: "DELIVERED",
       metaMessageId: message.id,
       metadata: {
         from: senderPhone,
         timestamp,
         type: message.type,
-        // Raw message store karo debugging ke liye
+
         raw: JSON.parse(JSON.stringify(message)),
       },
     },
@@ -311,10 +252,6 @@ async function saveMessage(
 
   return saved;
 }
-
-// ============================================================
-// HELPER: Message content extract karo (text/interactive)
-// ============================================================
 
 function extractMessageContent(
   message: InboundMessageJob["message"],

@@ -7,36 +7,14 @@ import { generateEmbedding } from "./embeddings.processor.js";
 import { env } from "../config/env.js";
 import type { AiReplyJob, OutboundMessageJob } from "../types/job-payloads.js";
 
-// ============================================================
-// AI REPLY PROCESSOR
-//
-// Steps:
-// 1. Tenant ka active TenantAIPrompt fetch karo
-// 2. Conversation history fetch karo (last 10 messages)
-// 3. RAG — query embedding generate karo
-// 4. pgvector cosine similarity search (top 5 chunks)
-// 5. OpenAI gpt-4o-mini chat completion
-// 6. AI response DB mein save karo (outbound message)
-// 7. whatsapp-outbound queue mein push karo
-//
-// Model: gpt-4o-mini
-// - Cost efficient for high-volume WhatsApp responses
-// - Fast response time
-// - Good instruction following
-//
-// RAG: cosine similarity (<=> operator)
-// - Top 5 chunks — enough context without bloating prompt
-// - tenantId filter — RLS + explicit filter for safety
-// ============================================================
-
 const openai = new OpenAI({ apiKey: env.OPENAI_API_KEY });
 
 const CHAT_MODEL = "gpt-4o-mini";
-const MAX_TOKENS = 500; // WhatsApp message limit ke andar
-const TEMPERATURE = 0.7; // Balanced creativity/consistency
-const RAG_TOP_K = 5; // Top 5 similar chunks
-const HISTORY_LIMIT = 10; // Last 10 messages for context
-const MAX_RESPONSE_CHARS = 1500; // WhatsApp practical limit
+const MAX_TOKENS = 500;
+const TEMPERATURE = 0.7;
+const RAG_TOP_K = 5;
+const HISTORY_LIMIT = 10;
+const MAX_RESPONSE_CHARS = 1500;
 
 export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
   const {
@@ -57,7 +35,6 @@ export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
     "Processing AI reply",
   );
 
-  // ── Step 1: Active AI prompt fetch karo ──────────────────────────────
   const aiPrompt = await withTenantContext(tenantId, async (tx) => {
     return tx.tenantAIPrompt.findFirst({
       where: {
@@ -65,7 +42,7 @@ export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
         isActive: true,
         deletedAt: null,
       },
-      orderBy: { version: "desc" }, // Latest version
+      orderBy: { version: "desc" },
       select: {
         id: true,
         systemPrompt: true,
@@ -81,21 +58,19 @@ export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
     );
   }
 
-  // Default system prompt agar tenant ne set nahi kiya
   const systemPrompt =
     aiPrompt?.systemPrompt ??
     "You are a helpful WhatsApp business assistant. " +
       "Be concise, friendly, and professional. " +
       "Keep responses under 150 words suitable for WhatsApp.";
 
-  // ── Step 2: Conversation history fetch karo ───────────────────────────
   const history = await withTenantContext(tenantId, async (tx) => {
     return tx.message.findMany({
       where: {
         conversationId,
         tenantId,
         deletedAt: null,
-        // Current message exclude karo
+
         id: { not: messageId },
       },
       orderBy: { createdAt: "desc" },
@@ -108,7 +83,6 @@ export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
     });
   });
 
-  // Chronological order ke liye reverse karo
   const chronologicalHistory = history.reverse();
 
   log.debug(
@@ -116,15 +90,11 @@ export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
     "Conversation history fetched",
   );
 
-  // ── Step 3: RAG — Query embedding generate karo ───────────────────────
   let ragContext = "";
 
   try {
     const queryEmbedding = await generateEmbedding(inboundContent);
 
-    // ── Step 4: pgvector cosine similarity search ─────────────────────
-    // $queryRaw mandatory — Prisma vector operator (<=>)  support nahi karta
-    // tenantId filter = RLS + explicit double safety
     const vectorStr = `[${queryEmbedding.join(",")}]`;
 
     const similarChunks = await withTenantContext(tenantId, async (tx) => {
@@ -157,18 +127,14 @@ export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
       log.debug({ conversationId }, "No relevant knowledge base chunks found");
     }
   } catch (err) {
-    // RAG fail hone pe bhi continue karo — bina context ke reply do
     log.error(
       { err, conversationId },
       "RAG search failed — continuing without context",
     );
   }
 
-  // ── Step 5: OpenAI chat completion ───────────────────────────────────
-  // Message array build karo
   const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [];
 
-  // System message — AI prompt + RAG context
   const fullSystemPrompt = ragContext
     ? `${systemPrompt}\n\n` +
       `RELEVANT BUSINESS INFORMATION:\n${ragContext}\n\n` +
@@ -181,7 +147,6 @@ export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
     content: fullSystemPrompt,
   });
 
-  // Conversation history add karo
   for (const msg of chronologicalHistory) {
     if (!msg.content) continue;
     messages.push({
@@ -190,7 +155,6 @@ export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
     });
   }
 
-  // Current user message
   messages.push({
     role: "user",
     content: inboundContent,
@@ -212,7 +176,6 @@ export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
       throw new Error("OpenAI returned empty response");
     }
 
-    // WhatsApp character limit enforce karo
     if (aiResponseText.length > MAX_RESPONSE_CHARS) {
       aiResponseText = aiResponseText.slice(0, MAX_RESPONSE_CHARS - 3) + "...";
     }
@@ -228,10 +191,9 @@ export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
     );
   } catch (err) {
     log.error({ err, conversationId }, "OpenAI chat completion failed");
-    throw err; // BullMQ retry karega
+    throw err;
   }
 
-  // ── Step 6: AI response DB mein save karo ────────────────────────────
   const savedMessage = await withTenantContext(tenantId, async (tx) => {
     return tx.message.create({
       data: {
@@ -240,7 +202,7 @@ export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
         messageType: "TEXT",
         direction: "outbound",
         content: aiResponseText,
-        status: "QUEUED", // Abhi queue mein hai — sent nahi hua
+        status: "QUEUED",
         metadata: {
           aiGenerated: true,
           model: CHAT_MODEL,
@@ -257,7 +219,6 @@ export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
     "AI response saved to DB",
   );
 
-  // ── Step 7: whatsapp-outbound queue mein push karo ────────────────────
   const outboundJob: OutboundMessageJob = {
     tenantId,
     conversationId,

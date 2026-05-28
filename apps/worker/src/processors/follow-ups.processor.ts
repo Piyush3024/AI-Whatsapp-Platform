@@ -6,10 +6,6 @@ import { createJobLogger } from "../lib/logger.js";
 import { outboundQueue } from "../lib/queues.js";
 import type { FollowUpJob, OutboundMessageJob } from "../types/job-payloads.js";
 
-// ============================================================
-// Payload Validation
-// ============================================================
-
 const FollowUpJobSchema = z.object({
   tenantId: z.string().uuid(),
   bookingId: z.string().uuid(),
@@ -19,22 +15,17 @@ const FollowUpJobSchema = z.object({
   messageBody: z.string().min(1).max(1024),
 });
 
-// ============================================================
-// Processor Entry Point
-// ============================================================
-
 export async function processFollowUpJob(job: Job<FollowUpJob>): Promise<void> {
   const { tenantId } = job.data;
   const log = createJobLogger("follow_ups", job.id, tenantId);
 
-  // Validate payload
   const parsed = FollowUpJobSchema.safeParse(job.data);
   if (!parsed.success) {
     log.error(
       { errors: parsed.error.flatten() },
       "Invalid follow-up job payload — dropping",
     );
-    // Don't throw — invalid payload should not retry
+
     return;
   }
 
@@ -47,7 +38,6 @@ export async function processFollowUpJob(job: Job<FollowUpJob>): Promise<void> {
   );
 
   await withTenantContext(tenantId, async (tx) => {
-    // ── 1. Verify booking still exists and is COMPLETED ──────────────────
     const booking = await tx.booking.findFirst({
       where: { id: bookingId, tenantId, status: "COMPLETED" },
       select: { id: true },
@@ -61,7 +51,6 @@ export async function processFollowUpJob(job: Job<FollowUpJob>): Promise<void> {
       return;
     }
 
-    // ── 2. Verify customer opt-in (may have changed since job was queued) ─
     const customer = await tx.customer.findFirst({
       where: { id: customerId, tenantId },
       select: { optInStatus: true },
@@ -77,7 +66,6 @@ export async function processFollowUpJob(job: Job<FollowUpJob>): Promise<void> {
       return;
     }
 
-    // ── 3. Resolve default WhatsApp number ────────────────────────────────
     const whatsappNumber = await tx.whatsAppNumber.findFirst({
       where: { tenantId, isDefault: true, isActive: true },
       select: { id: true, phoneNumberId: true },
@@ -91,7 +79,6 @@ export async function processFollowUpJob(job: Job<FollowUpJob>): Promise<void> {
       throw new Error("No default WhatsApp number configured");
     }
 
-    // ── 4. Find or create conversation ────────────────────────────────────
     let conversation = await tx.conversation.findFirst({
       where: {
         tenantId,
@@ -116,7 +103,6 @@ export async function processFollowUpJob(job: Job<FollowUpJob>): Promise<void> {
       });
     }
 
-    // ── 5. Save outbound message record ───────────────────────────────────
     const savedMessage = await tx.message.create({
       data: {
         tenantId,
@@ -134,7 +120,6 @@ export async function processFollowUpJob(job: Job<FollowUpJob>): Promise<void> {
       select: { id: true },
     });
 
-    // ── 6. Push to outbound queue ─────────────────────────────────────────
     const outboundJob: OutboundMessageJob = {
       tenantId,
       conversationId: conversation.id,
@@ -145,9 +130,7 @@ export async function processFollowUpJob(job: Job<FollowUpJob>): Promise<void> {
       messageType: "text",
     };
 
-    await outboundQueue.add("send-whatsapp-message", outboundJob, {
-      // Inherit retry settings from queue defaults
-    });
+    await outboundQueue.add("send-whatsapp-message", outboundJob, {});
 
     log.info(
       { bookingId, followUpType, customerPhone, messageId: savedMessage.id },

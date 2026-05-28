@@ -7,10 +7,6 @@ import { outboundQueue, remindersQueue } from "../lib/queues.js";
 import { ReminderRuleType } from "@whatsapp-ai/db/generated/prisma";
 import type { OutboundMessageJob } from "../types/job-payloads.js";
 
-// ============================================================
-// Job Payload Schema
-// ============================================================
-
 export const ReminderJobPayloadSchema = z.object({
   tenantId: z.string().uuid(),
   bookingId: z.string().uuid(),
@@ -19,21 +15,13 @@ export const ReminderJobPayloadSchema = z.object({
 
 export type ReminderJobPayload = z.infer<typeof ReminderJobPayloadSchema>;
 
-// ============================================================
-// Constants
-// ============================================================
-
 const MAX_RETRY_ATTEMPTS = 3;
-
-// ============================================================
-// Processor
-// ============================================================
 
 export async function processReminderJob(job: Job): Promise<void> {
   if (job.name === "sweep-due-reminders") {
     return processDueReminders();
   }
-  // default: individual reminder
+
   return processSingleReminder(job as Job<ReminderJobPayload>);
 }
 
@@ -53,9 +41,7 @@ export async function processSingleReminder(
   );
 
   try {
-    // Use tenant context for RLS
     const result = await withTenantContext(tenantId, async (tx) => {
-      // Find the pending scheduled reminder with booking + customer
       const scheduledReminder = await tx.scheduledReminder.findFirst({
         where: {
           tenantId,
@@ -81,7 +67,6 @@ export async function processSingleReminder(
         return null;
       }
 
-      // Check if customer has opted out
       if (scheduledReminder.booking.customer.optInStatus === "OPTED_OUT") {
         log.info(
           { customerId: scheduledReminder.booking.customerId },
@@ -99,7 +84,6 @@ export async function processSingleReminder(
         return null;
       }
 
-      // Get default WhatsApp number for tenant (not on Booking — separate relation)
       const whatsappNumber = await tx.whatsAppNumber.findFirst({
         where: {
           tenantId,
@@ -126,7 +110,6 @@ export async function processSingleReminder(
         throw new Error("No default WhatsApp number configured");
       }
 
-      // ── Find or create Conversation ─────────────────────────────────────
       let conversation = await tx.conversation.findFirst({
         where: {
           tenantId,
@@ -149,7 +132,6 @@ export async function processSingleReminder(
         });
       }
 
-      // ── Save Message record in DB ───────────────────────────────────────
       const savedMessage = await tx.message.create({
         data: {
           tenantId,
@@ -165,7 +147,6 @@ export async function processSingleReminder(
         },
       });
 
-      // ── Queue the outbound message ──────────────────────────────────────
       const outboundJob: OutboundMessageJob = {
         tenantId,
         conversationId: conversation.id,
@@ -178,7 +159,6 @@ export async function processSingleReminder(
 
       await outboundQueue.add("send-whatsapp-message", outboundJob);
 
-      // Update reminder status
       await tx.scheduledReminder.update({
         where: { id: scheduledReminder.id },
         data: {
@@ -217,9 +197,7 @@ export async function processSingleReminder(
       "Reminder job failed",
     );
 
-    // Update scheduled reminder with error
     await withTenantContext(tenantId, async (tx) => {
-      // Fetch current attempts to do a plain integer update
       const current = await tx.scheduledReminder.findFirst({
         where: { tenantId, bookingId, ruleType, status: "PENDING" },
         select: { attempts: true },
@@ -241,20 +219,11 @@ export async function processSingleReminder(
     });
 
     if (isRetryable) {
-      // Throw to trigger BullMQ retry
       throw error;
     }
   }
 }
 
-// ============================================================
-// Scheduled Reminders Sweeper
-// ============================================================
-
-/**
- * Process all pending reminders that are due
- * This runs periodically to catch any missed reminders
- */
 export async function processDueReminders(): Promise<void> {
   const now = new Date();
 
@@ -268,7 +237,7 @@ export async function processDueReminders(): Promise<void> {
           lte: now,
         },
       },
-      take: 100, // Process in batches
+      take: 100,
       orderBy: {
         scheduledAt: "asc",
       },
