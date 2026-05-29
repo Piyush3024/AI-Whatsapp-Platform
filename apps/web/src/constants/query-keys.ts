@@ -47,6 +47,8 @@ export const QUERY_KEYS = {
   customers: {
     all: ["customers"] as const,
     list: (params: unknown) => ["customers", "list", params] as const,
+    detail: (id: string) => ["customers", "detail", id] as const,
+    conversations: (id: string) => ["customers", "conversations", id] as const,
   },
 
   /**

@@ -46,8 +46,17 @@ export const API_ENDPOINTS = {
     delete: (id: string) => `/bookings/${id}`,
   },
 
+  /**
+   * Customers-related endpoints
+   */
+
   customers: {
     list: "/customers",
+    detail: (id: string) => `/customers/${id}`,
+    create: "/customers",
+    update: (id: string) => `/customers/${id}`,
+    delete: (id: string) => `/customers/${id}`,
+    conversations: (id: string) => `/customers/${id}/conversations`,
   },
   staff: {
     list: "/staff",
