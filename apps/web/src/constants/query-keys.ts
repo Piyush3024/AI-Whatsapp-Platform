@@ -70,4 +70,13 @@ export const QUERY_KEYS = {
     list: (params?: unknown) => ["services", "list", params] as const,
     detail: (id: string) => ["services", "detail", id] as const,
   },
+
+  /**
+   * Knowledge base-related queries
+   */
+  knowledgeBase: {
+    all: ["knowledge-base"] as const,
+    list: (params?: unknown) => ["knowledge-base", "list", params] as const,
+    detail: (id: string) => ["knowledge-base", "detail", id] as const,
+  },
 } as const;

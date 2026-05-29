@@ -73,11 +73,26 @@ export const API_ENDPOINTS = {
     deleteOverride: (id: string, overrideId: string) =>
       `/staff/${id}/overrides/${overrideId}`,
   },
+
+  /**
+   * Service-related endpoints
+   */
   services: {
     list: "/services",
     detail: (id: string) => `/services/${id}`,
     create: "/services",
     update: (id: string) => `/services/${id}`,
     delete: (id: string) => `/services/${id}`,
+  },
+
+  /**
+   * Knowledge base-related endpoints
+   */
+
+  knowledgeBase: {
+    list: "/knowledge-base/documents",
+    detail: (id: string) => `/knowledge-base/documents/${id}`,
+    upload: "/knowledge-base/documents",
+    delete: (id: string) => `/knowledge-base/documents/${id}`,
   },
 } as const;

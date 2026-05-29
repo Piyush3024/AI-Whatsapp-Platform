@@ -63,16 +63,31 @@ export class KnowledgeBaseService {
     const tenantId = this.cls.get<string>('tenantId');
     const { page = 1, limit = 10, status } = query;
 
-    return this.prisma.db.knowledgeBaseDocument.findMany({
-      where: {
-        tenantId,
-        ...(status && { status }),
-        deletedAt: null,
+    const where = {
+      tenantId,
+      ...(status && { status }),
+      deletedAt: null,
+    };
+
+    const [items, total] = await Promise.all([
+      this.prisma.db.knowledgeBaseDocument.findMany({
+        where,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.db.knowledgeBaseDocument.count({ where }),
+    ]);
+
+    return {
+      items,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
       },
-      skip: (page - 1) * limit,
-      take: limit,
-      orderBy: { createdAt: 'desc' },
-    });
+    };
   }
 
   async getDocument(id: string) {
