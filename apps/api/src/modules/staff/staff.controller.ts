@@ -36,12 +36,12 @@ export class StaffController {
   constructor(private readonly staffService: StaffService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Saare staff members list karo' })
+  @ApiOperation({ summary: 'List all staff members' })
   @ApiQuery({
     name: 'includeInactive',
     required: false,
     type: Boolean,
-    description: 'Inactive staff bhi include karo?',
+    description: 'Include inactive staff?',
   })
   findAll(
     @CurrentUser() user: CurrentUserPayload,
@@ -53,13 +53,13 @@ export class StaffController {
 
   @Post()
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @ApiOperation({ summary: 'Naya staff member banao' })
+  @ApiOperation({ summary: 'Create new staff member' })
   create(@CurrentUser() user: CurrentUserPayload, @Body() dto: CreateStaffDto) {
     return this.staffService.create(user.tenantId, dto);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Staff member by ID lo' })
+  @ApiOperation({ summary: 'Get staff member by ID' })
   findOne(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) staffId: string,
@@ -69,7 +69,7 @@ export class StaffController {
 
   @Patch(':id')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @ApiOperation({ summary: 'Staff member update karo' })
+  @ApiOperation({ summary: 'Update staff member' })
   update(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) staffId: string,
@@ -81,7 +81,7 @@ export class StaffController {
   @Delete(':id')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Staff member soft delete karo' })
+  @ApiOperation({ summary: 'Soft delete staff member' })
   remove(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) staffId: string,
@@ -90,7 +90,7 @@ export class StaffController {
   }
 
   @Get(':id/schedule')
-  @ApiOperation({ summary: 'Staff ki weekly schedule dekho' })
+  @ApiOperation({ summary: 'Get staff weekly schedule' })
   getSchedule(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) staffId: string,
@@ -100,7 +100,7 @@ export class StaffController {
 
   @Put(':id/schedule')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @ApiOperation({ summary: 'Staff ki weekly schedule set karo (full replace)' })
+  @ApiOperation({ summary: 'Set staff weekly schedule (full replace)' })
   setSchedule(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) staffId: string,
@@ -110,7 +110,7 @@ export class StaffController {
   }
 
   @Get(':id/overrides')
-  @ApiOperation({ summary: 'Staff ke schedule overrides list karo' })
+  @ApiOperation({ summary: 'Get staff schedule overrides' })
   getOverrides(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) staffId: string,
@@ -120,7 +120,7 @@ export class StaffController {
 
   @Post(':id/overrides')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
-  @ApiOperation({ summary: 'Specific date ke liye schedule override banao' })
+  @ApiOperation({ summary: 'Create schedule override for specific date' })
   createOverride(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) staffId: string,
@@ -132,7 +132,7 @@ export class StaffController {
   @Delete(':id/overrides/:overrideId')
   @Roles(UserRole.OWNER, UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Schedule override remove karo' })
+  @ApiOperation({ summary: 'Remove schedule override' })
   removeOverride(
     @CurrentUser() user: CurrentUserPayload,
     @Param('id', ParseUUIDPipe) staffId: string,
