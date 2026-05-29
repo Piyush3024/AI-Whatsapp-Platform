@@ -88,4 +88,15 @@ export const QUERY_KEYS = {
     list: (params?: unknown) => ["whatsapp", "list", params] as const,
     detail: (id: string) => ["whatsapp", "detail", id] as const,
   },
+
+  /**
+   * Tenant-related queries
+   */
+
+  tenant: {
+    me: ["tenant", "me"] as const,
+    members: ["tenant", "members"] as const,
+    locations: ["tenant", "locations"] as const,
+    locationHours: (id: string) => ["tenant", "location-hours", id] as const,
+  },
 } as const;

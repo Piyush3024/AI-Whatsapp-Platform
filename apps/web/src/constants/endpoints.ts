@@ -108,4 +108,19 @@ export const API_ENDPOINTS = {
     delete: (id: string) => `/whatsapp-numbers/${id}`,
     sendTest: (id: string) => `/whatsapp-numbers/${id}/test`,
   },
+
+  /**
+   * Tenant-related endpoints
+   */
+
+  tenant: {
+    me: "/tenant/me",
+    update: "/tenant/me",
+    members: "/tenant/members",
+    updateMemberRole: (userId: string) => `/tenant/members/${userId}/role`,
+    removeMember: (userId: string) => `/tenant/members/${userId}`,
+    locations: "/tenant/locations",
+    location: (id: string) => `/tenant/locations/${id}`,
+    locationHours: (id: string) => `/tenant/locations/${id}/hours`,
+  },
 } as const;

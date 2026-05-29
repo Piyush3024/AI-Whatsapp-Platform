@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "tsx watch src/main.ts",
+    "check-types": "tsc --noEmit",
     "build": "tsc",
     "start": "node dist/main.js",
     "generate": "prisma generate --config=prisma.config.ts",
