@@ -11,9 +11,11 @@ import {
   HttpCode,
   HttpStatus,
   UseInterceptors,
-  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FastifyFileInterceptor } from '../../common/interceptors/fastify-file.interceptor.js';
+import { UploadedFastifyFile } from '../../common/decorators/uploaded-fastify-file.decorator.js';
+import type { UploadedFile } from '../../common/interceptors/fastify-file.interceptor.js';
 import { ApiConsumes } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard.js';
 import { RolesGuard } from '../../common/guards/roles.guard.js';
@@ -30,17 +32,16 @@ export class KnowledgeBaseController {
 
   @Post()
   @Roles(UserRole.OWNER, UserRole.ADMIN, UserRole.STAFF)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(new FastifyFileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
   async uploadDocument(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFastifyFile() file: UploadedFile | null,
     @Body() dto: CreateDocumentDto,
   ) {
-    return this.knowledgeBaseService.uploadDocument(
-      dto,
-      file.buffer,
-      file.mimetype,
-    );
+    if (!file) {
+      throw new BadRequestException('File is required');
+    }
+    return this.knowledgeBaseService.uploadDocument(dto, file.buffer);
   }
 
   @Get()

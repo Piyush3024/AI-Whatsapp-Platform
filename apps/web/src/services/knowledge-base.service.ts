@@ -29,6 +29,7 @@ export async function getDocumentById(
 
 export async function uploadDocument(
   dto: UploadDocumentDto,
+  onProgress?: (percent: number) => void,
 ): Promise<KnowledgeBaseDocument> {
   const formData = new FormData();
   formData.append("title", dto.title);
@@ -40,6 +41,11 @@ export async function uploadDocument(
     formData,
     {
       headers: { "Content-Type": "multipart/form-data" },
+      onUploadProgress: (event) => {
+        if (event.total && onProgress) {
+          onProgress(Math.round((event.loaded * 100) / event.total));
+        }
+      },
     },
   );
   return response.data.data;

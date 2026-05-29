@@ -19,11 +19,7 @@ export class KnowledgeBaseService {
     private readonly embeddingsQueue: Queue,
   ) {}
 
-  async uploadDocument(
-    dto: CreateDocumentDto,
-    fileBuffer: Buffer,
-    mimeType: string,
-  ) {
+  async uploadDocument(dto: CreateDocumentDto, fileBuffer: Buffer) {
     const tenantId = this.cls.get<string>('tenantId');
 
     const validation = await validateFile(fileBuffer, dto.fileName);
@@ -32,7 +28,7 @@ export class KnowledgeBaseService {
       fileBuffer,
       tenantId,
       dto.fileName,
-      mimeType,
+      validation.mimeType,
     );
 
     const document = await this.prisma.db.knowledgeBaseDocument.create({
@@ -52,8 +48,8 @@ export class KnowledgeBaseService {
     await this.embeddingsQueue.add('generate-embeddings', {
       tenantId,
       documentId: document.id,
-      fileType: document.fileType,
-      storagePath: document.storagePath,
+      fileUrl: document.fileUrl,
+      title: document.title,
     });
 
     return document;

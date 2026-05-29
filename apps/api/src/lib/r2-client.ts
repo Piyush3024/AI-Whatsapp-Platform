@@ -41,7 +41,9 @@ function getS3Client(): S3Client {
 }
 
 function generateObjectKey(tenantId: string, fileName: string): string {
-  const extension = extname(fileName).slice(1) || 'bin';
+  const rawExtension = extname(fileName).slice(1) || 'bin';
+  const extension =
+    rawExtension.replace(/[^a-zA-Z0-9]/g, '').slice(0, 10) || 'bin';
   const uuid = randomUUID();
   return `tenants/${tenantId}/${KB_PREFIX}/${uuid}.${extension}`;
 }

@@ -8,6 +8,7 @@ import {
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import fastifyHelmet from '@fastify/helmet';
 import fastifyCompress from '@fastify/compress';
+import fastifyMultipart from '@fastify/multipart';
 import { AppModule } from './app.module.js';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter.js';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor.js';
@@ -49,6 +50,15 @@ async function bootstrap(): Promise<void> {
   await app.register(fastifyCompress, {
     encodings: ['gzip', 'deflate'],
     threshold: 1024,
+  });
+  await app.register(fastifyMultipart, {
+    limits: {
+      fieldNameSize: 100,
+      fieldSize: 1_000_000,
+      fields: 10,
+      fileSize: 10 * 1024 * 1024, // 10MB
+      files: 1,
+    },
   });
 
   const allowedOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:3000')

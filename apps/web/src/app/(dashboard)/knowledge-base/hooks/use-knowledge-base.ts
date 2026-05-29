@@ -30,7 +30,13 @@ export function useDocuments(params?: KnowledgeBaseQuery) {
 export function useUploadDocument() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (dto: UploadDocumentDto) => uploadDocument(dto),
+    mutationFn: ({
+      dto,
+      onProgress,
+    }: {
+      dto: UploadDocumentDto;
+      onProgress?: (percent: number) => void;
+    }) => uploadDocument(dto, onProgress),
     onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: QUERY_KEYS.knowledgeBase.all,

@@ -5,8 +5,11 @@ import { withTenantContext } from "../lib/prisma.js";
 import { env } from "../config/env.js";
 import type { EmbeddingJob } from "../types/job-payloads.js";
 import OpenAI from "openai";
+import SmartParser from "pdf-parse-new/lib/SmartPDFParser";
+import mammoth from "mammoth";
 
 const openai = new OpenAI({ apiKey: env.OPENAI_API_KEY });
+const smartParser = new SmartParser();
 
 const CHUNK_SIZE = 500;
 const CHUNK_OVERLAP = 50;
@@ -23,7 +26,7 @@ export async function processEmbedding(job: Job<EmbeddingJob>): Promise<void> {
   const document = await withTenantContext(tenantId, async (tx) => {
     return tx.knowledgeBaseDocument.findFirst({
       where: { id: documentId, deletedAt: null },
-      select: { id: true, status: true, title: true },
+      select: { id: true, status: true, title: true, fileType: true },
     });
   });
 
@@ -50,7 +53,23 @@ export async function processEmbedding(job: Job<EmbeddingJob>): Promise<void> {
         `Failed to fetch file: ${response.status} ${response.statusText}`,
       );
     }
-    rawText = await response.text();
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    if (document.fileType === "application/pdf") {
+      const pdfData = await smartParser.parse(buffer);
+      rawText = pdfData.text;
+    } else if (
+      document.fileType ===
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ) {
+      const docxResult = await mammoth.extractRawText({ buffer });
+      rawText = docxResult.value;
+    } else if (document.fileType === "text/plain") {
+      rawText = buffer.toString("utf-8");
+    } else {
+      throw new Error(`Unsupported file type: ${document.fileType}`);
+    }
   } catch (err) {
     await withTenantContext(tenantId, async (tx) => {
       await tx.knowledgeBaseDocument.update({
@@ -58,7 +77,10 @@ export async function processEmbedding(job: Job<EmbeddingJob>): Promise<void> {
         data: { status: "FAILED" },
       });
     });
-    log.error({ err, documentId, fileUrl }, "Failed to fetch document content");
+    log.error(
+      { err, documentId, fileUrl },
+      "Failed to fetch or parse document content",
+    );
     throw err;
   }
 

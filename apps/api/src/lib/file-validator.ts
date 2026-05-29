@@ -36,13 +36,16 @@ export class CorruptFileError extends Error {
   }
 }
 
-const ALLOWED_MIME_TYPES: string[] = (process.env.KB_ALLOWED_MIME_TYPES || '')
-  .split(',')
-  .map((type) => type.trim());
+export function getAllowedMimeTypes(): string[] {
+  return (process.env.KB_ALLOWED_MIME_TYPES || '')
+    .split(',')
+    .map((type) => type.trim());
+}
 
-const MAX_FILE_SIZE_BYTES: number = Number(
-  process.env.KB_MAX_FILE_SIZE_BYTES || 10_485_760,
-);
+export function getMaxFileSize(): number {
+  return Number(process.env.KB_MAX_FILE_SIZE_BYTES || 10_485_760);
+}
+
 async function generateChecksum(buffer: Buffer): Promise<string> {
   return new Promise((resolve) => {
     const hash = createHash('sha256');
@@ -53,25 +56,38 @@ async function generateChecksum(buffer: Buffer): Promise<string> {
 
 async function getFileType(
   buffer: Buffer,
+  fileName: string,
 ): Promise<{ mime: string; ext: string }> {
   const type = await fileTypeFromBuffer(buffer);
-  if (!type) {
-    throw new CorruptFileError('unknown');
+  if (type) {
+    return { mime: type.mime, ext: type.ext };
   }
-  return { mime: type.mime, ext: type.ext };
+
+  // Fallback for plain text (.txt) files which file-type does not detect
+  const extension = fileName.split('.').pop()?.toLowerCase();
+  if (extension === 'txt') {
+    const isBinary = buffer.slice(0, 8000).includes(0);
+    if (!isBinary) {
+      return { mime: 'text/plain', ext: 'txt' };
+    }
+  }
+
+  throw new CorruptFileError(fileName);
 }
 
 export async function validateFile(
   buffer: Buffer,
   fileName: string,
 ): Promise<ValidationResult> {
-  if (buffer.length > MAX_FILE_SIZE_BYTES) {
-    throw new FileTooLargeError(fileName, buffer.length, MAX_FILE_SIZE_BYTES);
+  const maxFileSize = getMaxFileSize();
+  if (buffer.length > maxFileSize) {
+    throw new FileTooLargeError(fileName, buffer.length, maxFileSize);
   }
 
-  const { mime, ext } = await getFileType(buffer);
+  const { mime, ext } = await getFileType(buffer, fileName);
 
-  if (!ALLOWED_MIME_TYPES.includes(mime)) {
+  const allowedMimeTypes = getAllowedMimeTypes();
+  if (!allowedMimeTypes.includes(mime)) {
     throw new InvalidFileError(fileName, mime);
   }
   const checksum = await generateChecksum(buffer);
@@ -86,5 +102,3 @@ export async function validateFile(
     extension: ext,
   };
 }
-
-export { ALLOWED_MIME_TYPES, MAX_FILE_SIZE_BYTES };

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, MaxLength } from 'class-validator';
+import { IsString, IsNotEmpty, MaxLength, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateDocumentDto {
@@ -25,5 +25,6 @@ export class CreateDocumentDto {
     type: 'string',
     format: 'binary',
   })
+  @IsOptional()
   file!: unknown;
 }
