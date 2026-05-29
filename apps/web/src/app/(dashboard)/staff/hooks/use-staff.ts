@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  skipToken,
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { toast } from "sonner";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import {
@@ -22,12 +27,15 @@ import type {
   StaffQuery,
 } from "@/types/staff.types";
 
+import { useIsAuthReady } from "@/hooks/use-auth-ready";
+
 // ─── List ─────────────────────────────────────────────────────────────────────
 
 export function useStaffList(params?: StaffQuery) {
+  const isReady = useIsAuthReady();
   return useQuery({
     queryKey: QUERY_KEYS.staff.list(params),
-    queryFn: () => getStaff(params),
+    queryFn: isReady ? () => getStaff(params) : skipToken,
     staleTime: 1000 * 60 * 2,
   });
 }

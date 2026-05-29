@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  skipToken,
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { toast } from "sonner";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import type {
@@ -13,11 +18,14 @@ import {
   updateBookingStatus,
   deleteBooking,
 } from "@/services/booking.service";
+import { useIsAuthReady } from "@/hooks/use-auth-ready";
 
 export function useBookings(params: BookingQuery) {
+  const isReady = useIsAuthReady();
+
   return useQuery({
     queryKey: QUERY_KEYS.bookings.list(params),
-    queryFn: () => getBookings(params),
+    queryFn: isReady ? () => getBookings(params) : skipToken,
     staleTime: 1000 * 60 * 2, // 2 minutes
   });
 }

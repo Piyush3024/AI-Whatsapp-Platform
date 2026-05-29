@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  skipToken,
+} from "@tanstack/react-query";
 import { toast } from "sonner";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import {
@@ -14,11 +19,13 @@ import type {
   CreateServiceDto,
   UpdateServiceDto,
 } from "@/types/service.types";
+import { useIsAuthReady } from "@/hooks/use-auth-ready";
 
 export function useServiceList(params?: ServiceQuery) {
+  const isReady = useIsAuthReady();
   return useQuery({
     queryKey: QUERY_KEYS.services.list(params),
-    queryFn: () => getServices(params),
+    queryFn: isReady ? () => getServices(params) : skipToken,
     staleTime: 1000 * 60 * 2,
   });
 }

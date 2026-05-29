@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  skipToken,
+} from "@tanstack/react-query";
 import { toast } from "sonner";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import type {
@@ -14,11 +19,13 @@ import {
   deleteCustomer,
   getCustomerConversations,
 } from "@/services/customer.service";
+import { useIsAuthReady } from "@/hooks/use-auth-ready";
 
 export function useCustomers(params: CustomerQuery) {
+  const isReady = useIsAuthReady();
   return useQuery({
     queryKey: QUERY_KEYS.customers.list(params),
-    queryFn: () => getCustomers(params),
+    queryFn: isReady ? () => getCustomers(params) : skipToken,
     staleTime: 1000 * 60 * 2,
   });
 }
