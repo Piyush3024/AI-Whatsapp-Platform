@@ -16,11 +16,18 @@ export class StaffService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(tenantId: string, includeInactive = false) {
+  async findAll(tenantId: string, includeInactive = false, search?: string) {
     return this.prisma.db.staff.findMany({
       where: {
         tenantId,
         ...(!includeInactive && { isActive: true }),
+        ...(search && {
+          OR: [
+            { name: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+            { phone: { contains: search, mode: 'insensitive' } },
+          ],
+        }),
       },
       orderBy: { name: 'asc' },
       select: {

@@ -97,6 +97,11 @@ export interface CreateScheduleOverrideDto {
   reason?: string;
 }
 
+export interface StaffQuery {
+  search?: string;
+  includeInactive?: boolean;
+}
+
 // ─── Response shapes ──────────────────────────────────────────────────────────
 
 /** GET /staff returns direct array — no pagination */

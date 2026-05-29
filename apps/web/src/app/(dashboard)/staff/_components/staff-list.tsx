@@ -16,10 +16,26 @@ import { StaffStatusBadge } from "./staff-status-badge";
 import { StaffForm } from "./staff-form";
 import { StaffScheduleDialog } from "./staff-schedule-dialog";
 import { useStaffList, useDeleteStaff } from "../hooks/use-staff";
-import type { StaffOption } from "@/types/staff.types";
+import type { StaffOption, StaffQuery } from "@/types/staff.types";
+import { Input } from "@repo/ui/components/input";
+import { useDebounce } from "@/hooks/use-debounce";
+import { Checkbox } from "@repo/ui/components/checkbox";
 
-export function StaffList() {
-  const { data: staff, isLoading } = useStaffList();
+interface StaffListProps {
+  filters: StaffQuery;
+  onFilterChange: (filters: StaffQuery) => void;
+}
+
+// export function StaffList() {
+export function StaffList({ filters, onFilterChange }: StaffListProps) {
+  const [searchInput, setSearchInput] = useState(filters.search ?? "");
+  const debouncedSearch = useDebounce(searchInput, 400);
+
+  const { data: staff, isLoading } = useStaffList({
+    ...filters,
+    search: debouncedSearch || undefined,
+  });
+  // const { data: staff, isLoading } = useStaffList();
   const deleteStaff = useDeleteStaff();
 
   const [formOpen, setFormOpen] = useState(false);
@@ -40,12 +56,34 @@ export function StaffList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Staff</h1>
-        <Button onClick={() => setFormOpen(true)}>
-          <Icons.add className="mr-2 size-4" />
-          Add Staff
-        </Button>
+      <div className="flex items-center justify-between gap-4">
+        <div className="relative w-full max-w-sm">
+          <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+          <Input
+            placeholder="Search by name, phone, email..."
+            className="pl-9"
+            value={searchInput}
+            onChange={(e) => {
+              setSearchInput(e.target.value);
+              onFilterChange({ ...filters });
+            }}
+          />
+        </div>
+        <div className="flex items-center gap-3">
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <Checkbox
+              checked={filters.includeInactive ?? false}
+              onCheckedChange={(checked) =>
+                onFilterChange({ ...filters, includeInactive: !!checked })
+              }
+            />
+            Show inactive
+          </label>
+          <Button onClick={() => setFormOpen(true)}>
+            <Icons.add className="mr-2 size-4" />
+            Add Staff
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-md border">

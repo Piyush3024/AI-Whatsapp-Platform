@@ -19,14 +19,15 @@ import type {
   UpdateStaffDto,
   SetStaffScheduleDto,
   CreateScheduleOverrideDto,
+  StaffQuery,
 } from "@/types/staff.types";
 
 // ─── List ─────────────────────────────────────────────────────────────────────
 
-export function useStaffList(includeInactive = false) {
+export function useStaffList(params?: StaffQuery) {
   return useQuery({
-    queryKey: QUERY_KEYS.staff.list(),
-    queryFn: () => getStaff(),
+    queryKey: QUERY_KEYS.staff.list(params),
+    queryFn: () => getStaff(params),
     staleTime: 1000 * 60 * 2,
   });
 }

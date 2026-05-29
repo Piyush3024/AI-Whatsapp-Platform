@@ -43,12 +43,14 @@ export class StaffController {
     type: Boolean,
     description: 'Include inactive staff?',
   })
+  @ApiQuery({ name: 'search', required: false, type: String })
   findAll(
     @CurrentUser() user: CurrentUserPayload,
     @Query('includeInactive', new ParseBoolPipe({ optional: true }))
     includeInactive?: boolean,
+    @Query('search') search?: string,
   ) {
-    return this.staffService.findAll(user.tenantId, includeInactive);
+    return this.staffService.findAll(user.tenantId, includeInactive, search);
   }
 
   @Post()

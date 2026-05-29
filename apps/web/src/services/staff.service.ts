@@ -10,13 +10,17 @@ import type {
   StaffScheduleResponse,
   StaffOverridesResponse,
   Staff,
+  StaffQuery,
   StaffScheduleOverride,
   StaffOption,
 } from "@/types/staff.types";
 
-export async function getStaff(): Promise<StaffOption[]> {
-  const response = await apiClient.get<ApiResponse<StaffOption[]>>(
+export async function getStaff(
+  params?: StaffQuery,
+): Promise<StaffListResponse> {
+  const response = await apiClient.get<ApiResponse<StaffListResponse>>(
     API_ENDPOINTS.staff.list,
+    { params },
   );
   return response.data.data;
 }
