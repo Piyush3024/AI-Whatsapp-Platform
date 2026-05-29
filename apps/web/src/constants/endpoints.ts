@@ -58,8 +58,20 @@ export const API_ENDPOINTS = {
     delete: (id: string) => `/customers/${id}`,
     conversations: (id: string) => `/customers/${id}/conversations`,
   },
+
+  /**
+   * Staff-related endpoints
+   */
   staff: {
     list: "/staff",
+    detail: (id: string) => `/staff/${id}`,
+    create: "/staff",
+    update: (id: string) => `/staff/${id}`,
+    delete: (id: string) => `/staff/${id}`,
+    schedule: (id: string) => `/staff/${id}/schedule`,
+    overrides: (id: string) => `/staff/${id}/overrides`,
+    deleteOverride: (id: string, overrideId: string) =>
+      `/staff/${id}/overrides/${overrideId}`,
   },
   services: {
     list: "/services",

@@ -57,6 +57,9 @@ export const QUERY_KEYS = {
   staff: {
     all: ["staff"] as const,
     list: () => ["staff", "list"] as const,
+    detail: (id: string) => ["staff", "detail", id] as const,
+    schedule: (id: string) => ["staff", "schedule", id] as const,
+    overrides: (id: string) => ["staff", "overrides", id] as const,
   },
 
   /**
