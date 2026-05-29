@@ -95,4 +95,17 @@ export const API_ENDPOINTS = {
     upload: "/knowledge-base/documents",
     delete: (id: string) => `/knowledge-base/documents/${id}`,
   },
+
+  /**
+   * WhatsApp-related endpoints
+   */
+
+  whatsapp: {
+    list: "/whatsapp-numbers",
+    detail: (id: string) => `/whatsapp-numbers/${id}`,
+    create: "/whatsapp-numbers",
+    update: (id: string) => `/whatsapp-numbers/${id}`,
+    delete: (id: string) => `/whatsapp-numbers/${id}`,
+    sendTest: (id: string) => `/whatsapp-numbers/${id}/test`,
+  },
 } as const;

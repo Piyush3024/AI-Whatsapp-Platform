@@ -79,4 +79,13 @@ export const QUERY_KEYS = {
     list: (params?: unknown) => ["knowledge-base", "list", params] as const,
     detail: (id: string) => ["knowledge-base", "detail", id] as const,
   },
+
+  /**
+   * WhatsApp-related queries
+   */
+  whatsapp: {
+    all: ["whatsapp"] as const,
+    list: (params?: unknown) => ["whatsapp", "list", params] as const,
+    detail: (id: string) => ["whatsapp", "detail", id] as const,
+  },
 } as const;
