@@ -12,7 +12,6 @@ import type {
   Staff,
   StaffQuery,
   StaffScheduleOverride,
-  StaffOption,
 } from "@/types/staff.types";
 
 export async function getStaff(

@@ -8,7 +8,7 @@ export function useDashboardStats() {
 
   return useQuery({
     queryKey: QUERY_KEYS.analytics.overview,
-    queryFn: isReady ? () => getAnalyticsOverview : skipToken,
+    queryFn: isReady ? getAnalyticsOverview : skipToken,
     staleTime: 1000 * 60 * 5, // 5 minutes — analytics data frequently change nahi hota
   });
 }

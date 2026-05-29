@@ -25,9 +25,9 @@ export const QUERY_KEYS = {
    */
   analytics: {
     overview: ["analytics", "overview"] as const,
-    messages: ["analytics", "messages"] as const,
-    bookings: ["analytics", "bookings"] as const,
-    usage: ["analytics", "usage"] as const,
+    messages: (params?: unknown) => ["analytics", "messages", params] as const,
+    bookings: (params?: unknown) => ["analytics", "bookings", params] as const,
+    usage: (params?: unknown) => ["analytics", "usage", params] as const,
   },
 
   /**

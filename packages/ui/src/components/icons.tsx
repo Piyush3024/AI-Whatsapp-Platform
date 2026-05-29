@@ -38,6 +38,10 @@ import {
   IconArrowRight,
   IconCircleCheck,
   IconCircleX,
+  IconUser,
+  IconMapPin,
+  IconCurrencyDollar,
+  IconMessage,
   type IconProps,
 } from "@tabler/icons-react";
 
@@ -92,6 +96,13 @@ export const Icons = {
   dotsVertical: IconDotsVertical,
   circleCheck: IconCircleCheck,
   circleX: IconCircleX,
+
+  user: IconUser,
+  mapPin: IconMapPin,
+  currencyDollar: IconCurrencyDollar,
+  message: IconMessage,
+  plus: IconPlus,
+  trash: IconTrash,
 } as const;
 
 export type IconName = keyof typeof Icons;
