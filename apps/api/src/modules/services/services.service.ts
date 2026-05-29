@@ -11,13 +11,23 @@ export class ServicesService {
 
   async findAll(
     tenantId: string,
-    options: { includeInactive?: boolean; locationId?: string } = {},
+    options: {
+      includeInactive?: boolean;
+      locationId?: string;
+      search?: string;
+    } = {},
   ) {
     return this.prisma.db.service.findMany({
       where: {
         tenantId,
         ...(!options.includeInactive && { isActive: true }),
         ...(options.locationId && { locationId: options.locationId }),
+        ...(options.search && {
+          OR: [
+            { name: { contains: options.search, mode: 'insensitive' } },
+            { description: { contains: options.search, mode: 'insensitive' } },
+          ],
+        }),
       },
       orderBy: { name: 'asc' },
     });

@@ -67,6 +67,7 @@ export const QUERY_KEYS = {
    */
   services: {
     all: ["services"] as const,
-    list: () => ["services", "list"] as const,
+    list: (params?: unknown) => ["services", "list", params] as const,
+    detail: (id: string) => ["services", "detail", id] as const,
   },
 } as const;

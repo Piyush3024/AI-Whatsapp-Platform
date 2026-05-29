@@ -36,15 +36,18 @@ export class ServicesController {
   @ApiOperation({ summary: 'List all services' })
   @ApiQuery({ name: 'includeInactive', required: false, type: Boolean })
   @ApiQuery({ name: 'locationId', required: false, type: String })
+  @ApiQuery({ name: 'search', required: false, type: String })
   findAll(
     @CurrentUser() user: CurrentUserPayload,
     @Query('includeInactive', new ParseBoolPipe({ optional: true }))
     includeInactive?: boolean,
     @Query('locationId') locationId?: string,
+    @Query('search') search?: string,
   ) {
     return this.servicesService.findAll(user.tenantId, {
       includeInactive,
       locationId,
+      search,
     });
   }
 

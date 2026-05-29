@@ -75,5 +75,9 @@ export const API_ENDPOINTS = {
   },
   services: {
     list: "/services",
+    detail: (id: string) => `/services/${id}`,
+    create: "/services",
+    update: (id: string) => `/services/${id}`,
+    delete: (id: string) => `/services/${id}`,
   },
 } as const;
