@@ -99,4 +99,14 @@ export const QUERY_KEYS = {
     locations: ["tenant", "locations"] as const,
     locationHours: (id: string) => ["tenant", "location-hours", id] as const,
   },
+
+  /**
+   * Billing-related queries
+   */
+
+  billing: {
+    plans: ["billing", "plans"] as const,
+    subscription: ["billing", "subscription"] as const,
+    invoices: (params?: unknown) => ["billing", "invoices", params] as const,
+  },
 } as const;

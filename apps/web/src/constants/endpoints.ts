@@ -123,4 +123,17 @@ export const API_ENDPOINTS = {
     location: (id: string) => `/tenant/locations/${id}`,
     locationHours: (id: string) => `/tenant/locations/${id}/hours`,
   },
+
+  /**
+   * Billing-related endpoints
+   */
+
+  billing: {
+    plans: "/billing/plans",
+    subscription: "/billing/subscription",
+    stripeCheckout: "/billing/stripe/checkout",
+    stripePortal: "/billing/stripe/portal",
+    esewaInitiate: "/billing/esewa/initiate",
+    invoices: "/billing/invoices",
+  },
 } as const;
