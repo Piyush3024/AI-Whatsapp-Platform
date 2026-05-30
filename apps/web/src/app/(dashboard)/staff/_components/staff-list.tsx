@@ -107,7 +107,7 @@ export function StaffList({ filters, onFilterChange }: StaffListProps) {
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              Array.from({ length: 4 }).map((_, i) => (
+              Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
                   {Array.from({ length: 5 }).map((_, j) => (
                     <TableCell key={j}>

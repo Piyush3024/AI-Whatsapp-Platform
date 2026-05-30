@@ -74,7 +74,7 @@ export function WhatsAppList() {
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              Array.from({ length: 3 }).map((_, i) => (
+              Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
                   {Array.from({ length: 7 }).map((_, j) => (
                     <TableCell key={j}>
