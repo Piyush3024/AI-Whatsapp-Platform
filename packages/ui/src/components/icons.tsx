@@ -42,6 +42,8 @@ import {
   IconMapPin,
   IconCurrencyDollar,
   IconMessage,
+  IconSun,
+  IconMoon,
   type IconProps,
 } from "@tabler/icons-react";
 
@@ -58,6 +60,8 @@ export const Icons = {
   knowledgeBase: IconBook,
   services: IconTool,
   notifications: IconBell,
+  sun: IconSun,
+  moon: IconMoon,
 
   // Actions
   logout: IconLogout,

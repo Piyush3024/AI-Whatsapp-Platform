@@ -14,6 +14,7 @@ import { Icons } from "@repo/ui/components/icons";
 import { useAuthStore } from "@/stores/auth.store";
 import { useLogout } from "@/app/(auth)/logout/hooks/use-logout";
 import { useUIStore } from "@/stores/ui.store";
+import { useTheme } from "next-themes";
 
 function getInitials(name: string): string {
   return name
@@ -28,6 +29,7 @@ export function Topbar() {
   const { user } = useAuthStore();
   const { mutate: logout, isPending } = useLogout();
   const { toggleSidebar } = useUIStore();
+  const { theme, setTheme } = useTheme();
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-card px-4 lg:px-6">
@@ -48,6 +50,17 @@ export function Topbar() {
         {/* Notifications */}
         <Button variant="ghost" size="icon-sm">
           <Icons.notifications className="size-4" />
+        </Button>
+
+        {/* Theme toggle */}
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          aria-label="Toggle theme"
+        >
+          <Icons.sun className="size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Icons.moon className="absolute size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
         </Button>
 
         {/* User menu */}
