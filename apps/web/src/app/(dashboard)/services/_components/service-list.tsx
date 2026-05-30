@@ -58,7 +58,7 @@ export function ServiceList({ filters, onFilterChange }: ServiceListProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="relative w-full max-w-sm">
           <Icons.search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
@@ -85,7 +85,7 @@ export function ServiceList({ filters, onFilterChange }: ServiceListProps) {
         </div>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>

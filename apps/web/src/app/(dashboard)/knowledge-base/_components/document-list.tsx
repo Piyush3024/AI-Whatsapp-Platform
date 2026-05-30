@@ -67,7 +67,7 @@ export function DocumentList() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <Select
           value={filters.status ?? "ALL"}
           onValueChange={handleStatusChange}
@@ -89,7 +89,7 @@ export function DocumentList() {
         </Button>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -157,7 +157,7 @@ export function DocumentList() {
 
       {/* Pagination */}
       {data && data.meta.totalPages > 1 && (
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <p className="text-muted-foreground text-sm">
             Showing {((filters.page ?? 1) - 1) * (filters.limit ?? 10) + 1}–
             {Math.min(

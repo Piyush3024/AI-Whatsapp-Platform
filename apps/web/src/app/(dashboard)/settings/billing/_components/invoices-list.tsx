@@ -44,7 +44,7 @@ export function InvoicesList() {
         <CardTitle>Invoices</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="rounded-md border">
+        <div className="rounded-md border overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
@@ -57,7 +57,7 @@ export function InvoicesList() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                Array.from({ length: 4 }).map((_, i) => (
+                Array.from({ length: 5 }).map((_, i) => (
                   <TableRow key={i}>
                     {Array.from({ length: 5 }).map((_, j) => (
                       <TableCell key={j}>
@@ -105,7 +105,7 @@ export function InvoicesList() {
         </div>
 
         {data && data.pagination.totalPages > 1 && (
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <p className="text-muted-foreground text-sm">
               Page {page} of {data.pagination.totalPages} —{" "}
               {data.pagination.total} invoices

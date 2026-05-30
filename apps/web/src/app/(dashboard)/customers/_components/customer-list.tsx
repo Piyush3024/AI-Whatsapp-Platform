@@ -75,7 +75,7 @@ export function CustomerList({ filters, onFilterChange }: CustomerListProps) {
       </div>
 
       {/* Table */}
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -193,7 +193,7 @@ export function CustomerList({ filters, onFilterChange }: CustomerListProps) {
 
       {/* Pagination */}
       {data && data.meta.totalPages > 1 && (
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
             Showing {((filters.page ?? 1) - 1) * (filters.limit ?? 20) + 1}–
             {Math.min(
