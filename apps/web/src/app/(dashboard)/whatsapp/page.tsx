@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
 import { WhatsAppList } from "./_components/whatsapp-list";
 
-export const metadata = { title: "WhatsApp Numbers" };
+export const metadata: Metadata = {
+  title: "WhatsApp",
+  description: "Manage your WhatsApp numbers",
+};
 
 export default function WhatsAppPage() {
   return (

@@ -1,8 +1,12 @@
+import type { Metadata } from "next";
 import { GeneralSettings } from "./_components/general-settings";
 import { LocationsSettings } from "./_components/locations-settings";
 import { MembersSettings } from "./_components/members-settings";
 
-export const metadata = { title: "Settings" };
+export const metadata: Metadata = {
+  title: "Settings",
+  description: "Configure your business settings",
+};
 
 export default function SettingsPage() {
   return (

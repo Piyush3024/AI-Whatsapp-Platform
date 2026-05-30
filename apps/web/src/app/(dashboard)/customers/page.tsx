@@ -1,39 +1,11 @@
-"use client";
+import type { Metadata } from "next";
+import { CustomersPageContent } from "./_components/customers-page-content";
 
-import { useState } from "react";
-import { Button } from "@repo/ui/components/button";
-import { Icons } from "@repo/ui/components/icons";
-import { CustomerList } from "./_components/customer-list";
-import { CustomerForm } from "./_components/customer-form";
-import type { CustomerQuery } from "@/types/customer.types";
-
-const DEFAULT_FILTERS: CustomerQuery = {
-  page: 1,
-  limit: 20,
+export const metadata: Metadata = {
+  title: "Customers",
+  description: "View and manage your customer base",
 };
 
 export default function CustomersPage() {
-  const [filters, setFilters] = useState<CustomerQuery>(DEFAULT_FILTERS);
-  const [formOpen, setFormOpen] = useState(false);
-
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Customers</h1>
-          <p className="text-muted-foreground mt-1">
-            Manage your customer base
-          </p>
-        </div>
-        <Button onClick={() => setFormOpen(true)}>
-          <Icons.add className="size-4 mr-2" />
-          Add Customer
-        </Button>
-      </div>
-
-      <CustomerList filters={filters} onFilterChange={setFilters} />
-
-      <CustomerForm open={formOpen} onOpenChange={setFormOpen} />
-    </div>
-  );
+  return <CustomersPageContent />;
 }

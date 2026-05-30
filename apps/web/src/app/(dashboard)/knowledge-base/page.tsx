@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
 import { DocumentList } from "./_components/document-list";
 
-export const metadata = { title: "Knowledge Base" };
+export const metadata: Metadata = {
+  title: "Knowledge Base",
+  description: "Manage AI knowledge documents",
+};
 
 export default function KnowledgeBasePage() {
   return (

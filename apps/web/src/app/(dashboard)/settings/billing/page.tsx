@@ -1,8 +1,12 @@
+import type { Metadata } from "next";
 import { CurrentPlanCard } from "./_components/current-plan-card";
 import { PlansList } from "./_components/plans-list";
 import { InvoicesList } from "./_components/invoices-list";
 
-export const metadata = { title: "Billing" };
+export const metadata: Metadata = {
+  title: "Billing",
+  description: "Manage your subscription and invoices",
+};
 
 export default function BillingPage() {
   return (

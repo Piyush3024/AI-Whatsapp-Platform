@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { OverviewStats } from "./_components/overview-stats";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description: "Overview of your business performance",
+};
 
 export default function DashboardPage() {
   return (
