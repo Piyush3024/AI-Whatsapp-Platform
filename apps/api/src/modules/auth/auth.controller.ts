@@ -18,6 +18,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { LoginDto } from './dto/login.dto.js';
+import { ForgotPasswordDto } from './dto/forgot-password.dto.js';
+import { ResetPasswordDto } from './dto/reset-password.dto.js';
 import { Public } from '../../common/decorators/public.decorator.js';
 import { CurrentUser } from '../../common/decorators/current-user.decorator.js';
 import type { CurrentUserPayload } from '../../common/decorators/current-user.decorator.js';
@@ -109,5 +111,41 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'User profile data' })
   me(@CurrentUser() user: CurrentUserPayload) {
     return this.authService.me(user.userId, user.tenantId);
+  }
+
+  // ── Forgot Password ───────────────────────────────────────────────────────
+
+  @Public()
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ strict: { limit: 3, ttl: 60_000 } })
+  @ApiOperation({ summary: 'Password reset email bhejo' })
+  @ApiResponse({
+    status: 200,
+    description: 'Agar email registered hai toh reset link bhej diya jaayega',
+  })
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    await this.authService.forgotPassword(dto.email);
+    return {
+      message:
+        'Agar yeh email registered hai, toh aapko password reset link mil jayega.',
+    };
+  }
+
+  // ── Reset Password ────────────────────────────────────────────────────────
+
+  @Public()
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ strict: { limit: 5, ttl: 60_000 } })
+  @ApiOperation({ summary: 'Token se password reset karo' })
+  @ApiResponse({ status: 200, description: 'Password successfully reset hua' })
+  @ApiResponse({
+    status: 400,
+    description: 'Token invalid, expired, ya already used hai',
+  })
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    await this.authService.resetPassword(dto.token, dto.newPassword);
+    return { message: 'Password successfully reset ho gaya. Ab login karo.' };
   }
 }

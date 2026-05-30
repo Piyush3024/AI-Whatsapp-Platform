@@ -82,6 +82,115 @@ export class MailService {
     this.logger.log({ to: opts.toEmail }, 'Welcome email sent');
   }
 
+  async sendPasswordReset(opts: {
+    toEmail: string;
+    name: string;
+    resetUrl: string;
+    expiresAt: Date;
+  }): Promise<void> {
+    const expiryStr = opts.expiresAt.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZoneName: 'short',
+    });
+
+    const html = this.buildPasswordResetHtml({
+      name: opts.name,
+      resetUrl: opts.resetUrl,
+      expiryStr,
+      appName: this.appName,
+    });
+
+    await this.send({
+      to: opts.toEmail,
+      subject: `Password reset karo — ${this.appName}`,
+      html,
+    });
+
+    this.logger.log({ to: opts.toEmail }, 'Password reset email sent');
+  }
+
+  private buildPasswordResetHtml(opts: {
+    name: string;
+    resetUrl: string;
+    expiryStr: string;
+    appName: string;
+  }): string {
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Password Reset</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+          <!-- Header -->
+          <tr>
+            <td style="background:#16a34a;padding:32px 40px;text-align:center;">
+              <h1 style="color:#ffffff;margin:0;font-size:24px;font-weight:700;">${opts.appName}</h1>
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td style="padding:40px;">
+              <h2 style="color:#111827;margin:0 0 16px;font-size:20px;">Password Reset Request</h2>
+              <p style="color:#374151;margin:0 0 8px;line-height:1.6;">
+                Namaste <strong>${opts.name}</strong>,
+              </p>
+              <p style="color:#374151;margin:0 0 8px;line-height:1.6;">
+                Aapne apna password reset karne ki request ki hai. Neeche diye gaye button par click karein.
+              </p>
+              <p style="color:#6b7280;margin:0 0 32px;font-size:14px;">
+                Yeh link <strong>${opts.expiryStr}</strong> tak valid hai (1 ghanta).
+              </p>
+              <!-- CTA Button -->
+              <table cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="border-radius:8px;background:#16a34a;">
+                    <a href="${opts.resetUrl}"
+                       style="display:inline-block;padding:14px 32px;color:#ffffff;text-decoration:none;font-weight:600;font-size:16px;border-radius:8px;">
+                      Reset Password
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              <p style="color:#9ca3af;margin:24px 0 0;font-size:13px;">
+                Ya is link pe jaayein:<br/>
+                <a href="${opts.resetUrl}" style="color:#16a34a;word-break:break-all;">${opts.resetUrl}</a>
+              </p>
+            </td>
+          </tr>
+          <!-- Security Notice -->
+          <tr>
+            <td style="padding:0 40px 24px;">
+              <div style="background:#fef9c3;border:1px solid #fde047;border-radius:8px;padding:16px;">
+                <p style="color:#854d0e;margin:0;font-size:13px;line-height:1.5;">
+                  ⚠️ <strong>Security Notice:</strong> Agar aapne yeh request nahi ki, toh is email ko ignore karein. Aapka password safe hai.
+                </p>
+              </div>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="padding:24px 40px;border-top:1px solid #f3f4f6;text-align:center;">
+              <p style="color:#9ca3af;font-size:12px;margin:0;">
+                ${opts.appName} — Automated WhatsApp Business Platform
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+  }
+
   private async send(opts: {
     to: string;
     subject: string;

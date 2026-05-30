@@ -7,6 +7,9 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
+import { MailService } from '../mail/mail.service.js';
+import { BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import type { RegisterDto } from './dto/register.dto.js';
 import type { LoginDto } from './dto/login.dto.js';
@@ -37,6 +40,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
+    private readonly mail: MailService,
   ) {}
 
   async register(dto: RegisterDto): Promise<AuthTokens> {
@@ -201,6 +205,110 @@ export class AuthService {
     });
 
     this.logger.log(`User logged out: ${userId}`, 'AuthService');
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    // Always return success — email enumeration prevent karne ke liye
+    const user = await this.prisma.db.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+
+    if (!user) {
+      // Silently return — attacker ko pata nahi chalega email exist karta hai ya nahi
+      this.logger.log(
+        `Forgot password: email not found (silent) — ${email}`,
+        'AuthService',
+      );
+      return;
+    }
+
+    // Purane unused tokens expire karo (cleanup)
+    await this.prisma.db.passwordResetToken.updateMany({
+      where: {
+        userId: user.id,
+        usedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+      data: {
+        expiresAt: new Date(), // immediately expire
+      },
+    });
+
+    // Cryptographically secure token generate karo
+    const rawToken = crypto.randomBytes(32).toString('hex'); // 64 char hex string
+    const tokenHash = crypto
+      .createHash('sha256')
+      .update(rawToken)
+      .digest('hex');
+
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await this.prisma.db.passwordResetToken.create({
+      data: {
+        userId: user.id,
+        tokenHash,
+        expiresAt,
+      },
+    });
+
+    const appUrl = this.config.getOrThrow<string>('mail.appUrl');
+    const resetUrl = `${appUrl}/reset-password?token=${rawToken}`;
+
+    await this.mail.sendPasswordReset({
+      toEmail: user.email,
+      name: user.name,
+      resetUrl,
+      expiresAt,
+    });
+
+    this.logger.log(
+      `Password reset email sent to userId: ${user.id}`,
+      'AuthService',
+    );
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
+    const resetToken = await this.prisma.db.passwordResetToken.findUnique({
+      where: { tokenHash },
+      include: { user: true },
+    });
+
+    if (!resetToken) {
+      throw new BadRequestException('Invalid or Expired Reset Link.');
+    }
+
+    if (resetToken.usedAt !== null) {
+      throw new BadRequestException('This reset link has already been used.');
+    }
+
+    if (resetToken.expiresAt < new Date()) {
+      throw new BadRequestException(
+        'Reset link is expired. Please request a new forgot password link.',
+      );
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
+
+    await this.prisma.$transaction([
+      this.prisma.db.user.update({
+        where: { id: resetToken.userId },
+        data: { passwordHash },
+      }),
+      this.prisma.db.passwordResetToken.update({
+        where: { tokenHash },
+        data: { usedAt: new Date() },
+      }),
+      this.prisma.db.refreshToken.deleteMany({
+        where: { userId: resetToken.userId },
+      }),
+    ]);
+
+    this.logger.log(
+      `Password reset successful for userId: ${resetToken.userId}`,
+      'AuthService',
+    );
   }
 
   async me(userId: string, tenantId: string): Promise<object> {
