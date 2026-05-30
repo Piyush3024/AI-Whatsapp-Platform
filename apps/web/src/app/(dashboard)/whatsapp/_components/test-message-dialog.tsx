@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@repo/ui/components/dialog";
@@ -56,10 +57,13 @@ export function TestMessageDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Send Test Message</DialogTitle>
-          <p className="text-muted-foreground text-sm">
-            From: <span className="font-medium">{number.phoneNumber}</span> (
-            {number.displayName})
-          </p>
+          <DialogDescription>
+            From:{" "}
+            <span className="font-medium text-foreground">
+              {number.phoneNumber}
+            </span>{" "}
+            ({number.displayName})
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

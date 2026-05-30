@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@repo/ui/components/dialog";
@@ -42,6 +43,10 @@ export function DocumentUploadForm({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Upload Document</DialogTitle>
+          <DialogDescription>
+            Upload files (PDF, TXT, DOCX, etc.) to your AI's knowledge base to
+            help train your assistant.
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-1.5">

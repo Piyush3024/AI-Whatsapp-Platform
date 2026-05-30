@@ -1,4 +1,3 @@
-// Standard API response shapes from apps/api TransformInterceptor
 export interface ApiResponse<T> {
   success: true;
   data: T;
@@ -24,12 +23,14 @@ export interface PaginatedData<T> {
   totalPages: number;
 }
 
+export type UserRole = "OWNER" | "ADMIN" | "STAFF";
+
 // Auth types
 export interface User {
   id: string;
   email: string;
   name: string;
-  role: "OWNER" | "ADMIN" | "MEMBER";
+  role: UserRole;
   tenantId: string;
   createdAt: string;
 }

@@ -97,7 +97,7 @@ export function ServiceForm({ open, onOpenChange, service }: ServiceFormProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>{isEdit ? "Edit Service" : "Add Service"}</DialogTitle>
         </DialogHeader>

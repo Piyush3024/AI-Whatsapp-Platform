@@ -141,7 +141,7 @@ export function StaffScheduleDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg" aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>Schedule — {staff.name}</DialogTitle>
         </DialogHeader>
