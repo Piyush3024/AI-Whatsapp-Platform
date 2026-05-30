@@ -28,6 +28,7 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { formatDate } from "@/lib/utils";
 import { ROUTES } from "@/constants/routes";
 import type { Customer, CustomerQuery } from "@/types/customer.types";
+import { GeneralError } from "@/components/shared/error-display";
 
 interface CustomerListProps {
   filters: CustomerQuery;
@@ -54,13 +55,7 @@ export function CustomerList({ filters, onFilterChange }: CustomerListProps) {
     });
   };
 
-  if (isError) {
-    return (
-      <p className="text-sm text-destructive py-4">
-        Failed to load customers. Please refresh.
-      </p>
-    );
-  }
+  if (isError) return <GeneralError minimal />;
 
   return (
     <div className="space-y-4">

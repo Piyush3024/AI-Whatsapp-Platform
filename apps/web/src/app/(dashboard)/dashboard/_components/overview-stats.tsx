@@ -3,6 +3,7 @@
 import { StatCard } from "./stat-card";
 import { useDashboardStats } from "../hooks/use-dashboard-stats";
 import { Skeleton } from "@repo/ui/components/skeleton";
+import { GeneralError } from "@/components/shared/error-display";
 
 const formatPrice = (paisa: number) => `Rs. ${(paisa / 100).toFixed(2)}`;
 
@@ -19,13 +20,7 @@ export function OverviewStats() {
     );
   }
 
-  if (isError) {
-    return (
-      <p className="text-sm text-destructive">
-        Failed to load stats. Please refresh.
-      </p>
-    );
-  }
+  if (isError) return <GeneralError minimal />;
 
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">

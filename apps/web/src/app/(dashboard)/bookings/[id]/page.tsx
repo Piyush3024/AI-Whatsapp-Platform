@@ -16,6 +16,7 @@ import { useBooking, useUpdateBookingStatus } from "../hooks/use-bookings";
 import { formatPrice, formatDate } from "@/lib/utils";
 import { ROUTES } from "@/constants/routes";
 import type { BookingStatus } from "@/types/booking.types";
+import { NotFoundError } from "@/components/shared/error-display";
 
 const STATUS_ACTIONS: {
   label: string;
@@ -61,18 +62,7 @@ export default function BookingDetailPage({
   }
 
   if (isError || !booking) {
-    return (
-      <div className="space-y-4">
-        <p className="text-sm text-destructive">Booking not found.</p>
-        <Button
-          variant="outline"
-          onClick={() => router.push(ROUTES.bookings.list)}
-        >
-          <Icons.arrowLeft className="size-4 mr-2" />
-          Back to Bookings
-        </Button>
-      </div>
-    );
+    return <NotFoundError />;
   }
 
   const allowedStatuses = ALLOWED_TRANSITIONS[booking.status];

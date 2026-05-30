@@ -20,6 +20,7 @@ import {
 } from "../hooks/use-customers";
 import { formatDate } from "@/lib/utils";
 import { ROUTES } from "@/constants/routes";
+import { NotFoundError } from "@/components/shared/error-display";
 
 export default function CustomerDetailPage({
   params,
@@ -55,18 +56,7 @@ export default function CustomerDetailPage({
   }
 
   if (isError || !customer) {
-    return (
-      <div className="space-y-4">
-        <p className="text-sm text-destructive">Customer not found.</p>
-        <Button
-          variant="outline"
-          onClick={() => router.push(ROUTES.customers.list)}
-        >
-          <Icons.arrowLeft className="size-4 mr-2" />
-          Back to Customers
-        </Button>
-      </div>
-    );
+    return <NotFoundError />;
   }
 
   return (
