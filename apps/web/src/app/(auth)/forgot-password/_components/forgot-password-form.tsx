@@ -52,8 +52,8 @@ export function ForgotPasswordForm() {
           </div>
           <CardTitle className="text-center">Check your inbox</CardTitle>
           <CardDescription className="text-center">
-            Agar yeh email registered hai, toh aapko password reset link mil
-            jayega. Spam folder bhi check karo.
+            Password Reset link will be sent to your registered email address if
+            the email address is valid
           </CardDescription>
         </CardHeader>
         <CardFooter className="justify-center">
@@ -61,7 +61,7 @@ export function ForgotPasswordForm() {
             href="/login"
             className="text-primary hover:underline font-medium text-sm"
           >
-            Login page pe wapas jao
+            Return to Login
           </Link>
         </CardFooter>
       </Card>
@@ -73,7 +73,7 @@ export function ForgotPasswordForm() {
       <CardHeader>
         <CardTitle>Forgot your password?</CardTitle>
         <CardDescription>
-          Apna email daalo — hum aapko reset link bhej denge.
+          Enter your email address, and we'll send you a reset link.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -105,7 +105,7 @@ export function ForgotPasswordForm() {
               {isPending ? (
                 <>
                   <Icons.spinner className="mr-2 size-4 animate-spin" />
-                  Bhej rahe hain…
+                  Sending...
                 </>
               ) : (
                 "Send Reset Link"
@@ -116,12 +116,12 @@ export function ForgotPasswordForm() {
       </CardContent>
       <CardFooter className="justify-center">
         <p className="text-muted-foreground text-sm">
-          Password yaad aa gaya?{" "}
+          Remember your password?{" "}
           <Link
             href="/login"
             className="text-primary hover:underline font-medium"
           >
-            Login karo
+            Login
           </Link>
         </p>
       </CardFooter>

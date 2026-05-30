@@ -54,7 +54,7 @@ export function ResetPasswordForm() {
           </div>
           <CardTitle className="text-center">Invalid Link</CardTitle>
           <CardDescription className="text-center">
-            Yeh reset link invalid hai. Dobara forgot password request karo.
+            Reset link is invalid. Request a new one to continue.
           </CardDescription>
         </CardHeader>
         <CardFooter className="justify-center">
@@ -62,7 +62,7 @@ export function ResetPasswordForm() {
             href="/forgot-password"
             className="text-primary hover:underline font-medium text-sm"
           >
-            Reset link dobara maango
+            Request a new link
           </Link>
         </CardFooter>
       </Card>
@@ -78,7 +78,7 @@ export function ResetPasswordForm() {
       <CardHeader>
         <CardTitle>Set new password</CardTitle>
         <CardDescription>
-          Apna naya password daalo. Kam se kam 8 characters hone chahiye.
+          Enter your new password. Minimum 8 characters required.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -166,7 +166,7 @@ export function ResetPasswordForm() {
               {isPending ? (
                 <>
                   <Icons.spinner className="mr-2 size-4 animate-spin" />
-                  Reset ho raha hai…
+                  Resetting...
                 </>
               ) : (
                 "Reset Password"
@@ -177,12 +177,12 @@ export function ResetPasswordForm() {
       </CardContent>
       <CardFooter className="justify-center">
         <p className="text-muted-foreground text-sm">
-          Password yaad aa gaya?{" "}
+          Remembered your password?{" "}
           <Link
             href="/login"
             className="text-primary hover:underline font-medium"
           >
-            Login karo
+            Login
           </Link>
         </p>
       </CardFooter>
