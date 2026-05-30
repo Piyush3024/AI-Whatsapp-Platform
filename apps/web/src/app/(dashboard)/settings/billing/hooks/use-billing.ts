@@ -1,5 +1,4 @@
 import { useQuery, useMutation, skipToken } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import {
   getPlans,

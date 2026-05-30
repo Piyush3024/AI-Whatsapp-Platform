@@ -75,30 +75,21 @@ export function LoginForm() {
                 </FormItem>
               )}
             />
-            {/* <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="••••••••"
-                      autoComplete="current-password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
+
             <FormField
               control={form.control}
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Password</FormLabel>
+                    <Link
+                      href="/forgot-password"
+                      className="text-sm text-primary hover:underline font-medium"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
                   <FormControl>
                     <div className="relative">
                       <Input

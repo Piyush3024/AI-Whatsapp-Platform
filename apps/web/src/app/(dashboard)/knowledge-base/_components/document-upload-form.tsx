@@ -44,8 +44,8 @@ export function DocumentUploadForm({
         <DialogHeader>
           <DialogTitle>Upload Document</DialogTitle>
           <DialogDescription>
-            Upload files (PDF, TXT, DOCX, etc.) to your AI's knowledge base to
-            help train your assistant.
+            Upload files (PDF, TXT, DOCX, etc.) to your AI&apos;s knowledge base
+            to help train your assistant.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
