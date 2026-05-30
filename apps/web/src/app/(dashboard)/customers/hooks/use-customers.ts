@@ -20,6 +20,7 @@ import {
   getCustomerConversations,
 } from "@/services/customer.service";
 import { useIsAuthReady } from "@/hooks/use-auth-ready";
+import { handleApiError } from "@/lib/handle-error";
 
 export function useCustomers(params: CustomerQuery) {
   const isReady = useIsAuthReady();
@@ -62,8 +63,8 @@ export function useCreateCustomer() {
       });
       toast.success("Customer created successfully");
     },
-    onError: () => {
-      toast.error("Failed to create customer");
+    onError: (error) => {
+      handleApiError({ error, fallbackMessage: "Failed to create customer" });
     },
   });
 }
@@ -83,8 +84,8 @@ export function useUpdateCustomer(id: string) {
       });
       toast.success("Customer updated successfully");
     },
-    onError: () => {
-      toast.error("Failed to update customer");
+    onError: (error) => {
+      handleApiError({ error, fallbackMessage: "Failed to update customer" });
     },
   });
 }
@@ -100,8 +101,8 @@ export function useDeleteCustomer() {
       });
       toast.success("Customer deleted successfully");
     },
-    onError: () => {
-      toast.error("Failed to delete customer");
+    onError: (error) => {
+      handleApiError({ error, fallbackMessage: "Failed to delete customer" });
     },
   });
 }

@@ -19,6 +19,7 @@ import {
   deleteBooking,
 } from "@/services/booking.service";
 import { useIsAuthReady } from "@/hooks/use-auth-ready";
+import { handleApiError } from "@/lib/handle-error";
 
 export function useBookings(params: BookingQuery) {
   const isReady = useIsAuthReady();
@@ -50,8 +51,8 @@ export function useCreateBooking() {
       });
       toast.success("Booking created successfully");
     },
-    onError: () => {
-      toast.error("Failed to create booking");
+    onError: (error) => {
+      handleApiError({ error, fallbackMessage: "Failed to create booking" });
     },
   });
 }
@@ -74,8 +75,11 @@ export function useUpdateBookingStatus() {
       });
       toast.success("Booking status updated");
     },
-    onError: () => {
-      toast.error("Failed to update booking status");
+    onError: (error) => {
+      handleApiError({
+        error,
+        fallbackMessage: "Failed to update booking status",
+      });
     },
   });
 }
@@ -91,8 +95,8 @@ export function useDeleteBooking() {
       });
       toast.success("Booking deleted successfully");
     },
-    onError: () => {
-      toast.error("Failed to delete booking");
+    onError: (error) => {
+      handleApiError({ error, fallbackMessage: "Failed to delete booking" });
     },
   });
 }

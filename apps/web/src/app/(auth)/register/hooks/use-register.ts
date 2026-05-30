@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/auth.store";
 import { register } from "@/services/auth.service";
 import { setCookie } from "@/lib/cookies";
+import { handleApiError } from "@/lib/handle-error";
 import type { RegisterFormValues } from "../schema/register.schema";
 
 export function useRegister() {
@@ -18,6 +19,9 @@ export function useRegister() {
       setCookie("refresh_token", data.refreshToken, 7);
       setAuth(data.user, data.accessToken, data.refreshToken);
       router.push("/dashboard");
+    },
+    onError: (error) => {
+      handleApiError({ error, fallbackMessage: "Registration failed" });
     },
   });
 }
