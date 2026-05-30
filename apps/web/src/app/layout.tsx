@@ -10,6 +10,11 @@ export const metadata: Metadata = {
     template: "%s | WA AI Platform",
   },
   description: "AI-powered WhatsApp automation for your business",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-icon.png",
+  },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
