@@ -216,3 +216,8 @@ export type TenantMessageTemplate = Prisma.TenantMessageTemplateModel;
  *
  */
 export type NotificationPreference = Prisma.NotificationPreferenceModel;
+/**
+ * Model PasswordResetToken
+ *
+ */
+export type PasswordResetToken = Prisma.PasswordResetTokenModel;

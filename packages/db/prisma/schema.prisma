@@ -216,10 +216,11 @@ model User {
   deletedAt    DateTime? @db.Timestamptz(6)
 
   // Relations
-  tenantMemberships TenantMember[]
-  refreshTokens     RefreshToken[]
-  staff             Staff[]
-  notifications     NotificationPreference[]
+  tenantMemberships   TenantMember[]
+  refreshTokens       RefreshToken[]
+  staff               Staff[]
+  notifications       NotificationPreference[]
+  passwordResetTokens PasswordResetToken[]
 
   @@index([email])
   @@map("users")
@@ -929,4 +930,19 @@ model NotificationPreference {
   @@unique([tenantId, userId, type])
   @@index([tenantId])
   @@map("notification_preferences")
+}
+
+model PasswordResetToken {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String    @db.Uuid
+  tokenHash String    @unique
+  expiresAt DateTime  @db.Timestamptz(6)
+  usedAt    DateTime? @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("password_reset_tokens")
 }
