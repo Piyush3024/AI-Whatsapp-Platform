@@ -29,6 +29,8 @@ import type { BookingQuery, BookingStatus } from "@/types/booking.types";
 import { formatPrice } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
+import { EmptyState } from "@/components/shared/empty-state";
+import { GeneralError } from "@/components/shared/error-display";
 
 interface BookingListProps {
   filters: BookingQuery;
@@ -45,13 +47,7 @@ export function BookingList({ filters, onFilterChange }: BookingListProps) {
   const { mutate: deleteBooking } = useDeleteBooking();
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  if (isError) {
-    return (
-      <p className="text-sm text-destructive py-4">
-        Failed to load bookings. Please refresh.
-      </p>
-    );
-  }
+  if (isError) return <GeneralError minimal />;
 
   const handleDelete = (id: string) => {
     setDeletingId(id);
@@ -89,11 +85,12 @@ export function BookingList({ filters, onFilterChange }: BookingListProps) {
               ))
             ) : data?.items.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-center text-muted-foreground py-8"
-                >
-                  No bookings found
+                <TableCell colSpan={7}>
+                  <EmptyState
+                    icon="calendar"
+                    title="No bookings found"
+                    description="Try adjusting your filters or create a new booking."
+                  />
                 </TableCell>
               </TableRow>
             ) : (

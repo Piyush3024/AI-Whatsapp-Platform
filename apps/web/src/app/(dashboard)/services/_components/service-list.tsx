@@ -20,6 +20,8 @@ import { useServiceList, useDeleteService } from "../hooks/use-services";
 import { useDebounce } from "@/hooks/use-debounce";
 import { formatPrice } from "@/lib/utils";
 import type { Service, ServiceQuery } from "@/types/service.types";
+import { EmptyState } from "@/components/shared/empty-state";
+import { GeneralError } from "@/components/shared/error-display";
 
 interface ServiceListProps {
   filters: ServiceQuery;
@@ -32,11 +34,17 @@ export function ServiceList({ filters, onFilterChange }: ServiceListProps) {
   const [editTarget, setEditTarget] = useState<Service | undefined>();
 
   const debouncedSearch = useDebounce(searchInput, 400);
-  const { data: services, isLoading } = useServiceList({
+  const {
+    data: services,
+    isLoading,
+    isError,
+  } = useServiceList({
     ...filters,
     search: debouncedSearch || undefined,
   });
   const deleteService = useDeleteService();
+
+  if (isError) return <GeneralError minimal />;
 
   function handleEdit(service: Service) {
     setEditTarget(service);
@@ -102,11 +110,12 @@ export function ServiceList({ filters, onFilterChange }: ServiceListProps) {
               ))
             ) : !services?.length ? (
               <TableRow>
-                <TableCell
-                  colSpan={6}
-                  className="text-muted-foreground py-8 text-center"
-                >
-                  No services found. Add your first one.
+                <TableCell colSpan={7}>
+                  <EmptyState
+                    icon="slack"
+                    title="No services found"
+                    description="Try adjusting your filters or create your first service."
+                  />
                 </TableCell>
               </TableRow>
             ) : (

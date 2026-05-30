@@ -20,6 +20,8 @@ import type { StaffOption, StaffQuery } from "@/types/staff.types";
 import { Input } from "@repo/ui/components/input";
 import { useDebounce } from "@/hooks/use-debounce";
 import { Checkbox } from "@repo/ui/components/checkbox";
+import { EmptyState } from "@/components/shared/empty-state";
+import { GeneralError } from "@/components/shared/error-display";
 
 interface StaffListProps {
   filters: StaffQuery;
@@ -31,7 +33,11 @@ export function StaffList({ filters, onFilterChange }: StaffListProps) {
   const [searchInput, setSearchInput] = useState(filters.search ?? "");
   const debouncedSearch = useDebounce(searchInput, 400);
 
-  const { data: staff, isLoading } = useStaffList({
+  const {
+    data: staff,
+    isLoading,
+    isError,
+  } = useStaffList({
     ...filters,
     search: debouncedSearch || undefined,
   });
@@ -43,6 +49,8 @@ export function StaffList({ filters, onFilterChange }: StaffListProps) {
   const [scheduleTarget, setScheduleTarget] = useState<
     StaffOption | undefined
   >();
+
+  if (isError) return <GeneralError minimal />;
 
   function handleEdit(member: StaffOption) {
     setEditTarget(member);
@@ -110,11 +118,12 @@ export function StaffList({ filters, onFilterChange }: StaffListProps) {
               ))
             ) : !staff?.length ? (
               <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="text-muted-foreground py-8 text-center"
-                >
-                  No staff members yet. Add your first one.
+                <TableCell colSpan={7}>
+                  <EmptyState
+                    icon="user"
+                    title="No staff found"
+                    description="Try adjusting your filters or create a new staff member."
+                  />
                 </TableCell>
               </TableRow>
             ) : (

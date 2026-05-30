@@ -29,6 +29,7 @@ import { formatDate } from "@/lib/utils";
 import { ROUTES } from "@/constants/routes";
 import type { Customer, CustomerQuery } from "@/types/customer.types";
 import { GeneralError } from "@/components/shared/error-display";
+import { EmptyState } from "@/components/shared/empty-state";
 
 interface CustomerListProps {
   filters: CustomerQuery;
@@ -100,11 +101,12 @@ export function CustomerList({ filters, onFilterChange }: CustomerListProps) {
               ))
             ) : data?.items.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-center text-muted-foreground py-8"
-                >
-                  No customers found
+                <TableCell colSpan={7}>
+                  <EmptyState
+                    icon="users"
+                    title="No customers found"
+                    description="Try adjusting your filters or create a new customer."
+                  />
                 </TableCell>
               </TableRow>
             ) : (

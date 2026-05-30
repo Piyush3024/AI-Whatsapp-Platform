@@ -11,6 +11,7 @@ import {
   IconEye,
   IconEyeOff,
   IconInfoCircle,
+  IconInbox,
   IconLoader2,
   IconLogout,
   IconMenu2,
@@ -44,6 +45,8 @@ import {
   IconMessage,
   IconSun,
   IconMoon,
+  IconBrandGoogleDrive,
+  IconBrandSlack,
   type IconProps,
 } from "@tabler/icons-react";
 
@@ -92,11 +95,14 @@ export const Icons = {
   // Contact
   phone: IconPhone,
   mail: IconMail,
+  googleDrive: IconBrandGoogleDrive,
+  slack: IconBrandSlack,
 
   // UI / Feedback
   spinner: IconLoader2,
   warning: IconAlertTriangle,
   info: IconInfoCircle,
+  inbox: IconInbox,
   dotsVertical: IconDotsVertical,
   circleCheck: IconCircleCheck,
   circleX: IconCircleX,

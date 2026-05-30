@@ -27,6 +27,8 @@ import type {
   DocumentStatus,
   KnowledgeBaseQuery,
 } from "@/types/knowledge-base.types";
+import { EmptyState } from "@/components/shared/empty-state";
+import { GeneralError } from "@/components/shared/error-display";
 
 const STATUS_OPTIONS: { label: string; value: DocumentStatus | "ALL" }[] = [
   { label: "All", value: "ALL" },
@@ -50,8 +52,10 @@ export function DocumentList() {
     limit: 10,
   });
 
-  const { data, isLoading } = useDocuments(filters);
+  const { data, isLoading, isError } = useDocuments(filters);
   const deleteDocument = useDeleteDocument();
+
+  if (isError) return <GeneralError minimal />;
 
   function handleStatusChange(val: string) {
     setFilters((prev) => ({
@@ -110,11 +114,12 @@ export function DocumentList() {
               ))
             ) : !data?.items.length ? (
               <TableRow>
-                <TableCell
-                  colSpan={6}
-                  className="text-muted-foreground py-8 text-center"
-                >
-                  No documents yet. Upload your first one.
+                <TableCell colSpan={7}>
+                  <EmptyState
+                    icon="googleDrive"
+                    title="No documents found"
+                    description="Try adjusting your filters or upload a new document."
+                  />
                 </TableCell>
               </TableRow>
             ) : (

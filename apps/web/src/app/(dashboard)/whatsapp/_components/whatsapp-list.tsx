@@ -21,14 +21,18 @@ import {
   useDeleteWhatsAppNumber,
 } from "../hooks/use-whatsapp";
 import type { WhatsAppNumber } from "@/types/whatsapp.types";
+import { EmptyState } from "@/components/shared/empty-state";
+import { GeneralError } from "@/components/shared/error-display";
 
 export function WhatsAppList() {
   const [formOpen, setFormOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<WhatsAppNumber | undefined>();
   const [testTarget, setTestTarget] = useState<WhatsAppNumber | undefined>();
 
-  const { data, isLoading } = useWhatsAppNumbers();
+  const { data, isLoading, isError } = useWhatsAppNumbers();
   const deleteNumber = useDeleteWhatsAppNumber();
+
+  if (isError) return <GeneralError minimal />;
 
   function handleEdit(number: WhatsAppNumber) {
     setEditTarget(number);
@@ -81,11 +85,12 @@ export function WhatsAppList() {
               ))
             ) : !data?.data.length ? (
               <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-muted-foreground py-12 text-center"
-                >
-                  No WhatsApp numbers registered. Add your first one.
+                <TableCell colSpan={7}>
+                  <EmptyState
+                    icon="whatsapp"
+                    title="No WhatsApp numbers found"
+                    description="Try adjusting your filters or add your first WhatsApp number."
+                  />
                 </TableCell>
               </TableRow>
             ) : (
