@@ -27,7 +27,7 @@ import {
 } from "../hooks/use-bookings";
 import type { BookingQuery, BookingStatus } from "@/types/booking.types";
 import { formatPrice } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
 import { ROUTES } from "@/constants/routes";
 import { EmptyState } from "@/components/shared/empty-state";
 import { GeneralError } from "@/components/shared/error-display";

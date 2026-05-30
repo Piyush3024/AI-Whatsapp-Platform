@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import { Providers } from "@/components/layout/providers";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata: Metadata = {
   title: "WhatsApp AI Platform",
@@ -16,6 +17,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
+        <body suppressHydrationWarning>
+          <NextTopLoader
+            // color="var(--color-foreground)"
+            color="hsl(217.2 91.2% 59.8%)"
+            height={3}
+            showSpinner={false}
+            shadow={false}
+          />
+          <Providers>{children}</Providers>
+        </body>
         <Providers>{children}</Providers>
       </body>
     </html>

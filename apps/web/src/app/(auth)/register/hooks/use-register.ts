@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
 import { useAuthStore } from "@/stores/auth.store";
 import { register } from "@/services/auth.service";
 import { setCookie } from "@/lib/cookies";
