@@ -108,6 +108,7 @@ export const QUERY_KEYS = {
     plans: ["billing", "plans"] as const,
     subscription: ["billing", "subscription"] as const,
     invoices: (params?: unknown) => ["billing", "invoices", params] as const,
+    usage: ["billing", "usage"] as const,
   },
 
   /**

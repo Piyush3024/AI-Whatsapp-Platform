@@ -113,3 +113,15 @@ export interface StripeCheckoutResponse {
 export interface StripePortalResponse {
   url: string;
 }
+
+export interface UsageStatus {
+  used: number;
+  limit: number | null;
+  isExceeded: boolean;
+}
+
+export interface TenantUsageSummary {
+  maxMessages: UsageStatus;
+  maxStaff: UsageStatus;
+  maxLocations: UsageStatus;
+}

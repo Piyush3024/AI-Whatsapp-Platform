@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CurrentPlanCard } from "./_components/current-plan-card";
+import { UsageCard } from "./_components/usage-card";
 import { PlansList } from "./_components/plans-list";
 import { InvoicesList } from "./_components/invoices-list";
 
@@ -18,6 +19,7 @@ export default function BillingPage() {
         </p>
       </div>
       <CurrentPlanCard />
+      <UsageCard />
       <PlansList />
       <InvoicesList />
     </div>

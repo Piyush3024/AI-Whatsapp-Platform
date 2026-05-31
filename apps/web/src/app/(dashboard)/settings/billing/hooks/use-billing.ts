@@ -7,6 +7,7 @@ import {
   createStripePortalSession,
   initiateEsewaPayment,
   getInvoices,
+  getBillingUsage,
 } from "@/services/billing.service";
 import { handleApiError } from "@/lib/handle-error";
 import { useIsAuthReady } from "@/hooks/use-auth-ready";
@@ -72,5 +73,15 @@ export function useEsewaPayment() {
         error,
         fallbackMessage: "Failed to initiate eSewa payment",
       }),
+  });
+}
+
+export function useBillingUsage() {
+  const isReady = useIsAuthReady();
+
+  return useQuery({
+    queryKey: QUERY_KEYS.billing.usage,
+    queryFn: isReady ? getBillingUsage : skipToken,
+    staleTime: 1000 * 60 * 2,
   });
 }

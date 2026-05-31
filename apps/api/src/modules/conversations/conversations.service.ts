@@ -7,6 +7,7 @@ import {
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { PrismaService } from '../../prisma/prisma.service.js';
+import { UsageLimitService } from '../billing/usage-limit.service.js';
 import {
   ConversationStatus,
   MessageType,
@@ -75,6 +76,7 @@ export class ConversationsService {
 
   constructor(
     private readonly prisma: PrismaService,
+    private readonly usageLimitService: UsageLimitService,
     @InjectQueue('whatsapp-outbound')
     private readonly outboundQueue: Queue,
   ) {}
@@ -175,6 +177,8 @@ export class ConversationsService {
     currentUserRole: string,
   ): Promise<ConversationListItem> {
     const tenantId = this.prisma.getTenantId();
+
+    await this.usageLimitService.assertLimit(tenantId, 'maxMessages');
 
     const conversation = await this.prisma.db.conversation.findFirst({
       where: { id, tenantId },

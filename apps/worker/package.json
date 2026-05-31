@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_OPTIONS='--max-old-space-size=4096 --expose-gc' tsx watch src/main.ts",
+    "dev": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096 --expose-gc\" tsx watch src/main.ts",
     "check-types": "tsc --noEmit",
     "build": "tsc",
     "start": "cross-env NODE_OPTIONS=--max-old-space-size=4096 node dist/main.js",

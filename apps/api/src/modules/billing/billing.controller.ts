@@ -17,6 +17,7 @@ import type { FastifyRequest } from 'fastify';
 import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { BillingService } from './billing.service.js';
 import { EsewaService } from './esewa.service.js';
+import { UsageLimitService } from './usage-limit.service.js';
 import { CreateCheckoutSessionDto } from './dto/create-checkout-session.dto.js';
 import { CreatePortalSessionDto } from './dto/create-portal-session.dto.js';
 import { InitiateEsewaPaymentDto } from './dto/initiate-esewa-payment.dto.js';
@@ -33,6 +34,7 @@ export class BillingController {
   constructor(
     private readonly billingService: BillingService,
     private readonly esewaService: EsewaService,
+    private readonly usageLimitService: UsageLimitService,
   ) {}
 
   @Public()
@@ -112,5 +114,11 @@ export class BillingController {
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
   ) {
     return this.billingService.getInvoices(user.tenantId, page, limit);
+  }
+
+  @Get('usage')
+  @SkipThrottle({ default: false })
+  async getUsage(@CurrentUser() user: JwtPayload) {
+    return this.usageLimitService.getUsageSummary(user.tenantId);
   }
 }

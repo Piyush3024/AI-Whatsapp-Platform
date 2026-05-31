@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service.js';
+import { UsageLimitService } from '../billing/usage-limit.service.js';
 import type { CreateStaffDto } from './dto/create-staff.dto.js';
 import type { UpdateStaffDto } from './dto/update-staff.dto.js';
 import type { SetStaffScheduleDto } from './dto/set-staff-schedule.dto.js';
@@ -14,7 +15,10 @@ import type { CreateScheduleOverrideDto } from './dto/create-schedule-override.d
 export class StaffService {
   private readonly logger = new Logger(StaffService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly usageLimitService: UsageLimitService,
+  ) {}
 
   async findAll(tenantId: string, includeInactive = false, search?: string) {
     return this.prisma.db.staff.findMany({
@@ -56,6 +60,8 @@ export class StaffService {
   }
 
   async create(tenantId: string, dto: CreateStaffDto) {
+    await this.usageLimitService.assertLimit(tenantId, 'maxStaff');
+
     if (dto.locationId) {
       const location = await this.prisma.db.location.findFirst({
         where: { id: dto.locationId, tenantId },

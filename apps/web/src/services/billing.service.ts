@@ -8,6 +8,7 @@ import type {
   StripeCheckoutResponse,
   StripePortalResponse,
   EsewaInitiateResponse,
+  TenantUsageSummary,
 } from "@/types/billing.types";
 
 export async function getPlans(): Promise<Plan[]> {
@@ -66,3 +67,10 @@ export async function getInvoices(params: {
   );
   return response.data.data;
 }
+
+export const getBillingUsage = async (): Promise<TenantUsageSummary> => {
+  const res = await apiClient.get<{ data: TenantUsageSummary }>(
+    API_ENDPOINTS.billing.usage,
+  );
+  return res.data.data;
+};

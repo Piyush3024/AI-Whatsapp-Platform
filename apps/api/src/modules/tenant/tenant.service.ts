@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service.js';
+import { UsageLimitService } from '../billing/usage-limit.service.js';
 import { UserRole } from '@whatsapp-ai/db/generated/prisma';
 import type { UpdateTenantDto } from './dto/update-tenant.dto.js';
 import type { UpdateMemberRoleDto } from './dto/update-member-role.dto.js';
@@ -17,7 +18,10 @@ import type { SetBusinessHoursDto } from './dto/set-business-hours.dto.js';
 export class TenantService {
   private readonly logger = new Logger(TenantService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly usageLimitService: UsageLimitService,
+  ) {}
 
   async getTenant(tenantId: string) {
     const tenant = await this.prisma.tenant.findUnique({
@@ -172,6 +176,8 @@ export class TenantService {
   }
 
   async createLocation(tenantId: string, dto: CreateLocationDto) {
+    await this.usageLimitService.assertLimit(tenantId, 'maxLocations');
+
     if (dto.isDefault) {
       await this.prisma.db.location.updateMany({
         where: { tenantId, isDefault: true },

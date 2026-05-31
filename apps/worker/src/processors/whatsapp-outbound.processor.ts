@@ -1,6 +1,7 @@
 import type { Job } from "bullmq";
 import { createJobLogger } from "../lib/logger.js";
 import { withTenantContext } from "../lib/prisma.js";
+import { isMessageLimitExceeded } from "../lib/usage-limit.js";
 import { env } from "../config/env.js";
 import type {
   OutboundMessageJob,
@@ -54,6 +55,30 @@ async function processOutbound(job: Job<OutboundMessageJob>): Promise<void> {
     { messageId, toPhone, messageType, phoneNumberId },
     "Processing outbound message",
   );
+
+  // Check plan message limit before hitting Meta API
+  const limitExceeded = await isMessageLimitExceeded(tenantId);
+  if (limitExceeded) {
+    await withTenantContext(tenantId, async (tx) => {
+      await tx.message.update({
+        where: { id: messageId },
+        data: {
+          status: "FAILED",
+          metadata: {
+            error: "PLAN_LIMIT_EXCEEDED",
+            failedAt: new Date().toISOString(),
+          },
+        },
+      });
+    });
+
+    log.warn(
+      { messageId, tenantId },
+      "Message blocked — daily plan limit exceeded",
+    );
+    // Do not throw — job completes without retry since this is not a transient error
+    return;
+  }
 
   const accessToken = env.WHATSAPP_ACCESS_TOKEN;
 

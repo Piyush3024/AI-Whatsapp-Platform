@@ -139,6 +139,7 @@ export const API_ENDPOINTS = {
     stripePortal: "/billing/stripe/portal",
     esewaInitiate: "/billing/esewa/initiate",
     invoices: "/billing/invoices",
+    usage: "/billing/usage",
   },
 
   /**
