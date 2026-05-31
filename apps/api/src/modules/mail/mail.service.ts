@@ -51,7 +51,7 @@ export class MailService {
 
     await this.send({
       to: opts.toEmail,
-      subject: `${opts.inviterName} ne aapko ${opts.tenantName} mein invite kiya hai`,
+      subject: `${opts.inviterName} has invited you to ${opts.tenantName}`,
       html,
     });
 
@@ -103,7 +103,7 @@ export class MailService {
 
     await this.send({
       to: opts.toEmail,
-      subject: `Password reset karo — ${this.appName}`,
+      subject: `Reset Password Request - ${this.appName}`,
       html,
     });
 
@@ -140,13 +140,13 @@ export class MailService {
             <td style="padding:40px;">
               <h2 style="color:#111827;margin:0 0 16px;font-size:20px;">Password Reset Request</h2>
               <p style="color:#374151;margin:0 0 8px;line-height:1.6;">
-                Namaste <strong>${opts.name}</strong>,
+                Hello <strong>${opts.name}</strong>,
               </p>
               <p style="color:#374151;margin:0 0 8px;line-height:1.6;">
-                Aapne apna password reset karne ki request ki hai. Neeche diye gaye button par click karein.
+                You requested to reset your password. Click the button below to reset it.
               </p>
               <p style="color:#6b7280;margin:0 0 32px;font-size:14px;">
-                Yeh link <strong>${opts.expiryStr}</strong> tak valid hai (1 ghanta).
+                This link is valid until <strong>${opts.expiryStr}</strong> (1 hour).
               </p>
               <!-- CTA Button -->
               <table cellpadding="0" cellspacing="0">
@@ -160,7 +160,7 @@ export class MailService {
                 </tr>
               </table>
               <p style="color:#9ca3af;margin:24px 0 0;font-size:13px;">
-                Ya is link pe jaayein:<br/>
+                Click on the link below to reset your password<br/>
                 <a href="${opts.resetUrl}" style="color:#16a34a;word-break:break-all;">${opts.resetUrl}</a>
               </p>
             </td>
@@ -170,7 +170,7 @@ export class MailService {
             <td style="padding:0 40px 24px;">
               <div style="background:#fef9c3;border:1px solid #fde047;border-radius:8px;padding:16px;">
                 <p style="color:#854d0e;margin:0;font-size:13px;line-height:1.5;">
-                  ⚠️ <strong>Security Notice:</strong> Agar aapne yeh request nahi ki, toh is email ko ignore karein. Aapka password safe hai.
+                  ⚠️ <strong>Security Notice:</strong> If you did not request this reset, please ignore this email. Your password is safe.
                 </p>
               </div>
             </td>
@@ -179,7 +179,7 @@ export class MailService {
           <tr>
             <td style="padding:24px 40px;border-top:1px solid #f3f4f6;text-align:center;">
               <p style="color:#9ca3af;font-size:12px;margin:0;">
-                ${opts.appName} — Automated WhatsApp Business Platform
+                ${opts.appName} — AI-Powered WhatsApp Business Platform
               </p>
             </td>
           </tr>
@@ -251,10 +251,10 @@ export class MailService {
             <td style="padding:40px;">
               <h2 style="color:#111827;margin:0 0 16px;font-size:20px;">You've been invited!</h2>
               <p style="color:#374151;margin:0 0 8px;line-height:1.6;">
-                <strong>${opts.inviterName}</strong> ne aapko <strong>${opts.tenantName}</strong> ke team mein <strong>${opts.role}</strong> ke role ke saath invite kiya hai.
+                <strong>${opts.inviterName}</strong> has invited you to join the <strong>${opts.tenantName}</strong> team as a <strong>${opts.role}</strong>.
               </p>
               <p style="color:#6b7280;margin:0 0 32px;font-size:14px;">
-                Ye invite <strong>${opts.expiryStr}</strong> tak valid hai.
+                This invitation is valid until <strong>${opts.expiryStr}</strong>.
               </p>
               <!-- CTA Button -->
               <table cellpadding="0" cellspacing="0">
@@ -268,7 +268,7 @@ export class MailService {
                 </tr>
               </table>
               <p style="color:#9ca3af;margin:24px 0 0;font-size:13px;">
-                Ya is link pe jaayein:<br/>
+                Or copy and paste this URL into your browser:<br/>
                 <a href="${opts.acceptUrl}" style="color:#16a34a;word-break:break-all;">${opts.acceptUrl}</a>
               </p>
             </td>
@@ -277,7 +277,7 @@ export class MailService {
           <tr>
             <td style="padding:24px 40px;border-top:1px solid #f3f4f6;text-align:center;">
               <p style="color:#9ca3af;font-size:12px;margin:0;">
-                Agar aapne ye invite expect nahi kiya tha, is email ko ignore kar sakte hain.
+                If you were not expecting this invitation, you can safely ignore this email.
               </p>
             </td>
           </tr>
@@ -316,7 +316,7 @@ export class MailService {
             <td style="padding:40px;">
               <h2 style="color:#111827;margin:0 0 16px;">Welcome, ${opts.name}! 🎉</h2>
               <p style="color:#374151;margin:0 0 24px;line-height:1.6;">
-                Aap ab <strong>${opts.tenantName}</strong> ke team member hain. Dashboard access karne ke liye login karein.
+                You are now a team member of <strong>${opts.tenantName}</strong>. Login to access your dashboard.
               </p>
               <table cellpadding="0" cellspacing="0">
                 <tr>

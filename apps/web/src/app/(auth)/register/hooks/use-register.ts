@@ -12,7 +12,7 @@ export function useRegister() {
 
   return useMutation({
     mutationFn: (values: RegisterFormValues) => {
-      const { ...registerData } = values;
+      const { confirmPassword, ...registerData } = values;
       return register(registerData);
     },
     onSuccess: (data) => {
