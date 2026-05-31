@@ -9,7 +9,9 @@ import SmartParser from "pdf-parse-new/lib/SmartPDFParser";
 import mammoth from "mammoth";
 
 const openai = new OpenAI({ apiKey: env.OPENAI_API_KEY });
-const smartParser = new SmartParser();
+// NOTE: SmartParser is intentionally NOT a module-level singleton.
+// Instantiating it per-job ensures PDFJS internal state and LRU cache
+// are garbage-collected after each job completes, preventing heap growth.
 
 const CHUNK_SIZE = 500;
 const CHUNK_OVERLAP = 50;
@@ -45,6 +47,8 @@ export async function processEmbedding(job: Job<EmbeddingJob>): Promise<void> {
   }
 
   let rawText: string;
+
+  const smartParser = new SmartParser();
 
   try {
     const response = await fetch(fileUrl);
@@ -90,6 +94,7 @@ export async function processEmbedding(job: Job<EmbeddingJob>): Promise<void> {
   );
 
   const chunks = chunkText(rawText, CHUNK_SIZE, CHUNK_OVERLAP);
+  rawText = ""; // FREE MEMORY: Clear large text buffer after chunking
 
   log.info({ documentId, chunkCount: chunks.length }, "Text chunked");
 
@@ -121,6 +126,11 @@ export async function processEmbedding(job: Job<EmbeddingJob>): Promise<void> {
       { documentId, batchStart: i, batchSize: batch.length },
       "Processing embedding batch",
     );
+
+    // Trigger garbage collection between batches
+    if (global.gc) {
+      global.gc();
+    }
 
     let embeddings: number[][];
     try {
@@ -180,6 +190,9 @@ export async function processEmbedding(job: Job<EmbeddingJob>): Promise<void> {
       { documentId, processedChunks, totalChunks: chunks.length },
       "Embedding batch stored",
     );
+
+    // Clear processed batch from memory
+    batch.length = 0;
   }
 
   await withTenantContext(tenantId, async (tx) => {

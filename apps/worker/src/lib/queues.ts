@@ -2,7 +2,11 @@ import { Queue } from "bullmq";
 import { Redis } from "ioredis";
 import { env } from "../config/env.js";
 import { QUEUE_NAMES } from "../constants/queues.js";
-import type { AiReplyJob, OutboundMessageJob } from "../types/job-payloads.js";
+import type {
+  AiReplyJob,
+  OutboundMessageJob,
+  EmbeddingJob,
+} from "../types/job-payloads.js";
 import type {
   RemindersQueuePayload,
   FollowUpJob,
@@ -90,6 +94,16 @@ export const followUpsQueue = new Queue<FollowUpJob>(QUEUE_NAMES.FOLLOW_UPS, {
   },
 });
 
+export const embeddingsQueue = new Queue<EmbeddingJob>(QUEUE_NAMES.EMBEDDINGS, {
+  connection: producerRedis,
+  defaultJobOptions: {
+    attempts: 3,
+    backoff: { type: "exponential", delay: 2_000 },
+    removeOnComplete: { age: 24 * 3600 },
+    removeOnFail: { age: 7 * 24 * 3600 },
+  },
+});
+
 export const analyticsQueue = new Queue(QUEUE_NAMES.ANALYTICS, {
   connection: producerRedis,
   defaultJobOptions: {
@@ -105,6 +119,7 @@ export async function closeQueues(): Promise<void> {
   await outboundQueue.close();
   await remindersQueue.close();
   await analyticsQueue.close();
+  await embeddingsQueue.close();
   await followUpsQueue.close();
   await producerRedis.quit();
 }

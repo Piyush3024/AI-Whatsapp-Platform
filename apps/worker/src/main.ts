@@ -12,7 +12,7 @@ import type {
 } from "./types/job-payloads.js";
 import { processOutboundMessage } from "./processors/whatsapp-outbound.processor.js";
 import type { OutboundMessageJob } from "./types/job-payloads.js";
-import { closeQueues, analyticsQueue } from "./lib/queues.js";
+import { closeQueues, analyticsQueue, embeddingsQueue } from "./lib/queues.js";
 import { Worker } from "bullmq";
 import { redisConnection, checkRedisHealth, closeRedis } from "./lib/redis.js";
 import { connectPrisma, disconnectPrisma } from "./lib/prisma.js";
@@ -103,7 +103,9 @@ function createWorkers(): Worker[] {
     processEmbedding,
     {
       connection: redisConnection,
-      concurrency: 2,
+      // Keep at 1: PDF parsing loads the full PDFJS engine per job.
+      // Running concurrently doubles heap usage and causes OOM crashes.
+      concurrency: 1,
     },
   );
 
@@ -201,11 +203,28 @@ async function gracefulShutdown(signal: string): Promise<void> {
   }
 }
 
+async function cleanStaleEmbeddingJobs(): Promise<void> {
+  try {
+    // Remove jobs stuck in waiting state (orphaned from previous runs)
+    const drained = await embeddingsQueue.drain();
+    // Remove failed jobs older than 0ms (i.e., all of them) — up to 100 at a time
+    await embeddingsQueue.clean(0, 100, "failed");
+    logger.info({ drained }, "Stale embedding jobs cleaned from queue");
+  } catch (err) {
+    logger.warn({ err }, "Could not clean stale embedding jobs — continuing");
+  }
+}
+
 async function main(): Promise<void> {
   logger.info("Worker starting...");
 
   await checkRedisHealth();
   await connectPrisma();
+
+  // Clean up ghost embedding jobs left over from previous runs before
+  // workers start consuming — prevents "Document not found" failures
+  // on orphaned queue entries.
+  await cleanStaleEmbeddingJobs();
 
   const created = createWorkers();
   workers.push(...created);
