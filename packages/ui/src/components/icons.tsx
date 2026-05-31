@@ -4,6 +4,7 @@ import {
   IconBook,
   IconCalendar,
   IconCheck,
+  IconChecks,
   IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
@@ -47,6 +48,8 @@ import {
   IconMoon,
   IconBrandGoogleDrive,
   IconBrandSlack,
+  IconMessages,
+  IconSend,
   type IconProps,
 } from "@tabler/icons-react";
 
@@ -65,6 +68,7 @@ export const Icons = {
   notifications: IconBell,
   sun: IconSun,
   moon: IconMoon,
+  messages: IconMessages,
 
   // Actions
   logout: IconLogout,
@@ -75,6 +79,7 @@ export const Icons = {
   edit: IconEdit,
   delete: IconTrash,
   check: IconCheck,
+  checkCheck: IconChecks,
   eye: IconEye,
   eyeOff: IconEyeOff,
   upload: IconUpload,
@@ -83,6 +88,7 @@ export const Icons = {
   filter: IconFilter,
   copy: IconCopy,
   externalLink: IconExternalLink,
+  send: IconSend,
 
   // Navigation arrows
   chevronDown: IconChevronDown,

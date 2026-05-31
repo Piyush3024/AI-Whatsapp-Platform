@@ -48,4 +48,9 @@ export const ROUTES = {
     members: "/settings/members",
     billing: "/settings/billing",
   },
+  // COnversations
+  conversations: {
+    list: "/conversations",
+    detail: (id: string) => `/conversations/${id}`,
+  },
 } as const;

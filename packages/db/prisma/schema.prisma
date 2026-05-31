@@ -48,6 +48,12 @@ enum ConversationState {
   HUMAN_HANDOFF
 }
 
+enum ConversationStatus {
+  OPEN
+  HUMAN_HANDOFF
+  CLOSED
+}
+
 enum MessageStatus {
   QUEUED
   SENT
@@ -520,16 +526,17 @@ model Customer {
 }
 
 model Conversation {
-  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  tenantId         String            @db.Uuid
-  customerId       String            @db.Uuid
-  whatsappNumberId String            @db.Uuid
-  state            ConversationState @default(IDLE)
-  assignedStaffId  String?           @db.Uuid
-  metadata         Json?             @default("{}")
-  createdAt        DateTime          @default(now()) @db.Timestamptz(6)
-  updatedAt        DateTime          @updatedAt @db.Timestamptz(6)
-  deletedAt        DateTime?         @db.Timestamptz(6)
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId         String             @db.Uuid
+  customerId       String             @db.Uuid
+  whatsappNumberId String             @db.Uuid
+  state            ConversationState  @default(IDLE)
+  status           ConversationStatus @default(OPEN)
+  assignedStaffId  String?            @db.Uuid
+  metadata         Json?              @default("{}")
+  createdAt        DateTime           @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime           @updatedAt @db.Timestamptz(6)
+  deletedAt        DateTime?          @db.Timestamptz(6)
 
   // Relations
   tenant         Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -542,6 +549,7 @@ model Conversation {
   @@index([tenantId])
   @@index([tenantId, customerId])
   @@index([tenantId, state])
+  @@index([tenantId, status])
   @@map("conversations")
 }
 

@@ -47,6 +47,15 @@ export const ConversationState = {
 export type ConversationState =
   (typeof ConversationState)[keyof typeof ConversationState];
 
+export const ConversationStatus = {
+  OPEN: "OPEN",
+  HUMAN_HANDOFF: "HUMAN_HANDOFF",
+  CLOSED: "CLOSED",
+} as const;
+
+export type ConversationStatus =
+  (typeof ConversationStatus)[keyof typeof ConversationStatus];
+
 export const MessageStatus = {
   QUEUED: "QUEUED",
   SENT: "SENT",

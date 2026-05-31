@@ -13,7 +13,8 @@ export type Permission =
   | "analytics:view" // OWNER + ADMIN
   | "knowledge-base:manage" // OWNER + ADMIN
   | "whatsapp:manage" // OWNER + ADMIN
-  | "locations:manage"; // OWNER + ADMIN
+  | "locations:manage" // OWNER + ADMIN
+  | "conversations:view";
 
 const ALL_PERMISSIONS: Permission[] = [
   "billing:manage",
@@ -29,6 +30,7 @@ const ALL_PERMISSIONS: Permission[] = [
   "knowledge-base:manage",
   "whatsapp:manage",
   "locations:manage",
+  "conversations:view",
 ];
 
 export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
@@ -36,7 +38,12 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
   ADMIN: ALL_PERMISSIONS.filter(
     (p) => p !== "billing:manage" && p !== "members:manage",
   ),
-  STAFF: ["bookings:manage", "bookings:view", "customers:view"],
+  STAFF: [
+    "bookings:manage",
+    "bookings:view",
+    "customers:view",
+    "conversations:view",
+  ],
 };
 
 export function hasPermission(role: UserRole, permission: Permission): boolean {

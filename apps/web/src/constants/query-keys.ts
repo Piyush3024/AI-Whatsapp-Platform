@@ -109,4 +109,17 @@ export const QUERY_KEYS = {
     subscription: ["billing", "subscription"] as const,
     invoices: (params?: unknown) => ["billing", "invoices", params] as const,
   },
+
+  /**
+   * Conversations-related queries
+   */
+
+  conversations: {
+    all: ["conversations"] as const,
+    list: (params?: Record<string, unknown>) =>
+      ["conversations", "list", params] as const,
+    detail: (id: string) => ["conversations", "detail", id] as const,
+    messages: (id: string, cursor?: string) =>
+      ["conversations", "messages", id, cursor] as const,
+  },
 } as const;

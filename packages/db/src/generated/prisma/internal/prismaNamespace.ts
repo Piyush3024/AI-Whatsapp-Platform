@@ -3528,6 +3528,7 @@ export const ConversationScalarFieldEnum = {
   customerId: "customerId",
   whatsappNumberId: "whatsappNumberId",
   state: "state",
+  status: "status",
   assignedStaffId: "assignedStaffId",
   metadata: "metadata",
   createdAt: "createdAt",
@@ -4125,6 +4126,18 @@ export type EnumConversationStateFieldRefInput<$PrismaModel> =
  */
 export type ListEnumConversationStateFieldRefInput<$PrismaModel> =
   FieldRefInputType<$PrismaModel, "ConversationState[]">;
+
+/**
+ * Reference to a field of type 'ConversationStatus'
+ */
+export type EnumConversationStatusFieldRefInput<$PrismaModel> =
+  FieldRefInputType<$PrismaModel, "ConversationStatus">;
+
+/**
+ * Reference to a field of type 'ConversationStatus[]'
+ */
+export type ListEnumConversationStatusFieldRefInput<$PrismaModel> =
+  FieldRefInputType<$PrismaModel, "ConversationStatus[]">;
 
 /**
  * Reference to a field of type 'MessageType'

@@ -23,6 +23,12 @@ export const MAIN_NAV_ITEMS: NavItem[] = [
     requiredPermission: "bookings:view",
   },
   {
+    href: ROUTES.conversations.list,
+    label: "Conversations",
+    icon: "messages",
+    requiredPermission: "conversations:view",
+  },
+  {
     href: ROUTES.customers.list,
     label: "Customers",
     icon: "users",

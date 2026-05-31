@@ -140,4 +140,15 @@ export const API_ENDPOINTS = {
     esewaInitiate: "/billing/esewa/initiate",
     invoices: "/billing/invoices",
   },
+
+  /**
+   * Conversations-related endpoints
+   */
+
+  conversations: {
+    list: "/conversations",
+    detail: (id: string) => `/conversations/${id}`,
+    messages: (id: string) => `/conversations/${id}/messages`,
+    updateStatus: (id: string) => `/conversations/${id}`,
+  },
 } as const;

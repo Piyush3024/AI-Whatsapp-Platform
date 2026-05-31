@@ -30,6 +30,7 @@ export type ConversationMinAggregateOutputType = {
   customerId: string | null;
   whatsappNumberId: string | null;
   state: $Enums.ConversationState | null;
+  status: $Enums.ConversationStatus | null;
   assignedStaffId: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
@@ -42,6 +43,7 @@ export type ConversationMaxAggregateOutputType = {
   customerId: string | null;
   whatsappNumberId: string | null;
   state: $Enums.ConversationState | null;
+  status: $Enums.ConversationStatus | null;
   assignedStaffId: string | null;
   createdAt: Date | null;
   updatedAt: Date | null;
@@ -54,6 +56,7 @@ export type ConversationCountAggregateOutputType = {
   customerId: number;
   whatsappNumberId: number;
   state: number;
+  status: number;
   assignedStaffId: number;
   metadata: number;
   createdAt: number;
@@ -68,6 +71,7 @@ export type ConversationMinAggregateInputType = {
   customerId?: true;
   whatsappNumberId?: true;
   state?: true;
+  status?: true;
   assignedStaffId?: true;
   createdAt?: true;
   updatedAt?: true;
@@ -80,6 +84,7 @@ export type ConversationMaxAggregateInputType = {
   customerId?: true;
   whatsappNumberId?: true;
   state?: true;
+  status?: true;
   assignedStaffId?: true;
   createdAt?: true;
   updatedAt?: true;
@@ -92,6 +97,7 @@ export type ConversationCountAggregateInputType = {
   customerId?: true;
   whatsappNumberId?: true;
   state?: true;
+  status?: true;
   assignedStaffId?: true;
   metadata?: true;
   createdAt?: true;
@@ -186,6 +192,7 @@ export type ConversationGroupByOutputType = {
   customerId: string;
   whatsappNumberId: string;
   state: $Enums.ConversationState;
+  status: $Enums.ConversationStatus;
   assignedStaffId: string | null;
   metadata: runtime.JsonValue | null;
   createdAt: Date;
@@ -220,6 +227,9 @@ export type ConversationWhereInput = {
   state?:
     | Prisma.EnumConversationStateFilter<"Conversation">
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFilter<"Conversation">
+    | $Enums.ConversationStatus;
   assignedStaffId?: Prisma.UuidNullableFilter<"Conversation"> | string | null;
   metadata?: Prisma.JsonNullableFilter<"Conversation">;
   createdAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string;
@@ -255,6 +265,7 @@ export type ConversationOrderByWithRelationInput = {
   customerId?: Prisma.SortOrder;
   whatsappNumberId?: Prisma.SortOrder;
   state?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   assignedStaffId?: Prisma.SortOrderInput | Prisma.SortOrder;
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
@@ -280,6 +291,9 @@ export type ConversationWhereUniqueInput = Prisma.AtLeast<
     state?:
       | Prisma.EnumConversationStateFilter<"Conversation">
       | $Enums.ConversationState;
+    status?:
+      | Prisma.EnumConversationStatusFilter<"Conversation">
+      | $Enums.ConversationStatus;
     assignedStaffId?: Prisma.UuidNullableFilter<"Conversation"> | string | null;
     metadata?: Prisma.JsonNullableFilter<"Conversation">;
     createdAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string;
@@ -317,6 +331,7 @@ export type ConversationOrderByWithAggregationInput = {
   customerId?: Prisma.SortOrder;
   whatsappNumberId?: Prisma.SortOrder;
   state?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   assignedStaffId?: Prisma.SortOrderInput | Prisma.SortOrder;
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
@@ -342,6 +357,9 @@ export type ConversationScalarWhereWithAggregatesInput = {
   state?:
     | Prisma.EnumConversationStateWithAggregatesFilter<"Conversation">
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusWithAggregatesFilter<"Conversation">
+    | $Enums.ConversationStatus;
   assignedStaffId?:
     | Prisma.UuidNullableWithAggregatesFilter<"Conversation">
     | string
@@ -365,6 +383,7 @@ export type ConversationScalarWhereWithAggregatesInput = {
 export type ConversationCreateInput = {
   id?: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -383,6 +402,7 @@ export type ConversationUncheckedCreateInput = {
   customerId: string;
   whatsappNumberId: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   assignedStaffId?: string | null;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
@@ -397,6 +417,9 @@ export type ConversationUpdateInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -421,6 +444,9 @@ export type ConversationUncheckedUpdateInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   assignedStaffId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
@@ -443,6 +469,7 @@ export type ConversationCreateManyInput = {
   customerId: string;
   whatsappNumberId: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   assignedStaffId?: string | null;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
@@ -455,6 +482,9 @@ export type ConversationUpdateManyMutationInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -473,6 +503,9 @@ export type ConversationUncheckedUpdateManyInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   assignedStaffId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
@@ -503,6 +536,7 @@ export type ConversationCountOrderByAggregateInput = {
   customerId?: Prisma.SortOrder;
   whatsappNumberId?: Prisma.SortOrder;
   state?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   assignedStaffId?: Prisma.SortOrder;
   metadata?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
@@ -516,6 +550,7 @@ export type ConversationMaxOrderByAggregateInput = {
   customerId?: Prisma.SortOrder;
   whatsappNumberId?: Prisma.SortOrder;
   state?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   assignedStaffId?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -528,6 +563,7 @@ export type ConversationMinOrderByAggregateInput = {
   customerId?: Prisma.SortOrder;
   whatsappNumberId?: Prisma.SortOrder;
   state?: Prisma.SortOrder;
+  status?: Prisma.SortOrder;
   assignedStaffId?: Prisma.SortOrder;
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
@@ -878,6 +914,10 @@ export type EnumConversationStateFieldUpdateOperationsInput = {
   set?: $Enums.ConversationState;
 };
 
+export type EnumConversationStatusFieldUpdateOperationsInput = {
+  set?: $Enums.ConversationStatus;
+};
+
 export type ConversationCreateNestedOneWithoutMessagesInput = {
   create?: Prisma.XOR<
     Prisma.ConversationCreateWithoutMessagesInput,
@@ -1045,6 +1085,7 @@ export type ConversationUpdateOneWithoutBookingsNestedInput = {
 export type ConversationCreateWithoutTenantInput = {
   id?: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1061,6 +1102,7 @@ export type ConversationUncheckedCreateWithoutTenantInput = {
   customerId: string;
   whatsappNumberId: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   assignedStaffId?: string | null;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
@@ -1128,6 +1170,9 @@ export type ConversationScalarWhereInput = {
   state?:
     | Prisma.EnumConversationStateFilter<"Conversation">
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFilter<"Conversation">
+    | $Enums.ConversationStatus;
   assignedStaffId?: Prisma.UuidNullableFilter<"Conversation"> | string | null;
   metadata?: Prisma.JsonNullableFilter<"Conversation">;
   createdAt?: Prisma.DateTimeFilter<"Conversation"> | Date | string;
@@ -1142,6 +1187,7 @@ export type ConversationScalarWhereInput = {
 export type ConversationCreateWithoutWhatsappNumberInput = {
   id?: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1158,6 +1204,7 @@ export type ConversationUncheckedCreateWithoutWhatsappNumberInput = {
   tenantId: string;
   customerId: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   assignedStaffId?: string | null;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
@@ -1213,6 +1260,7 @@ export type ConversationUpdateManyWithWhereWithoutWhatsappNumberInput = {
 export type ConversationCreateWithoutCustomerInput = {
   id?: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1229,6 +1277,7 @@ export type ConversationUncheckedCreateWithoutCustomerInput = {
   tenantId: string;
   whatsappNumberId: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   assignedStaffId?: string | null;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
@@ -1284,6 +1333,7 @@ export type ConversationUpdateManyWithWhereWithoutCustomerInput = {
 export type ConversationCreateWithoutMessagesInput = {
   id?: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1301,6 +1351,7 @@ export type ConversationUncheckedCreateWithoutMessagesInput = {
   customerId: string;
   whatsappNumberId: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   assignedStaffId?: string | null;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
@@ -1342,6 +1393,9 @@ export type ConversationUpdateWithoutMessagesInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1365,6 +1419,9 @@ export type ConversationUncheckedUpdateWithoutMessagesInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   assignedStaffId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
@@ -1383,6 +1440,7 @@ export type ConversationUncheckedUpdateWithoutMessagesInput = {
 export type ConversationCreateWithoutAssignedStaffInput = {
   id?: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1400,6 +1458,7 @@ export type ConversationUncheckedCreateWithoutAssignedStaffInput = {
   customerId: string;
   whatsappNumberId: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1454,6 +1513,7 @@ export type ConversationUpdateManyWithWhereWithoutAssignedStaffInput = {
 export type ConversationCreateWithoutBookingsInput = {
   id?: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1471,6 +1531,7 @@ export type ConversationUncheckedCreateWithoutBookingsInput = {
   customerId: string;
   whatsappNumberId: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   assignedStaffId?: string | null;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
@@ -1512,6 +1573,9 @@ export type ConversationUpdateWithoutBookingsInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1535,6 +1599,9 @@ export type ConversationUncheckedUpdateWithoutBookingsInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   assignedStaffId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
@@ -1555,6 +1622,7 @@ export type ConversationCreateManyTenantInput = {
   customerId: string;
   whatsappNumberId: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   assignedStaffId?: string | null;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
@@ -1567,6 +1635,9 @@ export type ConversationUpdateWithoutTenantInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1589,6 +1660,9 @@ export type ConversationUncheckedUpdateWithoutTenantInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   assignedStaffId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
@@ -1612,6 +1686,9 @@ export type ConversationUncheckedUpdateManyWithoutTenantInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   assignedStaffId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
@@ -1631,6 +1708,7 @@ export type ConversationCreateManyWhatsappNumberInput = {
   tenantId: string;
   customerId: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   assignedStaffId?: string | null;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
@@ -1643,6 +1721,9 @@ export type ConversationUpdateWithoutWhatsappNumberInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1665,6 +1746,9 @@ export type ConversationUncheckedUpdateWithoutWhatsappNumberInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   assignedStaffId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
@@ -1688,6 +1772,9 @@ export type ConversationUncheckedUpdateManyWithoutWhatsappNumberInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   assignedStaffId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
@@ -1707,6 +1794,7 @@ export type ConversationCreateManyCustomerInput = {
   tenantId: string;
   whatsappNumberId: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   assignedStaffId?: string | null;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
@@ -1719,6 +1807,9 @@ export type ConversationUpdateWithoutCustomerInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1741,6 +1832,9 @@ export type ConversationUncheckedUpdateWithoutCustomerInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   assignedStaffId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
@@ -1764,6 +1858,9 @@ export type ConversationUncheckedUpdateManyWithoutCustomerInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   assignedStaffId?:
     | Prisma.NullableStringFieldUpdateOperationsInput
     | string
@@ -1784,6 +1881,7 @@ export type ConversationCreateManyAssignedStaffInput = {
   customerId: string;
   whatsappNumberId: string;
   state?: $Enums.ConversationState;
+  status?: $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Date | string;
   updatedAt?: Date | string;
@@ -1795,6 +1893,9 @@ export type ConversationUpdateWithoutAssignedStaffInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1818,6 +1919,9 @@ export type ConversationUncheckedUpdateWithoutAssignedStaffInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1838,6 +1942,9 @@ export type ConversationUncheckedUpdateManyWithoutAssignedStaffInput = {
   state?:
     | Prisma.EnumConversationStateFieldUpdateOperationsInput
     | $Enums.ConversationState;
+  status?:
+    | Prisma.EnumConversationStatusFieldUpdateOperationsInput
+    | $Enums.ConversationStatus;
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -1908,6 +2015,7 @@ export type ConversationSelect<
     customerId?: boolean;
     whatsappNumberId?: boolean;
     state?: boolean;
+    status?: boolean;
     assignedStaffId?: boolean;
     metadata?: boolean;
     createdAt?: boolean;
@@ -1934,6 +2042,7 @@ export type ConversationSelectCreateManyAndReturn<
     customerId?: boolean;
     whatsappNumberId?: boolean;
     state?: boolean;
+    status?: boolean;
     assignedStaffId?: boolean;
     metadata?: boolean;
     createdAt?: boolean;
@@ -1957,6 +2066,7 @@ export type ConversationSelectUpdateManyAndReturn<
     customerId?: boolean;
     whatsappNumberId?: boolean;
     state?: boolean;
+    status?: boolean;
     assignedStaffId?: boolean;
     metadata?: boolean;
     createdAt?: boolean;
@@ -1976,6 +2086,7 @@ export type ConversationSelectScalar = {
   customerId?: boolean;
   whatsappNumberId?: boolean;
   state?: boolean;
+  status?: boolean;
   assignedStaffId?: boolean;
   metadata?: boolean;
   createdAt?: boolean;
@@ -1992,6 +2103,7 @@ export type ConversationOmit<
   | "customerId"
   | "whatsappNumberId"
   | "state"
+  | "status"
   | "assignedStaffId"
   | "metadata"
   | "createdAt"
@@ -2050,6 +2162,7 @@ export type $ConversationPayload<
       customerId: string;
       whatsappNumberId: string;
       state: $Enums.ConversationState;
+      status: $Enums.ConversationStatus;
       assignedStaffId: string | null;
       metadata: runtime.JsonValue | null;
       createdAt: Date;
@@ -2735,6 +2848,7 @@ export interface ConversationFieldRefs {
   readonly customerId: Prisma.FieldRef<"Conversation", "String">;
   readonly whatsappNumberId: Prisma.FieldRef<"Conversation", "String">;
   readonly state: Prisma.FieldRef<"Conversation", "ConversationState">;
+  readonly status: Prisma.FieldRef<"Conversation", "ConversationStatus">;
   readonly assignedStaffId: Prisma.FieldRef<"Conversation", "String">;
   readonly metadata: Prisma.FieldRef<"Conversation", "Json">;
   readonly createdAt: Prisma.FieldRef<"Conversation", "DateTime">;

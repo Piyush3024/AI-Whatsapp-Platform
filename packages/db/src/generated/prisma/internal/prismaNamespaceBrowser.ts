@@ -368,6 +368,7 @@ export const ConversationScalarFieldEnum = {
   customerId: "customerId",
   whatsappNumberId: "whatsappNumberId",
   state: "state",
+  status: "status",
   assignedStaffId: "assignedStaffId",
   metadata: "metadata",
   createdAt: "createdAt",
