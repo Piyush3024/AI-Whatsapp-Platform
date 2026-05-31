@@ -5,6 +5,7 @@ import type {
   RegisterDto,
   ForgotPasswordDto,
   ResetPasswordDto,
+  ResendVerificationDto,
 } from "@/types/api.types";
 import { API_ENDPOINTS } from "@/constants/endpoints";
 
@@ -43,6 +44,25 @@ export const resetPassword = async (
 ): Promise<{ message: string }> => {
   const res = await apiClient.post<{ data: { message: string } }>(
     API_ENDPOINTS.auth.resetPassword,
+    dto,
+  );
+  return res.data.data;
+};
+
+export const verifyEmail = async (
+  token: string,
+): Promise<{ message: string }> => {
+  const res = await apiClient.get<{ data: { message: string } }>(
+    `${API_ENDPOINTS.auth.verifyEmail}?token=${token}`,
+  );
+  return res.data.data;
+};
+
+export const resendVerification = async (
+  dto: ResendVerificationDto,
+): Promise<{ message: string }> => {
+  const res = await apiClient.post<{ data: { message: string } }>(
+    API_ENDPOINTS.auth.resendVerification,
     dto,
   );
   return res.data.data;

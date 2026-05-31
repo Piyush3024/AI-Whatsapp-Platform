@@ -221,3 +221,8 @@ export type NotificationPreference = Prisma.NotificationPreferenceModel;
  *
  */
 export type PasswordResetToken = Prisma.PasswordResetTokenModel;
+/**
+ * Model EmailVerificationToken
+ *
+ */
+export type EmailVerificationToken = Prisma.EmailVerificationTokenModel;

@@ -274,7 +274,13 @@ export class InvitationService {
 
     const userRecord = await this.prisma.db.user.findUnique({
       where: { id: userId },
-      select: { id: true, name: true, email: true, createdAt: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        emailVerifiedAt: true,
+      },
     });
 
     return {
@@ -287,6 +293,7 @@ export class InvitationService {
         tenantId: invitation.tenantId,
         createdAt:
           userRecord?.createdAt.toISOString() ?? new Date().toISOString(),
+        emailVerifiedAt: userRecord?.emailVerifiedAt?.toISOString() ?? null,
       },
     };
   }

@@ -33,6 +33,7 @@ export interface User {
   role: UserRole;
   tenantId: string;
   createdAt: string;
+  emailVerifiedAt: string | null;
 }
 
 export interface AuthTokens {
@@ -60,4 +61,8 @@ export interface ForgotPasswordDto {
 export interface ResetPasswordDto {
   token: string;
   newPassword: string;
+}
+
+export interface ResendVerificationDto {
+  email: string;
 }

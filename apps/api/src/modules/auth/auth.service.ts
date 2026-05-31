@@ -27,9 +27,9 @@ export interface AuthTokens {
     role: UserRole;
     tenantId: string;
     createdAt: string;
+    emailVerifiedAt: string | null;
   };
 }
-
 const BCRYPT_ROUNDS = 12;
 
 @Injectable()
@@ -92,6 +92,15 @@ export class AuthService {
       'AuthService',
     );
 
+    this._createAndSendVerificationEmail(user.id, user.email, user.name).catch(
+      (err: unknown) => {
+        this.logger.error(
+          { err, userId: user.id },
+          'Failed to send verification email on register',
+        );
+      },
+    );
+
     const tokens = await this._generateAndStoreTokens({
       sub: user.id,
       tenantId: tenant.id,
@@ -108,6 +117,7 @@ export class AuthService {
         role: UserRole.OWNER,
         tenantId: tenant.id,
         createdAt: user.createdAt.toISOString(),
+        emailVerifiedAt: null,
       },
     };
   }
@@ -156,6 +166,7 @@ export class AuthService {
         role: member.role,
         tenantId: member.tenantId,
         createdAt: user.createdAt.toISOString(),
+        emailVerifiedAt: user.emailVerifiedAt?.toISOString() ?? null,
       },
     };
   }
@@ -195,6 +206,7 @@ export class AuthService {
         role: role as UserRole,
         tenantId,
         createdAt: userRecord?.createdAt.toISOString() ?? '',
+        emailVerifiedAt: userRecord?.emailVerifiedAt?.toISOString() ?? null,
       },
     };
   }
@@ -208,13 +220,11 @@ export class AuthService {
   }
 
   async forgotPassword(email: string): Promise<void> {
-    // Always return success — email enumeration prevent karne ke liye
     const user = await this.prisma.db.user.findUnique({
       where: { email: email.toLowerCase() },
     });
 
     if (!user) {
-      // Silently return — attacker ko pata nahi chalega email exist karta hai ya nahi
       this.logger.log(
         `Forgot password: email not found (silent) — ${email}`,
         'AuthService',
@@ -222,7 +232,6 @@ export class AuthService {
       return;
     }
 
-    // Purane unused tokens expire karo (cleanup)
     await this.prisma.db.passwordResetToken.updateMany({
       where: {
         userId: user.id,
@@ -230,18 +239,17 @@ export class AuthService {
         expiresAt: { gt: new Date() },
       },
       data: {
-        expiresAt: new Date(), // immediately expire
+        expiresAt: new Date(),
       },
     });
 
-    // Cryptographically secure token generate karo
-    const rawToken = crypto.randomBytes(32).toString('hex'); // 64 char hex string
+    const rawToken = crypto.randomBytes(32).toString('hex');
     const tokenHash = crypto
       .createHash('sha256')
       .update(rawToken)
       .digest('hex');
 
-    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
 
     await this.prisma.db.passwordResetToken.create({
       data: {
@@ -263,6 +271,72 @@ export class AuthService {
 
     this.logger.log(
       `Password reset email sent to userId: ${user.id}`,
+      'AuthService',
+    );
+  }
+
+  async verifyEmail(token: string): Promise<void> {
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
+    const record = await this.prisma.db.emailVerificationToken.findUnique({
+      where: { tokenHash },
+      include: { user: true },
+    });
+
+    if (!record) {
+      throw new BadRequestException('Verification link is invalid.');
+    }
+
+    if (record.usedAt !== null) {
+      throw new BadRequestException(
+        'This verification link has already been used.',
+      );
+    }
+
+    if (record.expiresAt < new Date()) {
+      throw new BadRequestException(
+        'Verification link has expired. Request a new one.',
+      );
+    }
+
+    await this.prisma.$transaction([
+      this.prisma.db.user.update({
+        where: { id: record.userId },
+        data: { emailVerifiedAt: new Date() },
+      }),
+      this.prisma.db.emailVerificationToken.update({
+        where: { tokenHash },
+        data: { usedAt: new Date() },
+      }),
+    ]);
+
+    this.logger.log(
+      `Email verified for userId: ${record.userId}`,
+      'AuthService',
+    );
+  }
+
+  async resendVerification(email: string): Promise<void> {
+    const user = await this.prisma.db.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+
+    if (!user) {
+      this.logger.log(
+        `Resend verification: email not found (silent) — ${email}`,
+        'AuthService',
+      );
+      return;
+    }
+
+    if (user.emailVerifiedAt !== null) {
+      return;
+    }
+
+    await this._createAndSendVerificationEmail(user.id, user.email, user.name);
+
+    this.logger.log(
+      `Verification email resent for userId: ${user.id}`,
       'AuthService',
     );
   }
@@ -319,6 +393,7 @@ export class AuthService {
         name: true,
         email: true,
         phone: true,
+        emailVerifiedAt: true,
         createdAt: true,
       },
     });
@@ -432,5 +507,42 @@ export class AuthService {
     };
 
     return value * (multipliers[unit] ?? 60);
+  }
+
+  private async _createAndSendVerificationEmail(
+    userId: string,
+    email: string,
+    name: string,
+  ): Promise<void> {
+    await this.prisma.db.emailVerificationToken.updateMany({
+      where: {
+        userId,
+        usedAt: null,
+        expiresAt: { gt: new Date() },
+      },
+      data: { expiresAt: new Date() },
+    });
+
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const tokenHash = crypto
+      .createHash('sha256')
+      .update(rawToken)
+      .digest('hex');
+
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    await this.prisma.db.emailVerificationToken.create({
+      data: { userId, tokenHash, expiresAt },
+    });
+
+    const appUrl = this.config.getOrThrow<string>('mail.appUrl');
+    const verifyUrl = `${appUrl}/verify-email?token=${rawToken}`;
+
+    await this.mail.sendEmailVerification({
+      toEmail: email,
+      name,
+      verifyUrl,
+      expiresAt,
+    });
   }
 }

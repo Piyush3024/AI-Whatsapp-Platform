@@ -33,6 +33,7 @@ export type UserMinAggregateOutputType = {
   createdAt: Date | null;
   updatedAt: Date | null;
   deletedAt: Date | null;
+  emailVerifiedAt: Date | null;
 };
 
 export type UserMaxAggregateOutputType = {
@@ -44,6 +45,7 @@ export type UserMaxAggregateOutputType = {
   createdAt: Date | null;
   updatedAt: Date | null;
   deletedAt: Date | null;
+  emailVerifiedAt: Date | null;
 };
 
 export type UserCountAggregateOutputType = {
@@ -55,6 +57,7 @@ export type UserCountAggregateOutputType = {
   createdAt: number;
   updatedAt: number;
   deletedAt: number;
+  emailVerifiedAt: number;
   _all: number;
 };
 
@@ -67,6 +70,7 @@ export type UserMinAggregateInputType = {
   createdAt?: true;
   updatedAt?: true;
   deletedAt?: true;
+  emailVerifiedAt?: true;
 };
 
 export type UserMaxAggregateInputType = {
@@ -78,6 +82,7 @@ export type UserMaxAggregateInputType = {
   createdAt?: true;
   updatedAt?: true;
   deletedAt?: true;
+  emailVerifiedAt?: true;
 };
 
 export type UserCountAggregateInputType = {
@@ -89,6 +94,7 @@ export type UserCountAggregateInputType = {
   createdAt?: true;
   updatedAt?: true;
   deletedAt?: true;
+  emailVerifiedAt?: true;
   _all?: true;
 };
 
@@ -180,6 +186,7 @@ export type UserGroupByOutputType = {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+  emailVerifiedAt: Date | null;
   _count: UserCountAggregateOutputType | null;
   _min: UserMinAggregateOutputType | null;
   _max: UserMaxAggregateOutputType | null;
@@ -210,11 +217,17 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string;
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string;
   deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
+  emailVerifiedAt?:
+    | Prisma.DateTimeNullableFilter<"User">
+    | Date
+    | string
+    | null;
   tenantMemberships?: Prisma.TenantMemberListRelationFilter;
   refreshTokens?: Prisma.RefreshTokenListRelationFilter;
   staff?: Prisma.StaffListRelationFilter;
   notifications?: Prisma.NotificationPreferenceListRelationFilter;
   passwordResetTokens?: Prisma.PasswordResetTokenListRelationFilter;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenListRelationFilter;
 };
 
 export type UserOrderByWithRelationInput = {
@@ -226,11 +239,13 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
+  emailVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   tenantMemberships?: Prisma.TenantMemberOrderByRelationAggregateInput;
   refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput;
   staff?: Prisma.StaffOrderByRelationAggregateInput;
   notifications?: Prisma.NotificationPreferenceOrderByRelationAggregateInput;
   passwordResetTokens?: Prisma.PasswordResetTokenOrderByRelationAggregateInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenOrderByRelationAggregateInput;
 };
 
 export type UserWhereUniqueInput = Prisma.AtLeast<
@@ -246,11 +261,17 @@ export type UserWhereUniqueInput = Prisma.AtLeast<
     createdAt?: Prisma.DateTimeFilter<"User"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string;
     deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null;
+    emailVerifiedAt?:
+      | Prisma.DateTimeNullableFilter<"User">
+      | Date
+      | string
+      | null;
     tenantMemberships?: Prisma.TenantMemberListRelationFilter;
     refreshTokens?: Prisma.RefreshTokenListRelationFilter;
     staff?: Prisma.StaffListRelationFilter;
     notifications?: Prisma.NotificationPreferenceListRelationFilter;
     passwordResetTokens?: Prisma.PasswordResetTokenListRelationFilter;
+    emailVerificationTokens?: Prisma.EmailVerificationTokenListRelationFilter;
   },
   "id" | "email"
 >;
@@ -264,6 +285,7 @@ export type UserOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
+  emailVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
   _count?: Prisma.UserCountOrderByAggregateInput;
   _max?: Prisma.UserMaxOrderByAggregateInput;
   _min?: Prisma.UserMinOrderByAggregateInput;
@@ -289,6 +311,11 @@ export type UserScalarWhereWithAggregatesInput = {
     | Date
     | string
     | null;
+  emailVerifiedAt?:
+    | Prisma.DateTimeNullableWithAggregatesFilter<"User">
+    | Date
+    | string
+    | null;
 };
 
 export type UserCreateInput = {
@@ -300,11 +327,13 @@ export type UserCreateInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
+  emailVerifiedAt?: Date | string | null;
   tenantMemberships?: Prisma.TenantMemberCreateNestedManyWithoutUserInput;
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput;
   staff?: Prisma.StaffCreateNestedManyWithoutUserInput;
   notifications?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput;
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput;
 };
 
 export type UserUncheckedCreateInput = {
@@ -316,11 +345,13 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
+  emailVerifiedAt?: Date | string | null;
   tenantMemberships?: Prisma.TenantMemberUncheckedCreateNestedManyWithoutUserInput;
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput;
   staff?: Prisma.StaffUncheckedCreateNestedManyWithoutUserInput;
   notifications?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput;
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput;
 };
 
 export type UserUpdateInput = {
@@ -336,11 +367,17 @@ export type UserUpdateInput = {
     | Date
     | string
     | null;
+  emailVerifiedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
   tenantMemberships?: Prisma.TenantMemberUpdateManyWithoutUserNestedInput;
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput;
   staff?: Prisma.StaffUpdateManyWithoutUserNestedInput;
   notifications?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput;
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateInput = {
@@ -356,11 +393,17 @@ export type UserUncheckedUpdateInput = {
     | Date
     | string
     | null;
+  emailVerifiedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
   tenantMemberships?: Prisma.TenantMemberUncheckedUpdateManyWithoutUserNestedInput;
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput;
   staff?: Prisma.StaffUncheckedUpdateManyWithoutUserNestedInput;
   notifications?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput;
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput;
 };
 
 export type UserCreateManyInput = {
@@ -372,6 +415,7 @@ export type UserCreateManyInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
+  emailVerifiedAt?: Date | string | null;
 };
 
 export type UserUpdateManyMutationInput = {
@@ -383,6 +427,11 @@ export type UserUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  emailVerifiedAt?:
     | Prisma.NullableDateTimeFieldUpdateOperationsInput
     | Date
     | string
@@ -402,6 +451,11 @@ export type UserUncheckedUpdateManyInput = {
     | Date
     | string
     | null;
+  emailVerifiedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
 };
 
 export type UserCountOrderByAggregateInput = {
@@ -413,6 +467,7 @@ export type UserCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
+  emailVerifiedAt?: Prisma.SortOrder;
 };
 
 export type UserMaxOrderByAggregateInput = {
@@ -424,6 +479,7 @@ export type UserMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
+  emailVerifiedAt?: Prisma.SortOrder;
 };
 
 export type UserMinOrderByAggregateInput = {
@@ -435,6 +491,7 @@ export type UserMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder;
   updatedAt?: Prisma.SortOrder;
   deletedAt?: Prisma.SortOrder;
+  emailVerifiedAt?: Prisma.SortOrder;
 };
 
 export type UserScalarRelationFilter = {
@@ -583,6 +640,32 @@ export type UserUpdateOneRequiredWithoutPasswordResetTokensNestedInput = {
   >;
 };
 
+export type UserCreateNestedOneWithoutEmailVerificationTokensInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutEmailVerificationTokensInput,
+    Prisma.UserUncheckedCreateWithoutEmailVerificationTokensInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmailVerificationTokensInput;
+  connect?: Prisma.UserWhereUniqueInput;
+};
+
+export type UserUpdateOneRequiredWithoutEmailVerificationTokensNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.UserCreateWithoutEmailVerificationTokensInput,
+    Prisma.UserUncheckedCreateWithoutEmailVerificationTokensInput
+  >;
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmailVerificationTokensInput;
+  upsert?: Prisma.UserUpsertWithoutEmailVerificationTokensInput;
+  connect?: Prisma.UserWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.UserUpdateToOneWithWhereWithoutEmailVerificationTokensInput,
+      Prisma.UserUpdateWithoutEmailVerificationTokensInput
+    >,
+    Prisma.UserUncheckedUpdateWithoutEmailVerificationTokensInput
+  >;
+};
+
 export type UserCreateWithoutTenantMembershipsInput = {
   id?: string;
   email: string;
@@ -592,10 +675,12 @@ export type UserCreateWithoutTenantMembershipsInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
+  emailVerifiedAt?: Date | string | null;
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput;
   staff?: Prisma.StaffCreateNestedManyWithoutUserInput;
   notifications?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput;
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput;
 };
 
 export type UserUncheckedCreateWithoutTenantMembershipsInput = {
@@ -607,10 +692,12 @@ export type UserUncheckedCreateWithoutTenantMembershipsInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
+  emailVerifiedAt?: Date | string | null;
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput;
   staff?: Prisma.StaffUncheckedCreateNestedManyWithoutUserInput;
   notifications?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput;
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput;
 };
 
 export type UserCreateOrConnectWithoutTenantMembershipsInput = {
@@ -654,10 +741,16 @@ export type UserUpdateWithoutTenantMembershipsInput = {
     | Date
     | string
     | null;
+  emailVerifiedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput;
   staff?: Prisma.StaffUpdateManyWithoutUserNestedInput;
   notifications?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput;
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutTenantMembershipsInput = {
@@ -673,10 +766,16 @@ export type UserUncheckedUpdateWithoutTenantMembershipsInput = {
     | Date
     | string
     | null;
+  emailVerifiedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput;
   staff?: Prisma.StaffUncheckedUpdateManyWithoutUserNestedInput;
   notifications?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput;
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput;
 };
 
 export type UserCreateWithoutRefreshTokensInput = {
@@ -688,10 +787,12 @@ export type UserCreateWithoutRefreshTokensInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
+  emailVerifiedAt?: Date | string | null;
   tenantMemberships?: Prisma.TenantMemberCreateNestedManyWithoutUserInput;
   staff?: Prisma.StaffCreateNestedManyWithoutUserInput;
   notifications?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput;
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput;
 };
 
 export type UserUncheckedCreateWithoutRefreshTokensInput = {
@@ -703,10 +804,12 @@ export type UserUncheckedCreateWithoutRefreshTokensInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
+  emailVerifiedAt?: Date | string | null;
   tenantMemberships?: Prisma.TenantMemberUncheckedCreateNestedManyWithoutUserInput;
   staff?: Prisma.StaffUncheckedCreateNestedManyWithoutUserInput;
   notifications?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput;
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput;
 };
 
 export type UserCreateOrConnectWithoutRefreshTokensInput = {
@@ -750,10 +853,16 @@ export type UserUpdateWithoutRefreshTokensInput = {
     | Date
     | string
     | null;
+  emailVerifiedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
   tenantMemberships?: Prisma.TenantMemberUpdateManyWithoutUserNestedInput;
   staff?: Prisma.StaffUpdateManyWithoutUserNestedInput;
   notifications?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput;
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutRefreshTokensInput = {
@@ -769,10 +878,16 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
     | Date
     | string
     | null;
+  emailVerifiedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
   tenantMemberships?: Prisma.TenantMemberUncheckedUpdateManyWithoutUserNestedInput;
   staff?: Prisma.StaffUncheckedUpdateManyWithoutUserNestedInput;
   notifications?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput;
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput;
 };
 
 export type UserCreateWithoutStaffInput = {
@@ -784,10 +899,12 @@ export type UserCreateWithoutStaffInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
+  emailVerifiedAt?: Date | string | null;
   tenantMemberships?: Prisma.TenantMemberCreateNestedManyWithoutUserInput;
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput;
   notifications?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput;
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput;
 };
 
 export type UserUncheckedCreateWithoutStaffInput = {
@@ -799,10 +916,12 @@ export type UserUncheckedCreateWithoutStaffInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
+  emailVerifiedAt?: Date | string | null;
   tenantMemberships?: Prisma.TenantMemberUncheckedCreateNestedManyWithoutUserInput;
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput;
   notifications?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput;
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput;
 };
 
 export type UserCreateOrConnectWithoutStaffInput = {
@@ -846,10 +965,16 @@ export type UserUpdateWithoutStaffInput = {
     | Date
     | string
     | null;
+  emailVerifiedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
   tenantMemberships?: Prisma.TenantMemberUpdateManyWithoutUserNestedInput;
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput;
   notifications?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput;
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutStaffInput = {
@@ -865,10 +990,16 @@ export type UserUncheckedUpdateWithoutStaffInput = {
     | Date
     | string
     | null;
+  emailVerifiedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
   tenantMemberships?: Prisma.TenantMemberUncheckedUpdateManyWithoutUserNestedInput;
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput;
   notifications?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput;
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput;
 };
 
 export type UserCreateWithoutNotificationsInput = {
@@ -880,10 +1011,12 @@ export type UserCreateWithoutNotificationsInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
+  emailVerifiedAt?: Date | string | null;
   tenantMemberships?: Prisma.TenantMemberCreateNestedManyWithoutUserInput;
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput;
   staff?: Prisma.StaffCreateNestedManyWithoutUserInput;
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput;
 };
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -895,10 +1028,12 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
+  emailVerifiedAt?: Date | string | null;
   tenantMemberships?: Prisma.TenantMemberUncheckedCreateNestedManyWithoutUserInput;
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput;
   staff?: Prisma.StaffUncheckedCreateNestedManyWithoutUserInput;
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput;
 };
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -942,10 +1077,16 @@ export type UserUpdateWithoutNotificationsInput = {
     | Date
     | string
     | null;
+  emailVerifiedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
   tenantMemberships?: Prisma.TenantMemberUpdateManyWithoutUserNestedInput;
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput;
   staff?: Prisma.StaffUpdateManyWithoutUserNestedInput;
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -961,10 +1102,16 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
     | Date
     | string
     | null;
+  emailVerifiedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
   tenantMemberships?: Prisma.TenantMemberUncheckedUpdateManyWithoutUserNestedInput;
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput;
   staff?: Prisma.StaffUncheckedUpdateManyWithoutUserNestedInput;
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput;
 };
 
 export type UserCreateWithoutPasswordResetTokensInput = {
@@ -976,10 +1123,12 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
+  emailVerifiedAt?: Date | string | null;
   tenantMemberships?: Prisma.TenantMemberCreateNestedManyWithoutUserInput;
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput;
   staff?: Prisma.StaffCreateNestedManyWithoutUserInput;
   notifications?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput;
 };
 
 export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
@@ -991,10 +1140,12 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   deletedAt?: Date | string | null;
+  emailVerifiedAt?: Date | string | null;
   tenantMemberships?: Prisma.TenantMemberUncheckedCreateNestedManyWithoutUserInput;
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput;
   staff?: Prisma.StaffUncheckedCreateNestedManyWithoutUserInput;
   notifications?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput;
 };
 
 export type UserCreateOrConnectWithoutPasswordResetTokensInput = {
@@ -1038,10 +1189,16 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
     | Date
     | string
     | null;
+  emailVerifiedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
   tenantMemberships?: Prisma.TenantMemberUpdateManyWithoutUserNestedInput;
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput;
   staff?: Prisma.StaffUpdateManyWithoutUserNestedInput;
   notifications?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput;
 };
 
 export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
@@ -1057,10 +1214,128 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
     | Date
     | string
     | null;
+  emailVerifiedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
   tenantMemberships?: Prisma.TenantMemberUncheckedUpdateManyWithoutUserNestedInput;
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput;
   staff?: Prisma.StaffUncheckedUpdateManyWithoutUserNestedInput;
   notifications?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput;
+  emailVerificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput;
+};
+
+export type UserCreateWithoutEmailVerificationTokensInput = {
+  id?: string;
+  email: string;
+  phone?: string | null;
+  passwordHash: string;
+  name: string;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  deletedAt?: Date | string | null;
+  emailVerifiedAt?: Date | string | null;
+  tenantMemberships?: Prisma.TenantMemberCreateNestedManyWithoutUserInput;
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput;
+  staff?: Prisma.StaffCreateNestedManyWithoutUserInput;
+  notifications?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput;
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput;
+};
+
+export type UserUncheckedCreateWithoutEmailVerificationTokensInput = {
+  id?: string;
+  email: string;
+  phone?: string | null;
+  passwordHash: string;
+  name: string;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  deletedAt?: Date | string | null;
+  emailVerifiedAt?: Date | string | null;
+  tenantMemberships?: Prisma.TenantMemberUncheckedCreateNestedManyWithoutUserInput;
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput;
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutUserInput;
+  notifications?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput;
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput;
+};
+
+export type UserCreateOrConnectWithoutEmailVerificationTokensInput = {
+  where: Prisma.UserWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutEmailVerificationTokensInput,
+    Prisma.UserUncheckedCreateWithoutEmailVerificationTokensInput
+  >;
+};
+
+export type UserUpsertWithoutEmailVerificationTokensInput = {
+  update: Prisma.XOR<
+    Prisma.UserUpdateWithoutEmailVerificationTokensInput,
+    Prisma.UserUncheckedUpdateWithoutEmailVerificationTokensInput
+  >;
+  create: Prisma.XOR<
+    Prisma.UserCreateWithoutEmailVerificationTokensInput,
+    Prisma.UserUncheckedCreateWithoutEmailVerificationTokensInput
+  >;
+  where?: Prisma.UserWhereInput;
+};
+
+export type UserUpdateToOneWithWhereWithoutEmailVerificationTokensInput = {
+  where?: Prisma.UserWhereInput;
+  data: Prisma.XOR<
+    Prisma.UserUpdateWithoutEmailVerificationTokensInput,
+    Prisma.UserUncheckedUpdateWithoutEmailVerificationTokensInput
+  >;
+};
+
+export type UserUpdateWithoutEmailVerificationTokensInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.StringFieldUpdateOperationsInput | string;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  emailVerifiedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  tenantMemberships?: Prisma.TenantMemberUpdateManyWithoutUserNestedInput;
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput;
+  staff?: Prisma.StaffUpdateManyWithoutUserNestedInput;
+  notifications?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput;
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput;
+};
+
+export type UserUncheckedUpdateWithoutEmailVerificationTokensInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  email?: Prisma.StringFieldUpdateOperationsInput | string;
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.StringFieldUpdateOperationsInput | string;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  emailVerifiedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  tenantMemberships?: Prisma.TenantMemberUncheckedUpdateManyWithoutUserNestedInput;
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput;
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutUserNestedInput;
+  notifications?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput;
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput;
 };
 
 /**
@@ -1073,6 +1348,7 @@ export type UserCountOutputType = {
   staff: number;
   notifications: number;
   passwordResetTokens: number;
+  emailVerificationTokens: number;
 };
 
 export type UserCountOutputTypeSelect<
@@ -1086,6 +1362,9 @@ export type UserCountOutputTypeSelect<
   passwordResetTokens?:
     | boolean
     | UserCountOutputTypeCountPasswordResetTokensArgs;
+  emailVerificationTokens?:
+    | boolean
+    | UserCountOutputTypeCountEmailVerificationTokensArgs;
 };
 
 /**
@@ -1151,6 +1430,16 @@ export type UserCountOutputTypeCountPasswordResetTokensArgs<
   where?: Prisma.PasswordResetTokenWhereInput;
 };
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountEmailVerificationTokensArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.EmailVerificationTokenWhereInput;
+};
+
 export type UserSelect<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
@@ -1164,6 +1453,7 @@ export type UserSelect<
     createdAt?: boolean;
     updatedAt?: boolean;
     deletedAt?: boolean;
+    emailVerifiedAt?: boolean;
     tenantMemberships?: boolean | Prisma.User$tenantMembershipsArgs<ExtArgs>;
     refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>;
     staff?: boolean | Prisma.User$staffArgs<ExtArgs>;
@@ -1171,6 +1461,9 @@ export type UserSelect<
     passwordResetTokens?:
       | boolean
       | Prisma.User$passwordResetTokensArgs<ExtArgs>;
+    emailVerificationTokens?:
+      | boolean
+      | Prisma.User$emailVerificationTokensArgs<ExtArgs>;
     _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs["result"]["user"]
@@ -1189,6 +1482,7 @@ export type UserSelectCreateManyAndReturn<
     createdAt?: boolean;
     updatedAt?: boolean;
     deletedAt?: boolean;
+    emailVerifiedAt?: boolean;
   },
   ExtArgs["result"]["user"]
 >;
@@ -1206,6 +1500,7 @@ export type UserSelectUpdateManyAndReturn<
     createdAt?: boolean;
     updatedAt?: boolean;
     deletedAt?: boolean;
+    emailVerifiedAt?: boolean;
   },
   ExtArgs["result"]["user"]
 >;
@@ -1219,6 +1514,7 @@ export type UserSelectScalar = {
   createdAt?: boolean;
   updatedAt?: boolean;
   deletedAt?: boolean;
+  emailVerifiedAt?: boolean;
 };
 
 export type UserOmit<
@@ -1232,7 +1528,8 @@ export type UserOmit<
   | "name"
   | "createdAt"
   | "updatedAt"
-  | "deletedAt",
+  | "deletedAt"
+  | "emailVerifiedAt",
   ExtArgs["result"]["user"]
 >;
 export type UserInclude<
@@ -1244,6 +1541,9 @@ export type UserInclude<
   staff?: boolean | Prisma.User$staffArgs<ExtArgs>;
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>;
   passwordResetTokens?: boolean | Prisma.User$passwordResetTokensArgs<ExtArgs>;
+  emailVerificationTokens?:
+    | boolean
+    | Prisma.User$emailVerificationTokensArgs<ExtArgs>;
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type UserIncludeCreateManyAndReturn<
@@ -1266,6 +1566,7 @@ export type $UserPayload<
     staff: Prisma.$StaffPayload<ExtArgs>[];
     notifications: Prisma.$NotificationPreferencePayload<ExtArgs>[];
     passwordResetTokens: Prisma.$PasswordResetTokenPayload<ExtArgs>[];
+    emailVerificationTokens: Prisma.$EmailVerificationTokenPayload<ExtArgs>[];
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
@@ -1277,6 +1578,7 @@ export type $UserPayload<
       createdAt: Date;
       updatedAt: Date;
       deletedAt: Date | null;
+      emailVerifiedAt: Date | null;
     },
     ExtArgs["result"]["user"]
   >;
@@ -1884,6 +2186,19 @@ export interface Prisma__UserClient<
       >
     | Null
   >;
+  emailVerificationTokens<
+    T extends Prisma.User$emailVerificationTokensArgs<ExtArgs> = {},
+  >(
+    args?: Prisma.Subset<T, Prisma.User$emailVerificationTokensArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$EmailVerificationTokenPayload<ExtArgs>,
+        T,
+        "findMany",
+        GlobalOmitOptions
+      >
+    | Null
+  >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1934,6 +2249,7 @@ export interface UserFieldRefs {
   readonly createdAt: Prisma.FieldRef<"User", "DateTime">;
   readonly updatedAt: Prisma.FieldRef<"User", "DateTime">;
   readonly deletedAt: Prisma.FieldRef<"User", "DateTime">;
+  readonly emailVerifiedAt: Prisma.FieldRef<"User", "DateTime">;
 }
 
 // Custom InputTypes
@@ -2530,6 +2846,37 @@ export type User$passwordResetTokensArgs<
   distinct?:
     | Prisma.PasswordResetTokenScalarFieldEnum
     | Prisma.PasswordResetTokenScalarFieldEnum[];
+};
+
+/**
+ * User.emailVerificationTokens
+ */
+export type User$emailVerificationTokensArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the EmailVerificationToken
+   */
+  select?: Prisma.EmailVerificationTokenSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the EmailVerificationToken
+   */
+  omit?: Prisma.EmailVerificationTokenOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailVerificationTokenInclude<ExtArgs> | null;
+  where?: Prisma.EmailVerificationTokenWhereInput;
+  orderBy?:
+    | Prisma.EmailVerificationTokenOrderByWithRelationInput
+    | Prisma.EmailVerificationTokenOrderByWithRelationInput[];
+  cursor?: Prisma.EmailVerificationTokenWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?:
+    | Prisma.EmailVerificationTokenScalarFieldEnum
+    | Prisma.EmailVerificationTokenScalarFieldEnum[];
 };
 
 /**

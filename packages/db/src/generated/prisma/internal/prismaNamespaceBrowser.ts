@@ -89,6 +89,7 @@ export const ModelName = {
   TenantMessageTemplate: "TenantMessageTemplate",
   NotificationPreference: "NotificationPreference",
   PasswordResetToken: "PasswordResetToken",
+  EmailVerificationToken: "EmailVerificationToken",
 } as const;
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
@@ -130,6 +131,7 @@ export const UserScalarFieldEnum = {
   createdAt: "createdAt",
   updatedAt: "updatedAt",
   deletedAt: "deletedAt",
+  emailVerifiedAt: "emailVerifiedAt",
 } as const;
 
 export type UserScalarFieldEnum =
@@ -674,6 +676,18 @@ export const PasswordResetTokenScalarFieldEnum = {
 
 export type PasswordResetTokenScalarFieldEnum =
   (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum];
+
+export const EmailVerificationTokenScalarFieldEnum = {
+  id: "id",
+  userId: "userId",
+  tokenHash: "tokenHash",
+  expiresAt: "expiresAt",
+  usedAt: "usedAt",
+  createdAt: "createdAt",
+} as const;
+
+export type EmailVerificationTokenScalarFieldEnum =
+  (typeof EmailVerificationTokenScalarFieldEnum)[keyof typeof EmailVerificationTokenScalarFieldEnum];
 
 export const SortOrder = {
   asc: "asc",

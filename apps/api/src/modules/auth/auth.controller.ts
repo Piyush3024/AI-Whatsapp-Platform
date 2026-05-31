@@ -6,6 +6,8 @@ import {
   HttpStatus,
   Post,
   UseGuards,
+  Query,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -23,6 +25,7 @@ import { ResetPasswordDto } from './dto/reset-password.dto.js';
 import { Public } from '../../common/decorators/public.decorator.js';
 import { CurrentUser } from '../../common/decorators/current-user.decorator.js';
 import type { CurrentUserPayload } from '../../common/decorators/current-user.decorator.js';
+import { ResendVerificationDto } from './dto/resend-verification.dto.js';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -147,5 +150,45 @@ export class AuthController {
   async resetPassword(@Body() dto: ResetPasswordDto) {
     await this.authService.resetPassword(dto.token, dto.newPassword);
     return { message: 'Password successfully reset ho gaya. Ab login karo.' };
+  }
+
+  // ── Verify Email ──────────────────────────────────────────────────────────
+
+  @Public()
+  @Get('verify-email')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ strict: { limit: 10, ttl: 60_000 } })
+  @ApiOperation({ summary: 'Verify email address via token from email link' })
+  @ApiResponse({ status: 200, description: 'Email verified successfully' })
+  @ApiResponse({
+    status: 400,
+    description: 'Token invalid, expired, or already used',
+  })
+  async verifyEmail(@Query('token') token: string) {
+    if (!token) {
+      throw new BadRequestException('Token is required.');
+    }
+    await this.authService.verifyEmail(token);
+    return { message: 'Email verified successfully. You can now login.' };
+  }
+
+  // ── Resend Verification ───────────────────────────────────────────────────
+
+  @Public()
+  @Post('resend-verification')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ strict: { limit: 3, ttl: 60_000 } })
+  @ApiOperation({ summary: 'Resend email verification link' })
+  @ApiResponse({
+    status: 200,
+    description:
+      'If email is registered and unverified, a new link will be sent',
+  })
+  async resendVerification(@Body() dto: ResendVerificationDto) {
+    await this.authService.resendVerification(dto.email);
+    return {
+      message:
+        'If your email is registered and unverified, a new verification link has been sent.',
+    };
   }
 }
