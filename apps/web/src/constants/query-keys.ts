@@ -123,4 +123,15 @@ export const QUERY_KEYS = {
     messages: (id: string, cursor?: string) =>
       ["conversations", "messages", id, cursor] as const,
   },
+
+  /**
+   * Notifications-related queries
+   */
+
+  notifications: {
+    all: ["notifications"] as const,
+    list: (params?: Record<string, unknown>) =>
+      ["notifications", "list", params] as const,
+    unreadCount: ["notifications", "unread-count"] as const,
+  },
 } as const;

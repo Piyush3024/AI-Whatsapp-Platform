@@ -152,4 +152,14 @@ export const API_ENDPOINTS = {
     messages: (id: string) => `/conversations/${id}/messages`,
     updateStatus: (id: string) => `/conversations/${id}`,
   },
+
+  /**
+   * Notifications-related endpoints
+   */
+  notifications: {
+    list: "/notifications",
+    unreadCount: "/notifications/unread-count",
+    markRead: (id: string) => `/notifications/${id}/read`,
+    markAllRead: "/notifications/mark-all-read",
+  },
 } as const;

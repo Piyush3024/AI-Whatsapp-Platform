@@ -6,8 +6,7 @@ import type {
   AiReplyJob,
   OutboundMessageJob,
   EmbeddingJob,
-} from "../types/job-payloads.js";
-import type {
+  HumanHandoffNotifyJob,
   RemindersQueuePayload,
   FollowUpJob,
 } from "../types/job-payloads.js";
@@ -114,6 +113,19 @@ export const analyticsQueue = new Queue(QUEUE_NAMES.ANALYTICS, {
   },
 });
 
+export const notificationsQueue = new Queue<HumanHandoffNotifyJob>(
+  QUEUE_NAMES.NOTIFICATIONS,
+  {
+    connection: producerRedis,
+    defaultJobOptions: {
+      attempts: 3,
+      backoff: { type: "exponential", delay: 2_000 },
+      removeOnComplete: { age: 24 * 3600 },
+      removeOnFail: { age: 7 * 24 * 3600 },
+    },
+  },
+);
+
 export async function closeQueues(): Promise<void> {
   await aiReplyQueue.close();
   await outboundQueue.close();
@@ -121,5 +133,6 @@ export async function closeQueues(): Promise<void> {
   await analyticsQueue.close();
   await embeddingsQueue.close();
   await followUpsQueue.close();
+  await notificationsQueue.close();
   await producerRedis.quit();
 }

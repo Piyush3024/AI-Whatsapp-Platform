@@ -119,4 +119,13 @@ export interface ReminderJobPayload {
   ruleType: ReminderRuleType;
 }
 
+export interface HumanHandoffNotifyJob {
+  tenantId: string;
+  conversationId: string;
+  customerId: string;
+  customerPhone: string;
+  customerName: string | null;
+  assignedStaffId: string | null;
+}
+
 export type RemindersQueuePayload = ReminderJobPayload | { sweep?: boolean };

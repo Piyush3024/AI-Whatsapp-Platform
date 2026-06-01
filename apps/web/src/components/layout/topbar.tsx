@@ -15,6 +15,7 @@ import { useAuthStore } from "@/stores/auth.store";
 import { useLogout } from "@/app/(auth)/logout/hooks/use-logout";
 import { useUIStore } from "@/stores/ui.store";
 import { useTheme } from "next-themes";
+import { NotificationBell } from "@/components/layout/notification-bell";
 
 function getInitials(name: string): string {
   return name
@@ -48,9 +49,7 @@ export function Topbar() {
       {/* Right side actions */}
       <div className="flex items-center gap-2">
         {/* Notifications */}
-        <Button variant="ghost" size="icon-sm">
-          <Icons.notifications className="size-4" />
-        </Button>
+        <NotificationBell />
 
         {/* Theme toggle */}
         <Button

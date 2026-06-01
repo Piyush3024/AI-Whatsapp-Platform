@@ -9,10 +9,17 @@ import type {
   AiReplyJob,
   EmbeddingJob,
   FollowUpJob,
+  HumanHandoffNotifyJob,
 } from "./types/job-payloads.js";
 import { processOutboundMessage } from "./processors/whatsapp-outbound.processor.js";
+import { processNotificationJob } from "./processors/notification.processor.js";
 import type { OutboundMessageJob } from "./types/job-payloads.js";
-import { closeQueues, analyticsQueue, embeddingsQueue } from "./lib/queues.js";
+import {
+  closeQueues,
+  analyticsQueue,
+  embeddingsQueue,
+  // notificationsQueue,
+} from "./lib/queues.js";
 import { Worker } from "bullmq";
 import { redisConnection, checkRedisHealth, closeRedis } from "./lib/redis.js";
 import { connectPrisma, disconnectPrisma } from "./lib/prisma.js";
@@ -117,6 +124,15 @@ function createWorkers(): Worker[] {
       concurrency: 3,
     },
   );
+  const notificationsWorker = new Worker<HumanHandoffNotifyJob>(
+    QUEUE_NAMES.NOTIFICATIONS,
+    processNotificationJob,
+    {
+      connection: redisConnection,
+      concurrency: 5,
+    },
+  );
+
   created.push(
     inboundWorker,
     aiReplyWorker,
@@ -125,6 +141,7 @@ function createWorkers(): Worker[] {
     followUpsWorker,
     embeddingsWorker,
     analyticsWorker,
+    notificationsWorker,
   );
 
   return created;

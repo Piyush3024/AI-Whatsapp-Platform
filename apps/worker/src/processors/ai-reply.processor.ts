@@ -2,7 +2,8 @@ import type { Job } from "bullmq";
 import OpenAI from "openai";
 import { createJobLogger } from "../lib/logger.js";
 import { withTenantContext } from "../lib/prisma.js";
-import { outboundQueue } from "../lib/queues.js";
+import { outboundQueue, notificationsQueue } from "../lib/queues.js";
+import type { HumanHandoffNotifyJob } from "../types/job-payloads.js";
 import { generateEmbedding } from "./embeddings.processor.js";
 import { env } from "../config/env.js";
 import type { AiReplyJob, OutboundMessageJob } from "../types/job-payloads.js";
@@ -15,6 +16,23 @@ const TEMPERATURE = 0.7;
 const RAG_TOP_K = 5;
 const HISTORY_LIMIT = 10;
 const MAX_RESPONSE_CHARS = 1500;
+
+const HANDOFF_TRIGGERS = [
+  "human agent",
+  "staff member",
+  "representative",
+  "connect you with",
+  "transfer you",
+  "someone will assist",
+  "team will reach",
+  "please wait",
+  "escalat",
+];
+
+function detectsHandoff(text: string): boolean {
+  const lower = text.toLowerCase();
+  return HANDOFF_TRIGGERS.some((trigger) => lower.includes(trigger));
+}
 
 export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
   const {
@@ -218,6 +236,57 @@ export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
     { messageId: savedMessage.id, conversationId },
     "AI response saved to DB",
   );
+
+  if (detectsHandoff(aiResponseText)) {
+    log.info(
+      { conversationId, messageId: savedMessage.id },
+      "Handoff trigger detected in AI response — updating conversation state",
+    );
+
+    const convDetails = await withTenantContext(tenantId, async (tx) => {
+      return tx.conversation.findFirst({
+        where: { id: conversationId },
+        select: {
+          state: true,
+          assignedStaffId: true,
+          customer: {
+            select: { id: true, phone: true, name: true },
+          },
+        },
+      });
+    });
+
+    if (convDetails && convDetails.state !== "HUMAN_HANDOFF") {
+      await withTenantContext(tenantId, async (tx) => {
+        await tx.conversation.update({
+          where: { id: conversationId },
+          data: {
+            state: "HUMAN_HANDOFF",
+            status: "HUMAN_HANDOFF",
+          },
+        });
+      });
+
+      const handoffJob: HumanHandoffNotifyJob = {
+        tenantId,
+        conversationId,
+        customerId: convDetails.customer.id,
+        customerPhone: convDetails.customer.phone,
+        customerName: convDetails.customer.name,
+        assignedStaffId: convDetails.assignedStaffId,
+      };
+
+      await notificationsQueue.add("human-handoff-notify", handoffJob, {
+        attempts: 3,
+        backoff: { type: "exponential", delay: 2_000 },
+      });
+
+      log.info(
+        { conversationId, assignedStaffId: convDetails.assignedStaffId },
+        "Human handoff notification job enqueued",
+      );
+    }
+  }
 
   const outboundJob: OutboundMessageJob = {
     tenantId,
