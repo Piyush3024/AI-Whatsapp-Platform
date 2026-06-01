@@ -11,6 +11,7 @@ import {
   HttpStatus,
   ParseUUIDPipe,
   ValidationPipe,
+  Res,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -20,6 +21,7 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
+import type { FastifyReply } from 'fastify';
 import { Throttle, SkipThrottle } from '@nestjs/throttler';
 import { CustomersService } from './customers.service.js';
 import {
@@ -105,6 +107,25 @@ export class CustomersController {
   })
   async getStats(): Promise<CustomerStatsResponse> {
     return this.customersService.getStats();
+  }
+
+  @Get('export')
+  @SkipThrottle({ default: false })
+  @Roles(UserRole.ADMIN, UserRole.OWNER)
+  @ApiOperation({ summary: 'Export customers as CSV' })
+  @ApiResponse({ status: 200, description: 'CSV file download' })
+  async exportCsv(
+    @Query(new ValidationPipe({ transform: true, whitelist: true }))
+    query: CustomerQueryDto,
+    @Res() res: FastifyReply,
+  ) {
+    const csv = await this.customersService.exportCsv(query);
+    const filename = `customers-${new Date().toISOString().split('T')[0]}.csv`;
+
+    void res
+      .header('Content-Type', 'text/csv; charset=utf-8')
+      .header('Content-Disposition', `attachment; filename="${filename}"`)
+      .send(csv);
   }
 
   @Get(':id')

@@ -48,6 +48,7 @@ export const API_ENDPOINTS = {
     update: (id: string) => `/bookings/${id}`,
     updateStatus: (id: string) => `/bookings/${id}/status`,
     delete: (id: string) => `/bookings/${id}`,
+    export: "/bookings/export",
   },
 
   /**
@@ -61,6 +62,7 @@ export const API_ENDPOINTS = {
     update: (id: string) => `/customers/${id}`,
     delete: (id: string) => `/customers/${id}`,
     conversations: (id: string) => `/customers/${id}/conversations`,
+    export: "/customers/export",
   },
 
   /**

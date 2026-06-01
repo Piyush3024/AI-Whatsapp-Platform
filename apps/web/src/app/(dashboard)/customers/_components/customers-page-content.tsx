@@ -6,6 +6,7 @@ import { Icons } from "@repo/ui/components/icons";
 import { CustomerList } from "./customer-list";
 import { CustomerForm } from "./customer-form";
 import type { CustomerQuery } from "@/types/customer.types";
+import { useExportCustomers } from "../hooks/use-export-customers";
 
 const DEFAULT_FILTERS: CustomerQuery = {
   page: 1,
@@ -15,6 +16,7 @@ const DEFAULT_FILTERS: CustomerQuery = {
 export function CustomersPageContent() {
   const [filters, setFilters] = useState<CustomerQuery>(DEFAULT_FILTERS);
   const [formOpen, setFormOpen] = useState(false);
+  const { exportCsv, isExporting } = useExportCustomers();
 
   return (
     <div className="space-y-6">
@@ -25,10 +27,26 @@ export function CustomersPageContent() {
             View and manage your customer base
           </p>
         </div>
-        <Button onClick={() => setFormOpen(true)}>
-          <Icons.add className="size-4 mr-2" />
-          Add Customer
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => exportCsv(filters)}
+            disabled={isExporting}
+            className="cursor-pointer"
+          >
+            {isExporting ? (
+              <Icons.spinner className="size-4 mr-2 animate-spin" />
+            ) : (
+              <Icons.download className="size-4 mr-2" />
+            )}
+            {isExporting ? "Exporting…" : "Export CSV"}
+          </Button>
+          <Button onClick={() => setFormOpen(true)}>
+            <Icons.add className="size-4 mr-2" />
+            Add Customer
+          </Button>
+        </div>
       </div>
 
       <CustomerList filters={filters} onFilterChange={setFilters} />

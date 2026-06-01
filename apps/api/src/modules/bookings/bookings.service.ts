@@ -677,4 +677,85 @@ export class BookingsService {
 
     this.logger.log(`Follow-ups scheduled for booking: ${bookingId}`);
   }
+
+  async exportCsv(query: BookingQueryDto): Promise<string> {
+    const tenantId = this.prisma.getTenantId();
+
+    const where: Prisma.BookingWhereInput = { tenantId };
+
+    if (query.status) where.status = query.status;
+    if (query.staffId) where.staffId = query.staffId;
+    if (query.customerId) where.customerId = query.customerId;
+    if (query.locationId) where.locationId = query.locationId;
+    if (query.source) where.source = query.source;
+
+    if (query.dateFrom || query.dateTo) {
+      where.startTime = {};
+      if (query.dateFrom) where.startTime.gte = new Date(query.dateFrom);
+      if (query.dateTo) where.startTime.lte = new Date(query.dateTo);
+    }
+
+    const bookings = await this.prisma.db.booking.findMany({
+      where,
+      orderBy: { startTime: 'asc' },
+      // Cap at 10,000 rows for safety
+      take: 10_000,
+      include: {
+        customer: { select: { name: true, phone: true, email: true } },
+        staff: { select: { name: true } },
+        location: { select: { name: true } },
+        services: {
+          include: {
+            service: { select: { name: true, price: true } },
+          },
+        },
+      },
+    });
+
+    const headers = [
+      'ID',
+      'Status',
+      'Source',
+      'Customer Name',
+      'Customer Phone',
+      'Customer Email',
+      'Staff',
+      'Location',
+      'Services',
+      'Total Amount (Rs.)',
+      'Start Time',
+      'End Time',
+      'Notes',
+      'Created At',
+    ];
+
+    const escape = (value: string | null | undefined): string => {
+      if (value == null) return '';
+      // Wrap in quotes and escape internal quotes
+      return `"${String(value).replace(/"/g, '""')}"`;
+    };
+
+    const rows = bookings.map((b) => {
+      const services = b.services.map((bs) => bs.service.name).join('; ');
+
+      return [
+        escape(b.id),
+        escape(b.status),
+        escape(b.source),
+        escape(b.customer?.name),
+        escape(b.customer?.phone),
+        escape(b.customer?.email),
+        escape(b.staff?.name),
+        escape(b.location?.name),
+        escape(services),
+        escape(b.totalAmount != null ? (b.totalAmount / 100).toFixed(2) : null),
+        escape(b.startTime.toISOString()),
+        escape(b.endTime.toISOString()),
+        escape(b.notes),
+        escape(b.createdAt.toISOString()),
+      ].join(',');
+    });
+
+    return [headers.join(','), ...rows].join('\n');
+  }
 }

@@ -7,6 +7,7 @@ import type {
   CustomerConversationListResponse,
   CreateCustomerDto,
   UpdateCustomerDto,
+  CustomerQuery,
 } from "@/types/customer.types";
 
 export async function getCustomers(params?: {
@@ -62,3 +63,13 @@ export async function getCustomerConversations(
   >(API_ENDPOINTS.customers.conversations(id), { params });
   return response.data.data;
 }
+
+export const exportCustomersCsv = async (
+  params?: CustomerQuery,
+): Promise<string> => {
+  const res = await apiClient.get<string>(API_ENDPOINTS.customers.export, {
+    params,
+    responseType: "text",
+  });
+  return res.data;
+};

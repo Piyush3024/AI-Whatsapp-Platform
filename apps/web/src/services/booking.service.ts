@@ -60,3 +60,13 @@ export async function updateBookingStatus(
 export async function deleteBooking(id: string): Promise<void> {
   await apiClient.delete(API_ENDPOINTS.bookings.delete(id));
 }
+
+export const exportBookingsCsv = async (
+  params?: BookingQuery,
+): Promise<string> => {
+  const res = await apiClient.get<string>(API_ENDPOINTS.bookings.export, {
+    params,
+    responseType: "text",
+  });
+  return res.data;
+};

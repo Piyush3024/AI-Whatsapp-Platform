@@ -11,6 +11,7 @@ import {
   HttpStatus,
   ParseUUIDPipe,
   ValidationPipe,
+  Res,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -19,6 +20,7 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
+import type { FastifyReply } from 'fastify';
 import { SkipThrottle } from '@nestjs/throttler';
 import { BookingsService } from './bookings.service.js';
 import {
@@ -72,6 +74,25 @@ export class BookingsController {
     query: CalendarQueryDto,
   ) {
     return this.bookingsService.getCalendar(query);
+  }
+
+  @Get('export')
+  @SkipThrottle({ default: false })
+  @Roles(UserRole.ADMIN, UserRole.OWNER)
+  @ApiOperation({ summary: 'Export bookings as CSV' })
+  @ApiResponse({ status: 200, description: 'CSV file download' })
+  async exportCsv(
+    @Query(new ValidationPipe({ transform: true, whitelist: true }))
+    query: BookingQueryDto,
+    @Res() res: FastifyReply,
+  ) {
+    const csv = await this.bookingsService.exportCsv(query);
+    const filename = `bookings-${new Date().toISOString().split('T')[0]}.csv`;
+
+    void res
+      .header('Content-Type', 'text/csv; charset=utf-8')
+      .header('Content-Disposition', `attachment; filename="${filename}"`)
+      .send(csv);
   }
 
   @Get(':id')

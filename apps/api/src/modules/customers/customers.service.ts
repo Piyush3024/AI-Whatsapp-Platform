@@ -412,4 +412,73 @@ export class CustomersService {
       updatedAt: customer.updatedAt as Date,
     };
   }
+
+  async exportCsv(query: CustomerQueryDto): Promise<string> {
+    const tenantId = this.prisma.getTenantId();
+
+    const where: Record<string, unknown> = { tenantId };
+
+    if (query.search) {
+      where.OR = [
+        { name: { contains: query.search, mode: 'insensitive' } },
+        { phone: { contains: query.search, mode: 'insensitive' } },
+        { email: { contains: query.search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (query.status) where.optInStatus = query.status;
+    if (query.tag) where.tags = { array_contains: query.tag.toLowerCase() };
+
+    const customers = await this.prisma.db.customer.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      take: 10_000,
+      select: {
+        id: true,
+        name: true,
+        phone: true,
+        email: true,
+        optInStatus: true,
+        tags: true,
+        notes: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    const headers = [
+      'ID',
+      'Name',
+      'Phone',
+      'Email',
+      'Opt-In Status',
+      'Tags',
+      'Notes',
+      'Created At',
+      'Updated At',
+    ];
+
+    const escape = (value: string | null | undefined): string => {
+      if (value == null) return '';
+      return `"${String(value).replace(/"/g, '""')}"`;
+    };
+
+    const rows = customers.map((c) => {
+      const tags = Array.isArray(c.tags) ? (c.tags as string[]).join('; ') : '';
+
+      return [
+        escape(c.id),
+        escape(c.name),
+        escape(c.phone),
+        escape(c.email),
+        escape(c.optInStatus),
+        escape(tags),
+        escape(c.notes),
+        escape(c.createdAt.toISOString()),
+        escape(c.updatedAt.toISOString()),
+      ].join(',');
+    });
+
+    return [headers.join(','), ...rows].join('\n');
+  }
 }

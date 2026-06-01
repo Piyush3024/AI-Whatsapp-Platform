@@ -7,6 +7,7 @@ import type { BookingQuery } from "@/types/booking.types";
 import { Button } from "@repo/ui/components/button";
 import { Icons } from "@repo/ui/components/icons";
 import { BookingForm } from "./booking-form";
+import { useExportBookings } from "../hooks/use-export-booking";
 
 const DEFAULT_FILTERS: BookingQuery = {
   page: 1,
@@ -16,6 +17,7 @@ const DEFAULT_FILTERS: BookingQuery = {
 export function BookingsPageContent() {
   const [filters, setFilters] = useState<BookingQuery>(DEFAULT_FILTERS);
   const [formOpen, setFormOpen] = useState(false);
+  const { exportCsv, isExporting } = useExportBookings();
 
   return (
     <div className="space-y-6">
@@ -26,10 +28,26 @@ export function BookingsPageContent() {
             Manage and track all your bookings
           </p>
         </div>
-        <Button onClick={() => setFormOpen(true)}>
-          <Icons.add className="size-4 mr-2" />
-          Create Booking
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => exportCsv(filters)}
+            disabled={isExporting}
+            className="cursor-pointer"
+          >
+            {isExporting ? (
+              <Icons.spinner className="size-4 mr-2 animate-spin" />
+            ) : (
+              <Icons.download className="size-4 mr-2" />
+            )}
+            {isExporting ? "Exporting…" : "Export CSV"}
+          </Button>
+          <Button onClick={() => setFormOpen(true)}>
+            <Icons.add className="size-4 mr-2" />
+            Create Booking
+          </Button>
+        </div>
       </div>
 
       <BookingFilters
