@@ -9,12 +9,18 @@ export interface NavItem {
   requiredPermission?: Permission;
 }
 
+export interface NavGroup {
+  label: string;
+  icon: IconName;
+  requiredPermission?: Permission;
+  items: NavItem[];
+}
+
 export const MAIN_NAV_ITEMS: NavItem[] = [
   {
     href: ROUTES.dashboard,
     label: "Dashboard",
     icon: "home",
-    // no permission = all roles see this
   },
   {
     href: ROUTES.bookings.list,
@@ -66,11 +72,26 @@ export const MAIN_NAV_ITEMS: NavItem[] = [
   },
 ];
 
-export const BOTTOM_NAV_ITEMS: NavItem[] = [
-  {
-    href: ROUTES.settings.root,
-    label: "Settings",
-    icon: "settings",
-    requiredPermission: "settings:manage",
-  },
-];
+export const SETTINGS_NAV_GROUP: NavGroup = {
+  label: "Settings",
+  icon: "settings",
+  items: [
+    {
+      href: ROUTES.settings.root,
+      label: "General",
+      icon: "settings",
+    },
+    {
+      href: ROUTES.settings.billing,
+      label: "Billing",
+      icon: "billing",
+      requiredPermission: "billing:manage",
+    },
+    {
+      href: ROUTES.settings.auditLog,
+      label: "Audit Log",
+      icon: "shieldCheck",
+      requiredPermission: "billing:manage", // OWNER only
+    },
+  ],
+};

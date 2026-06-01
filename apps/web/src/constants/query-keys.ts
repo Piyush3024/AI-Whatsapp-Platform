@@ -134,4 +134,10 @@ export const QUERY_KEYS = {
       ["notifications", "list", params] as const,
     unreadCount: ["notifications", "unread-count"] as const,
   },
+
+  /**
+   * Audit-related queries
+   */
+  auditLogs: (params?: Record<string, unknown>) =>
+    ["audit-logs", params] as const,
 } as const;

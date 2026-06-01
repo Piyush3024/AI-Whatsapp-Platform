@@ -45,8 +45,8 @@ export const ROUTES = {
   // Settings
   settings: {
     root: "/settings",
-    members: "/settings/members",
     billing: "/settings/billing",
+    auditLog: "/settings/audit-log",
   },
   // COnversations
   conversations: {

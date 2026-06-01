@@ -10,6 +10,9 @@ import {
   Patch,
   Post,
   Put,
+  Query,
+  ParseIntPipe,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { TenantService } from './tenant.service.js';
@@ -147,5 +150,27 @@ export class TenantController {
     @Body() dto: SetBusinessHoursDto,
   ) {
     return this.tenantService.setBusinessHours(user.tenantId, locationId, dto);
+  }
+
+  @Get('audit-logs')
+  @Roles(UserRole.OWNER)
+  @ApiOperation({ summary: 'Get audit logs (OWNER only)' })
+  getAuditLogs(
+    @CurrentUser() user: CurrentUserPayload,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+    @Query('action') action?: string,
+    @Query('userId') userId?: string,
+    @Query('from') from?: string,
+    @Query('to') to?: string,
+  ) {
+    return this.tenantService.getAuditLogs(user.tenantId, {
+      page,
+      limit,
+      action,
+      userId,
+      from,
+      to,
+    });
   }
 }

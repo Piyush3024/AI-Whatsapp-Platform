@@ -143,6 +143,12 @@ export const API_ENDPOINTS = {
   },
 
   /**
+   * Audit-related endpoints
+   */
+
+  auditLogs: "/tenant/audit-logs",
+
+  /**
    * Conversations-related endpoints
    */
 

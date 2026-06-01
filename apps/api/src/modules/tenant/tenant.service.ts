@@ -289,4 +289,78 @@ export class TenantService {
 
     return this.getBusinessHours(tenantId, locationId);
   }
+
+  async getAuditLogs(
+    tenantId: string,
+    query: {
+      page?: number;
+      limit?: number;
+      action?: string;
+      userId?: string;
+      from?: string;
+      to?: string;
+    },
+  ) {
+    const page = query.page ?? 1;
+    const limit = Math.min(query.limit ?? 20, 100);
+    const skip = (page - 1) * limit;
+
+    const where: Record<string, unknown> = { tenantId };
+
+    if (query.action) where.action = query.action;
+    if (query.userId) where.userId = query.userId;
+    if (query.from || query.to) {
+      where.createdAt = {
+        ...(query.from && { gte: new Date(query.from) }),
+        ...(query.to && { lte: new Date(query.to) }),
+      };
+    }
+
+    const [items, total] = await Promise.all([
+      this.prisma.db.auditLog.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+        select: {
+          id: true,
+          action: true,
+          resource: true,
+          resourceId: true,
+          metadata: true,
+          ipAddress: true,
+          userAgent: true,
+          userId: true,
+          createdAt: true,
+        },
+      }),
+      this.prisma.db.auditLog.count({ where }),
+    ]);
+
+    const userIds = [
+      ...new Set(items.map((i) => i.userId).filter(Boolean)),
+    ] as string[];
+    const users =
+      userIds.length > 0
+        ? await this.prisma.db.user.findMany({
+            where: { id: { in: userIds } },
+            select: { id: true, name: true, email: true },
+          })
+        : [];
+
+    const userMap = Object.fromEntries(users.map((u) => [u.id, u]));
+
+    return {
+      items: items.map((log) => ({
+        ...log,
+        user: log.userId ? (userMap[log.userId] ?? null) : null,
+      })),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
 }

@@ -50,6 +50,8 @@ import {
   IconBrandSlack,
   IconMessages,
   IconSend,
+  IconReceiptRupee,
+  IconShieldCheck,
   type IconProps,
 } from "@tabler/icons-react";
 
@@ -69,6 +71,8 @@ export const Icons = {
   sun: IconSun,
   moon: IconMoon,
   messages: IconMessages,
+  billing: IconReceiptRupee,
+  shieldCheck: IconShieldCheck,
 
   // Actions
   logout: IconLogout,
