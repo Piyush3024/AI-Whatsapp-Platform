@@ -233,6 +233,7 @@ export type TenantWhereInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideListRelationFilter;
   bookingServices?: Prisma.BookingServiceListRelationFilter;
   notificationPreferences?: Prisma.NotificationPreferenceListRelationFilter;
+  notifications?: Prisma.NotificationListRelationFilter;
 };
 
 export type TenantOrderByWithRelationInput = {
@@ -271,6 +272,7 @@ export type TenantOrderByWithRelationInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideOrderByRelationAggregateInput;
   bookingServices?: Prisma.BookingServiceOrderByRelationAggregateInput;
   notificationPreferences?: Prisma.NotificationPreferenceOrderByRelationAggregateInput;
+  notifications?: Prisma.NotificationOrderByRelationAggregateInput;
 };
 
 export type TenantWhereUniqueInput = Prisma.AtLeast<
@@ -313,6 +315,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<
     staffScheduleOverrides?: Prisma.StaffScheduleOverrideListRelationFilter;
     bookingServices?: Prisma.BookingServiceListRelationFilter;
     notificationPreferences?: Prisma.NotificationPreferenceListRelationFilter;
+    notifications?: Prisma.NotificationListRelationFilter;
   },
   "id" | "slug"
 >;
@@ -391,6 +394,7 @@ export type TenantCreateInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateInput = {
@@ -429,6 +433,7 @@ export type TenantUncheckedCreateInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUpdateInput = {
@@ -473,6 +478,7 @@ export type TenantUpdateInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateInput = {
@@ -517,6 +523,7 @@ export type TenantUncheckedUpdateInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateManyInput = {
@@ -1316,6 +1323,32 @@ export type TenantUpdateOneRequiredWithoutNotificationPreferencesNestedInput = {
   >;
 };
 
+export type TenantCreateNestedOneWithoutNotificationsInput = {
+  create?: Prisma.XOR<
+    Prisma.TenantCreateWithoutNotificationsInput,
+    Prisma.TenantUncheckedCreateWithoutNotificationsInput
+  >;
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutNotificationsInput;
+  connect?: Prisma.TenantWhereUniqueInput;
+};
+
+export type TenantUpdateOneRequiredWithoutNotificationsNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.TenantCreateWithoutNotificationsInput,
+    Prisma.TenantUncheckedCreateWithoutNotificationsInput
+  >;
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutNotificationsInput;
+  upsert?: Prisma.TenantUpsertWithoutNotificationsInput;
+  connect?: Prisma.TenantWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.TenantUpdateToOneWithWhereWithoutNotificationsInput,
+      Prisma.TenantUpdateWithoutNotificationsInput
+    >,
+    Prisma.TenantUncheckedUpdateWithoutNotificationsInput
+  >;
+};
+
 export type TenantCreateWithoutMembersInput = {
   id?: string;
   name: string;
@@ -1351,6 +1384,7 @@ export type TenantCreateWithoutMembersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutMembersInput = {
@@ -1388,6 +1422,7 @@ export type TenantUncheckedCreateWithoutMembersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutMembersInput = {
@@ -1459,6 +1494,7 @@ export type TenantUpdateWithoutMembersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutMembersInput = {
@@ -1502,6 +1538,7 @@ export type TenantUncheckedUpdateWithoutMembersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutRefreshTokensInput = {
@@ -1539,6 +1576,7 @@ export type TenantCreateWithoutRefreshTokensInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutRefreshTokensInput = {
@@ -1576,6 +1614,7 @@ export type TenantUncheckedCreateWithoutRefreshTokensInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutRefreshTokensInput = {
@@ -1647,6 +1686,7 @@ export type TenantUpdateWithoutRefreshTokensInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutRefreshTokensInput = {
@@ -1690,6 +1730,7 @@ export type TenantUncheckedUpdateWithoutRefreshTokensInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutInvitationsInput = {
@@ -1727,6 +1768,7 @@ export type TenantCreateWithoutInvitationsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutInvitationsInput = {
@@ -1764,6 +1806,7 @@ export type TenantUncheckedCreateWithoutInvitationsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutInvitationsInput = {
@@ -1835,6 +1878,7 @@ export type TenantUpdateWithoutInvitationsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutInvitationsInput = {
@@ -1878,6 +1922,7 @@ export type TenantUncheckedUpdateWithoutInvitationsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutSubscriptionsInput = {
@@ -1915,6 +1960,7 @@ export type TenantCreateWithoutSubscriptionsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutSubscriptionsInput = {
@@ -1952,6 +1998,7 @@ export type TenantUncheckedCreateWithoutSubscriptionsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutSubscriptionsInput = {
@@ -2023,6 +2070,7 @@ export type TenantUpdateWithoutSubscriptionsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutSubscriptionsInput = {
@@ -2066,6 +2114,7 @@ export type TenantUncheckedUpdateWithoutSubscriptionsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutInvoicesInput = {
@@ -2103,6 +2152,7 @@ export type TenantCreateWithoutInvoicesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutInvoicesInput = {
@@ -2140,6 +2190,7 @@ export type TenantUncheckedCreateWithoutInvoicesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutInvoicesInput = {
@@ -2211,6 +2262,7 @@ export type TenantUpdateWithoutInvoicesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutInvoicesInput = {
@@ -2254,6 +2306,7 @@ export type TenantUncheckedUpdateWithoutInvoicesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutLocationsInput = {
@@ -2291,6 +2344,7 @@ export type TenantCreateWithoutLocationsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutLocationsInput = {
@@ -2328,6 +2382,7 @@ export type TenantUncheckedCreateWithoutLocationsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutLocationsInput = {
@@ -2399,6 +2454,7 @@ export type TenantUpdateWithoutLocationsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutLocationsInput = {
@@ -2442,6 +2498,7 @@ export type TenantUncheckedUpdateWithoutLocationsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutLocationBusinessHoursInput = {
@@ -2479,6 +2536,7 @@ export type TenantCreateWithoutLocationBusinessHoursInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutLocationBusinessHoursInput = {
@@ -2516,6 +2574,7 @@ export type TenantUncheckedCreateWithoutLocationBusinessHoursInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutLocationBusinessHoursInput = {
@@ -2587,6 +2646,7 @@ export type TenantUpdateWithoutLocationBusinessHoursInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutLocationBusinessHoursInput = {
@@ -2630,6 +2690,7 @@ export type TenantUncheckedUpdateWithoutLocationBusinessHoursInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutWhatsappNumbersInput = {
@@ -2667,6 +2728,7 @@ export type TenantCreateWithoutWhatsappNumbersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutWhatsappNumbersInput = {
@@ -2704,6 +2766,7 @@ export type TenantUncheckedCreateWithoutWhatsappNumbersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutWhatsappNumbersInput = {
@@ -2775,6 +2838,7 @@ export type TenantUpdateWithoutWhatsappNumbersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutWhatsappNumbersInput = {
@@ -2818,6 +2882,7 @@ export type TenantUncheckedUpdateWithoutWhatsappNumbersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutCustomersInput = {
@@ -2855,6 +2920,7 @@ export type TenantCreateWithoutCustomersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutCustomersInput = {
@@ -2892,6 +2958,7 @@ export type TenantUncheckedCreateWithoutCustomersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutCustomersInput = {
@@ -2963,6 +3030,7 @@ export type TenantUpdateWithoutCustomersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutCustomersInput = {
@@ -3006,6 +3074,7 @@ export type TenantUncheckedUpdateWithoutCustomersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutConversationsInput = {
@@ -3043,6 +3112,7 @@ export type TenantCreateWithoutConversationsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutConversationsInput = {
@@ -3080,6 +3150,7 @@ export type TenantUncheckedCreateWithoutConversationsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutConversationsInput = {
@@ -3151,6 +3222,7 @@ export type TenantUpdateWithoutConversationsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutConversationsInput = {
@@ -3194,6 +3266,7 @@ export type TenantUncheckedUpdateWithoutConversationsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutMessagesInput = {
@@ -3231,6 +3304,7 @@ export type TenantCreateWithoutMessagesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutMessagesInput = {
@@ -3268,6 +3342,7 @@ export type TenantUncheckedCreateWithoutMessagesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutMessagesInput = {
@@ -3339,6 +3414,7 @@ export type TenantUpdateWithoutMessagesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutMessagesInput = {
@@ -3382,6 +3458,7 @@ export type TenantUncheckedUpdateWithoutMessagesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutStaffInput = {
@@ -3419,6 +3496,7 @@ export type TenantCreateWithoutStaffInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutStaffInput = {
@@ -3456,6 +3534,7 @@ export type TenantUncheckedCreateWithoutStaffInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutStaffInput = {
@@ -3527,6 +3606,7 @@ export type TenantUpdateWithoutStaffInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutStaffInput = {
@@ -3570,6 +3650,7 @@ export type TenantUncheckedUpdateWithoutStaffInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutStaffSchedulesInput = {
@@ -3607,6 +3688,7 @@ export type TenantCreateWithoutStaffSchedulesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutStaffSchedulesInput = {
@@ -3644,6 +3726,7 @@ export type TenantUncheckedCreateWithoutStaffSchedulesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutStaffSchedulesInput = {
@@ -3715,6 +3798,7 @@ export type TenantUpdateWithoutStaffSchedulesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutStaffSchedulesInput = {
@@ -3758,6 +3842,7 @@ export type TenantUncheckedUpdateWithoutStaffSchedulesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutStaffScheduleOverridesInput = {
@@ -3795,6 +3880,7 @@ export type TenantCreateWithoutStaffScheduleOverridesInput = {
   staffSchedules?: Prisma.StaffScheduleCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutStaffScheduleOverridesInput = {
@@ -3832,6 +3918,7 @@ export type TenantUncheckedCreateWithoutStaffScheduleOverridesInput = {
   staffSchedules?: Prisma.StaffScheduleUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutStaffScheduleOverridesInput = {
@@ -3903,6 +3990,7 @@ export type TenantUpdateWithoutStaffScheduleOverridesInput = {
   staffSchedules?: Prisma.StaffScheduleUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutStaffScheduleOverridesInput = {
@@ -3946,6 +4034,7 @@ export type TenantUncheckedUpdateWithoutStaffScheduleOverridesInput = {
   staffSchedules?: Prisma.StaffScheduleUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutServicesInput = {
@@ -3983,6 +4072,7 @@ export type TenantCreateWithoutServicesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutServicesInput = {
@@ -4020,6 +4110,7 @@ export type TenantUncheckedCreateWithoutServicesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutServicesInput = {
@@ -4091,6 +4182,7 @@ export type TenantUpdateWithoutServicesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutServicesInput = {
@@ -4134,6 +4226,7 @@ export type TenantUncheckedUpdateWithoutServicesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutBookingsInput = {
@@ -4171,6 +4264,7 @@ export type TenantCreateWithoutBookingsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutBookingsInput = {
@@ -4208,6 +4302,7 @@ export type TenantUncheckedCreateWithoutBookingsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutBookingsInput = {
@@ -4279,6 +4374,7 @@ export type TenantUpdateWithoutBookingsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutBookingsInput = {
@@ -4322,6 +4418,7 @@ export type TenantUncheckedUpdateWithoutBookingsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutBookingServicesInput = {
@@ -4359,6 +4456,7 @@ export type TenantCreateWithoutBookingServicesInput = {
   staffSchedules?: Prisma.StaffScheduleCreateNestedManyWithoutTenantInput;
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutBookingServicesInput = {
@@ -4396,6 +4494,7 @@ export type TenantUncheckedCreateWithoutBookingServicesInput = {
   staffSchedules?: Prisma.StaffScheduleUncheckedCreateNestedManyWithoutTenantInput;
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutBookingServicesInput = {
@@ -4467,6 +4566,7 @@ export type TenantUpdateWithoutBookingServicesInput = {
   staffSchedules?: Prisma.StaffScheduleUpdateManyWithoutTenantNestedInput;
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutBookingServicesInput = {
@@ -4510,6 +4610,7 @@ export type TenantUncheckedUpdateWithoutBookingServicesInput = {
   staffSchedules?: Prisma.StaffScheduleUncheckedUpdateManyWithoutTenantNestedInput;
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutTenantReminderRulesInput = {
@@ -4547,6 +4648,7 @@ export type TenantCreateWithoutTenantReminderRulesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutTenantReminderRulesInput = {
@@ -4584,6 +4686,7 @@ export type TenantUncheckedCreateWithoutTenantReminderRulesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutTenantReminderRulesInput = {
@@ -4655,6 +4758,7 @@ export type TenantUpdateWithoutTenantReminderRulesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutTenantReminderRulesInput = {
@@ -4698,6 +4802,7 @@ export type TenantUncheckedUpdateWithoutTenantReminderRulesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutScheduledRemindersInput = {
@@ -4735,6 +4840,7 @@ export type TenantCreateWithoutScheduledRemindersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutScheduledRemindersInput = {
@@ -4772,6 +4878,7 @@ export type TenantUncheckedCreateWithoutScheduledRemindersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutScheduledRemindersInput = {
@@ -4843,6 +4950,7 @@ export type TenantUpdateWithoutScheduledRemindersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutScheduledRemindersInput = {
@@ -4886,6 +4994,7 @@ export type TenantUncheckedUpdateWithoutScheduledRemindersInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutTenantAiPromptsInput = {
@@ -4923,6 +5032,7 @@ export type TenantCreateWithoutTenantAiPromptsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutTenantAiPromptsInput = {
@@ -4960,6 +5070,7 @@ export type TenantUncheckedCreateWithoutTenantAiPromptsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutTenantAiPromptsInput = {
@@ -5031,6 +5142,7 @@ export type TenantUpdateWithoutTenantAiPromptsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutTenantAiPromptsInput = {
@@ -5074,6 +5186,7 @@ export type TenantUncheckedUpdateWithoutTenantAiPromptsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutKnowledgeBaseDocsInput = {
@@ -5111,6 +5224,7 @@ export type TenantCreateWithoutKnowledgeBaseDocsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutKnowledgeBaseDocsInput = {
@@ -5148,6 +5262,7 @@ export type TenantUncheckedCreateWithoutKnowledgeBaseDocsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutKnowledgeBaseDocsInput = {
@@ -5219,6 +5334,7 @@ export type TenantUpdateWithoutKnowledgeBaseDocsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutKnowledgeBaseDocsInput = {
@@ -5262,6 +5378,7 @@ export type TenantUncheckedUpdateWithoutKnowledgeBaseDocsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutKnowledgeBaseChunksInput = {
@@ -5299,6 +5416,7 @@ export type TenantCreateWithoutKnowledgeBaseChunksInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutKnowledgeBaseChunksInput = {
@@ -5336,6 +5454,7 @@ export type TenantUncheckedCreateWithoutKnowledgeBaseChunksInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutKnowledgeBaseChunksInput = {
@@ -5407,6 +5526,7 @@ export type TenantUpdateWithoutKnowledgeBaseChunksInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutKnowledgeBaseChunksInput = {
@@ -5450,6 +5570,7 @@ export type TenantUncheckedUpdateWithoutKnowledgeBaseChunksInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutUsageEventsInput = {
@@ -5487,6 +5608,7 @@ export type TenantCreateWithoutUsageEventsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutUsageEventsInput = {
@@ -5524,6 +5646,7 @@ export type TenantUncheckedCreateWithoutUsageEventsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutUsageEventsInput = {
@@ -5595,6 +5718,7 @@ export type TenantUpdateWithoutUsageEventsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutUsageEventsInput = {
@@ -5638,6 +5762,7 @@ export type TenantUncheckedUpdateWithoutUsageEventsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutDailyUsageAggregatesInput = {
@@ -5675,6 +5800,7 @@ export type TenantCreateWithoutDailyUsageAggregatesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutDailyUsageAggregatesInput = {
@@ -5712,6 +5838,7 @@ export type TenantUncheckedCreateWithoutDailyUsageAggregatesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutDailyUsageAggregatesInput = {
@@ -5783,6 +5910,7 @@ export type TenantUpdateWithoutDailyUsageAggregatesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutDailyUsageAggregatesInput = {
@@ -5826,6 +5954,7 @@ export type TenantUncheckedUpdateWithoutDailyUsageAggregatesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutAuditLogsInput = {
@@ -5863,6 +5992,7 @@ export type TenantCreateWithoutAuditLogsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutAuditLogsInput = {
@@ -5900,6 +6030,7 @@ export type TenantUncheckedCreateWithoutAuditLogsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutAuditLogsInput = {
@@ -5971,6 +6102,7 @@ export type TenantUpdateWithoutAuditLogsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutAuditLogsInput = {
@@ -6014,6 +6146,7 @@ export type TenantUncheckedUpdateWithoutAuditLogsInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutMessageTemplatesInput = {
@@ -6051,6 +6184,7 @@ export type TenantCreateWithoutMessageTemplatesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutMessageTemplatesInput = {
@@ -6088,6 +6222,7 @@ export type TenantUncheckedCreateWithoutMessageTemplatesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutMessageTemplatesInput = {
@@ -6159,6 +6294,7 @@ export type TenantUpdateWithoutMessageTemplatesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutMessageTemplatesInput = {
@@ -6202,6 +6338,7 @@ export type TenantUncheckedUpdateWithoutMessageTemplatesInput = {
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantCreateWithoutNotificationPreferencesInput = {
@@ -6239,6 +6376,7 @@ export type TenantCreateWithoutNotificationPreferencesInput = {
   staffSchedules?: Prisma.StaffScheduleCreateNestedManyWithoutTenantInput;
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantUncheckedCreateWithoutNotificationPreferencesInput = {
@@ -6276,6 +6414,7 @@ export type TenantUncheckedCreateWithoutNotificationPreferencesInput = {
   staffSchedules?: Prisma.StaffScheduleUncheckedCreateNestedManyWithoutTenantInput;
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
   bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutTenantInput;
 };
 
 export type TenantCreateOrConnectWithoutNotificationPreferencesInput = {
@@ -6347,6 +6486,7 @@ export type TenantUpdateWithoutNotificationPreferencesInput = {
   staffSchedules?: Prisma.StaffScheduleUpdateManyWithoutTenantNestedInput;
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUpdateManyWithoutTenantNestedInput;
 };
 
 export type TenantUncheckedUpdateWithoutNotificationPreferencesInput = {
@@ -6390,6 +6530,199 @@ export type TenantUncheckedUpdateWithoutNotificationPreferencesInput = {
   staffSchedules?: Prisma.StaffScheduleUncheckedUpdateManyWithoutTenantNestedInput;
   staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
   bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutTenantNestedInput;
+};
+
+export type TenantCreateWithoutNotificationsInput = {
+  id?: string;
+  name: string;
+  slug: string;
+  status?: $Enums.TenantStatus;
+  settings?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  deletedAt?: Date | string | null;
+  members?: Prisma.TenantMemberCreateNestedManyWithoutTenantInput;
+  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput;
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutTenantInput;
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutTenantInput;
+  invoices?: Prisma.InvoiceCreateNestedManyWithoutTenantInput;
+  locations?: Prisma.LocationCreateNestedManyWithoutTenantInput;
+  whatsappNumbers?: Prisma.WhatsAppNumberCreateNestedManyWithoutTenantInput;
+  customers?: Prisma.CustomerCreateNestedManyWithoutTenantInput;
+  conversations?: Prisma.ConversationCreateNestedManyWithoutTenantInput;
+  staff?: Prisma.StaffCreateNestedManyWithoutTenantInput;
+  services?: Prisma.ServiceCreateNestedManyWithoutTenantInput;
+  bookings?: Prisma.BookingCreateNestedManyWithoutTenantInput;
+  tenantReminderRules?: Prisma.TenantReminderRuleCreateNestedManyWithoutTenantInput;
+  scheduledReminders?: Prisma.ScheduledReminderCreateNestedManyWithoutTenantInput;
+  tenantAiPrompts?: Prisma.TenantAIPromptCreateNestedManyWithoutTenantInput;
+  knowledgeBaseDocs?: Prisma.KnowledgeBaseDocumentCreateNestedManyWithoutTenantInput;
+  knowledgeBaseChunks?: Prisma.KnowledgeBaseChunkCreateNestedManyWithoutTenantInput;
+  usageEvents?: Prisma.UsageEventCreateNestedManyWithoutTenantInput;
+  dailyUsageAggregates?: Prisma.DailyUsageAggregateCreateNestedManyWithoutTenantInput;
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutTenantInput;
+  messageTemplates?: Prisma.TenantMessageTemplateCreateNestedManyWithoutTenantInput;
+  locationBusinessHours?: Prisma.LocationBusinessHourCreateNestedManyWithoutTenantInput;
+  messages?: Prisma.MessageCreateNestedManyWithoutTenantInput;
+  staffSchedules?: Prisma.StaffScheduleCreateNestedManyWithoutTenantInput;
+  staffScheduleOverrides?: Prisma.StaffScheduleOverrideCreateNestedManyWithoutTenantInput;
+  bookingServices?: Prisma.BookingServiceCreateNestedManyWithoutTenantInput;
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput;
+};
+
+export type TenantUncheckedCreateWithoutNotificationsInput = {
+  id?: string;
+  name: string;
+  slug: string;
+  status?: $Enums.TenantStatus;
+  settings?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  deletedAt?: Date | string | null;
+  members?: Prisma.TenantMemberUncheckedCreateNestedManyWithoutTenantInput;
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput;
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutTenantInput;
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutTenantInput;
+  invoices?: Prisma.InvoiceUncheckedCreateNestedManyWithoutTenantInput;
+  locations?: Prisma.LocationUncheckedCreateNestedManyWithoutTenantInput;
+  whatsappNumbers?: Prisma.WhatsAppNumberUncheckedCreateNestedManyWithoutTenantInput;
+  customers?: Prisma.CustomerUncheckedCreateNestedManyWithoutTenantInput;
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutTenantInput;
+  staff?: Prisma.StaffUncheckedCreateNestedManyWithoutTenantInput;
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutTenantInput;
+  bookings?: Prisma.BookingUncheckedCreateNestedManyWithoutTenantInput;
+  tenantReminderRules?: Prisma.TenantReminderRuleUncheckedCreateNestedManyWithoutTenantInput;
+  scheduledReminders?: Prisma.ScheduledReminderUncheckedCreateNestedManyWithoutTenantInput;
+  tenantAiPrompts?: Prisma.TenantAIPromptUncheckedCreateNestedManyWithoutTenantInput;
+  knowledgeBaseDocs?: Prisma.KnowledgeBaseDocumentUncheckedCreateNestedManyWithoutTenantInput;
+  knowledgeBaseChunks?: Prisma.KnowledgeBaseChunkUncheckedCreateNestedManyWithoutTenantInput;
+  usageEvents?: Prisma.UsageEventUncheckedCreateNestedManyWithoutTenantInput;
+  dailyUsageAggregates?: Prisma.DailyUsageAggregateUncheckedCreateNestedManyWithoutTenantInput;
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutTenantInput;
+  messageTemplates?: Prisma.TenantMessageTemplateUncheckedCreateNestedManyWithoutTenantInput;
+  locationBusinessHours?: Prisma.LocationBusinessHourUncheckedCreateNestedManyWithoutTenantInput;
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutTenantInput;
+  staffSchedules?: Prisma.StaffScheduleUncheckedCreateNestedManyWithoutTenantInput;
+  staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedCreateNestedManyWithoutTenantInput;
+  bookingServices?: Prisma.BookingServiceUncheckedCreateNestedManyWithoutTenantInput;
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput;
+};
+
+export type TenantCreateOrConnectWithoutNotificationsInput = {
+  where: Prisma.TenantWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.TenantCreateWithoutNotificationsInput,
+    Prisma.TenantUncheckedCreateWithoutNotificationsInput
+  >;
+};
+
+export type TenantUpsertWithoutNotificationsInput = {
+  update: Prisma.XOR<
+    Prisma.TenantUpdateWithoutNotificationsInput,
+    Prisma.TenantUncheckedUpdateWithoutNotificationsInput
+  >;
+  create: Prisma.XOR<
+    Prisma.TenantCreateWithoutNotificationsInput,
+    Prisma.TenantUncheckedCreateWithoutNotificationsInput
+  >;
+  where?: Prisma.TenantWhereInput;
+};
+
+export type TenantUpdateToOneWithWhereWithoutNotificationsInput = {
+  where?: Prisma.TenantWhereInput;
+  data: Prisma.XOR<
+    Prisma.TenantUpdateWithoutNotificationsInput,
+    Prisma.TenantUncheckedUpdateWithoutNotificationsInput
+  >;
+};
+
+export type TenantUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.StringFieldUpdateOperationsInput | string;
+  slug?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?:
+    | Prisma.EnumTenantStatusFieldUpdateOperationsInput
+    | $Enums.TenantStatus;
+  settings?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  members?: Prisma.TenantMemberUpdateManyWithoutTenantNestedInput;
+  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput;
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutTenantNestedInput;
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutTenantNestedInput;
+  invoices?: Prisma.InvoiceUpdateManyWithoutTenantNestedInput;
+  locations?: Prisma.LocationUpdateManyWithoutTenantNestedInput;
+  whatsappNumbers?: Prisma.WhatsAppNumberUpdateManyWithoutTenantNestedInput;
+  customers?: Prisma.CustomerUpdateManyWithoutTenantNestedInput;
+  conversations?: Prisma.ConversationUpdateManyWithoutTenantNestedInput;
+  staff?: Prisma.StaffUpdateManyWithoutTenantNestedInput;
+  services?: Prisma.ServiceUpdateManyWithoutTenantNestedInput;
+  bookings?: Prisma.BookingUpdateManyWithoutTenantNestedInput;
+  tenantReminderRules?: Prisma.TenantReminderRuleUpdateManyWithoutTenantNestedInput;
+  scheduledReminders?: Prisma.ScheduledReminderUpdateManyWithoutTenantNestedInput;
+  tenantAiPrompts?: Prisma.TenantAIPromptUpdateManyWithoutTenantNestedInput;
+  knowledgeBaseDocs?: Prisma.KnowledgeBaseDocumentUpdateManyWithoutTenantNestedInput;
+  knowledgeBaseChunks?: Prisma.KnowledgeBaseChunkUpdateManyWithoutTenantNestedInput;
+  usageEvents?: Prisma.UsageEventUpdateManyWithoutTenantNestedInput;
+  dailyUsageAggregates?: Prisma.DailyUsageAggregateUpdateManyWithoutTenantNestedInput;
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutTenantNestedInput;
+  messageTemplates?: Prisma.TenantMessageTemplateUpdateManyWithoutTenantNestedInput;
+  locationBusinessHours?: Prisma.LocationBusinessHourUpdateManyWithoutTenantNestedInput;
+  messages?: Prisma.MessageUpdateManyWithoutTenantNestedInput;
+  staffSchedules?: Prisma.StaffScheduleUpdateManyWithoutTenantNestedInput;
+  staffScheduleOverrides?: Prisma.StaffScheduleOverrideUpdateManyWithoutTenantNestedInput;
+  bookingServices?: Prisma.BookingServiceUpdateManyWithoutTenantNestedInput;
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput;
+};
+
+export type TenantUncheckedUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.StringFieldUpdateOperationsInput | string;
+  slug?: Prisma.StringFieldUpdateOperationsInput | string;
+  status?:
+    | Prisma.EnumTenantStatusFieldUpdateOperationsInput
+    | $Enums.TenantStatus;
+  settings?: Prisma.JsonNullValueInput | runtime.InputJsonValue;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  deletedAt?:
+    | Prisma.NullableDateTimeFieldUpdateOperationsInput
+    | Date
+    | string
+    | null;
+  members?: Prisma.TenantMemberUncheckedUpdateManyWithoutTenantNestedInput;
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput;
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutTenantNestedInput;
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutTenantNestedInput;
+  invoices?: Prisma.InvoiceUncheckedUpdateManyWithoutTenantNestedInput;
+  locations?: Prisma.LocationUncheckedUpdateManyWithoutTenantNestedInput;
+  whatsappNumbers?: Prisma.WhatsAppNumberUncheckedUpdateManyWithoutTenantNestedInput;
+  customers?: Prisma.CustomerUncheckedUpdateManyWithoutTenantNestedInput;
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutTenantNestedInput;
+  staff?: Prisma.StaffUncheckedUpdateManyWithoutTenantNestedInput;
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutTenantNestedInput;
+  bookings?: Prisma.BookingUncheckedUpdateManyWithoutTenantNestedInput;
+  tenantReminderRules?: Prisma.TenantReminderRuleUncheckedUpdateManyWithoutTenantNestedInput;
+  scheduledReminders?: Prisma.ScheduledReminderUncheckedUpdateManyWithoutTenantNestedInput;
+  tenantAiPrompts?: Prisma.TenantAIPromptUncheckedUpdateManyWithoutTenantNestedInput;
+  knowledgeBaseDocs?: Prisma.KnowledgeBaseDocumentUncheckedUpdateManyWithoutTenantNestedInput;
+  knowledgeBaseChunks?: Prisma.KnowledgeBaseChunkUncheckedUpdateManyWithoutTenantNestedInput;
+  usageEvents?: Prisma.UsageEventUncheckedUpdateManyWithoutTenantNestedInput;
+  dailyUsageAggregates?: Prisma.DailyUsageAggregateUncheckedUpdateManyWithoutTenantNestedInput;
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutTenantNestedInput;
+  messageTemplates?: Prisma.TenantMessageTemplateUncheckedUpdateManyWithoutTenantNestedInput;
+  locationBusinessHours?: Prisma.LocationBusinessHourUncheckedUpdateManyWithoutTenantNestedInput;
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutTenantNestedInput;
+  staffSchedules?: Prisma.StaffScheduleUncheckedUpdateManyWithoutTenantNestedInput;
+  staffScheduleOverrides?: Prisma.StaffScheduleOverrideUncheckedUpdateManyWithoutTenantNestedInput;
+  bookingServices?: Prisma.BookingServiceUncheckedUpdateManyWithoutTenantNestedInput;
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput;
 };
 
 /**
@@ -6424,6 +6757,7 @@ export type TenantCountOutputType = {
   staffScheduleOverrides: number;
   bookingServices: number;
   notificationPreferences: number;
+  notifications: number;
 };
 
 export type TenantCountOutputTypeSelect<
@@ -6471,6 +6805,7 @@ export type TenantCountOutputTypeSelect<
   notificationPreferences?:
     | boolean
     | TenantCountOutputTypeCountNotificationPreferencesArgs;
+  notifications?: boolean | TenantCountOutputTypeCountNotificationsArgs;
 };
 
 /**
@@ -6756,6 +7091,16 @@ export type TenantCountOutputTypeCountNotificationPreferencesArgs<
   where?: Prisma.NotificationPreferenceWhereInput;
 };
 
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountNotificationsArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.NotificationWhereInput;
+};
+
 export type TenantSelect<
   ExtArgs extends runtime.Types.Extensions.InternalArgs =
     runtime.Types.Extensions.DefaultArgs,
@@ -6810,6 +7155,7 @@ export type TenantSelect<
     notificationPreferences?:
       | boolean
       | Prisma.Tenant$notificationPreferencesArgs<ExtArgs>;
+    notifications?: boolean | Prisma.Tenant$notificationsArgs<ExtArgs>;
     _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs["result"]["tenant"]
@@ -6917,6 +7263,7 @@ export type TenantInclude<
   notificationPreferences?:
     | boolean
     | Prisma.Tenant$notificationPreferencesArgs<ExtArgs>;
+  notifications?: boolean | Prisma.Tenant$notificationsArgs<ExtArgs>;
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type TenantIncludeCreateManyAndReturn<
@@ -6961,6 +7308,7 @@ export type $TenantPayload<
     staffScheduleOverrides: Prisma.$StaffScheduleOverridePayload<ExtArgs>[];
     bookingServices: Prisma.$BookingServicePayload<ExtArgs>[];
     notificationPreferences: Prisma.$NotificationPreferencePayload<ExtArgs>[];
+    notifications: Prisma.$NotificationPayload<ExtArgs>[];
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
@@ -7829,6 +8177,17 @@ export interface Prisma__TenantClient<
   ): Prisma.PrismaPromise<
     | runtime.Types.Result.GetResult<
         Prisma.$NotificationPreferencePayload<ExtArgs>,
+        T,
+        "findMany",
+        GlobalOmitOptions
+      >
+    | Null
+  >;
+  notifications<T extends Prisma.Tenant$notificationsArgs<ExtArgs> = {}>(
+    args?: Prisma.Subset<T, Prisma.Tenant$notificationsArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$NotificationPayload<ExtArgs>,
         T,
         "findMany",
         GlobalOmitOptions
@@ -9155,6 +9514,37 @@ export type Tenant$notificationPreferencesArgs<
   distinct?:
     | Prisma.NotificationPreferenceScalarFieldEnum
     | Prisma.NotificationPreferenceScalarFieldEnum[];
+};
+
+/**
+ * Tenant.notifications
+ */
+export type Tenant$notificationsArgs<
+  ExtArgs extends runtime.Types.Extensions.InternalArgs =
+    runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null;
+  where?: Prisma.NotificationWhereInput;
+  orderBy?:
+    | Prisma.NotificationOrderByWithRelationInput
+    | Prisma.NotificationOrderByWithRelationInput[];
+  cursor?: Prisma.NotificationWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?:
+    | Prisma.NotificationScalarFieldEnum
+    | Prisma.NotificationScalarFieldEnum[];
 };
 
 /**

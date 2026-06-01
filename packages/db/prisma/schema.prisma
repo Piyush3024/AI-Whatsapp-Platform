@@ -205,6 +205,7 @@ model Tenant {
   staffScheduleOverrides  StaffScheduleOverride[]
   bookingServices         BookingService[]
   notificationPreferences NotificationPreference[]
+  notifications           Notification[]
 
   @@index([slug])
   @@index([status])
@@ -226,9 +227,10 @@ model User {
   tenantMemberships       TenantMember[]
   refreshTokens           RefreshToken[]
   staff                   Staff[]
-  notifications           NotificationPreference[]
+  notificationsPreference NotificationPreference[]
   passwordResetTokens     PasswordResetToken[]
   emailVerificationTokens EmailVerificationToken[]
+  notifications           Notification[]
 
   @@index([email])
   @@map("users")
@@ -940,6 +942,27 @@ model NotificationPreference {
   @@unique([tenantId, userId, type])
   @@index([tenantId])
   @@map("notification_preferences")
+}
+
+model Notification {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tenantId  String    @db.Uuid
+  userId    String    @db.Uuid
+  type      String
+  title     String
+  body      String
+  metadata  Json      @default("{}")
+  readAt    DateTime? @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([userId, readAt])
+  @@index([tenantId, createdAt])
+  @@map("notifications")
 }
 
 model PasswordResetToken {

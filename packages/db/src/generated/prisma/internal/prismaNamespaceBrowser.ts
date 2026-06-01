@@ -88,6 +88,7 @@ export const ModelName = {
   AuditLog: "AuditLog",
   TenantMessageTemplate: "TenantMessageTemplate",
   NotificationPreference: "NotificationPreference",
+  Notification: "Notification",
   PasswordResetToken: "PasswordResetToken",
   EmailVerificationToken: "EmailVerificationToken",
 } as const;
@@ -665,6 +666,21 @@ export const NotificationPreferenceScalarFieldEnum = {
 
 export type NotificationPreferenceScalarFieldEnum =
   (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum];
+
+export const NotificationScalarFieldEnum = {
+  id: "id",
+  tenantId: "tenantId",
+  userId: "userId",
+  type: "type",
+  title: "title",
+  body: "body",
+  metadata: "metadata",
+  readAt: "readAt",
+  createdAt: "createdAt",
+} as const;
+
+export type NotificationScalarFieldEnum =
+  (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum];
 
 export const PasswordResetTokenScalarFieldEnum = {
   id: "id",

@@ -336,7 +336,7 @@ export type NotificationPreferenceCreateInput = {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   tenant: Prisma.TenantCreateNestedOneWithoutNotificationPreferencesInput;
-  user: Prisma.UserCreateNestedOneWithoutNotificationsInput;
+  user: Prisma.UserCreateNestedOneWithoutNotificationsPreferenceInput;
 };
 
 export type NotificationPreferenceUncheckedCreateInput = {
@@ -360,7 +360,7 @@ export type NotificationPreferenceUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   tenant?: Prisma.TenantUpdateOneRequiredWithoutNotificationPreferencesNestedInput;
-  user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput;
+  user?: Prisma.UserUpdateOneRequiredWithoutNotificationsPreferenceNestedInput;
 };
 
 export type NotificationPreferenceUncheckedUpdateInput = {
@@ -691,7 +691,7 @@ export type NotificationPreferenceCreateWithoutTenantInput = {
   inApp?: boolean;
   createdAt?: Date | string;
   updatedAt?: Date | string;
-  user: Prisma.UserCreateNestedOneWithoutNotificationsInput;
+  user: Prisma.UserCreateNestedOneWithoutNotificationsPreferenceInput;
 };
 
 export type NotificationPreferenceUncheckedCreateWithoutTenantInput = {
@@ -851,7 +851,7 @@ export type NotificationPreferenceUpdateWithoutTenantInput = {
   inApp?: Prisma.BoolFieldUpdateOperationsInput | boolean;
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-  user?: Prisma.UserUpdateOneRequiredWithoutNotificationsNestedInput;
+  user?: Prisma.UserUpdateOneRequiredWithoutNotificationsPreferenceNestedInput;
 };
 
 export type NotificationPreferenceUncheckedUpdateWithoutTenantInput = {

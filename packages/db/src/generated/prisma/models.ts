@@ -41,6 +41,7 @@ export type * from "./models/DailyUsageAggregate.js";
 export type * from "./models/AuditLog.js";
 export type * from "./models/TenantMessageTemplate.js";
 export type * from "./models/NotificationPreference.js";
+export type * from "./models/Notification.js";
 export type * from "./models/PasswordResetToken.js";
 export type * from "./models/EmailVerificationToken.js";
 export type * from "./commonInputTypes.js";
