@@ -49,6 +49,7 @@ export const API_ENDPOINTS = {
     updateStatus: (id: string) => `/bookings/${id}/status`,
     delete: (id: string) => `/bookings/${id}`,
     export: "/bookings/export",
+    calendar: "/bookings/calendar",
   },
 
   /**

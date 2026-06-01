@@ -8,6 +8,7 @@ import { Button } from "@repo/ui/components/button";
 import { Icons } from "@repo/ui/components/icons";
 import { BookingForm } from "./booking-form";
 import { useExportBookings } from "../hooks/use-export-booking";
+import { CalendarViewToggle } from "../calendar/_components/calendar-view-toggle";
 
 const DEFAULT_FILTERS: BookingQuery = {
   page: 1,
@@ -29,6 +30,7 @@ export function BookingsPageContent() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <CalendarViewToggle />
           <Button
             variant="outline"
             size="sm"

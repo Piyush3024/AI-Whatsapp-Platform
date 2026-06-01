@@ -1,4 +1,3 @@
-// Booking enums — backend se match
 export type BookingStatus =
   | "PENDING"
   | "CONFIRMED"
@@ -8,7 +7,6 @@ export type BookingStatus =
 
 export type BookingSource = "WHATSAPP" | "MANUAL" | "ONLINE";
 
-// Nested shapes from transformBooking
 export interface BookingCustomer {
   id: string;
   name: string;
@@ -100,4 +98,24 @@ export interface UpdateBookingDto {
 
 export interface UpdateBookingStatusDto {
   status: BookingStatus;
+}
+
+export interface CalendarQuery {
+  dateFrom: string;
+  dateTo: string;
+  staffId?: string;
+  locationId?: string;
+}
+
+export interface CalendarResponse {
+  items: Booking[];
+  meta: { total: number };
+}
+
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  resource: Booking;
 }

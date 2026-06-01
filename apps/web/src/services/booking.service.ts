@@ -8,6 +8,8 @@ import type {
   CreateBookingDto,
   UpdateBookingDto,
   UpdateBookingStatusDto,
+  CalendarQuery,
+  CalendarResponse,
 } from "@/types/booking.types";
 
 export async function getBookings(
@@ -69,4 +71,14 @@ export const exportBookingsCsv = async (
     responseType: "text",
   });
   return res.data;
+};
+
+export const getBookingsCalendar = async (
+  params: CalendarQuery,
+): Promise<CalendarResponse> => {
+  const res = await apiClient.get<{ data: CalendarResponse }>(
+    API_ENDPOINTS.bookings.calendar,
+    { params },
+  );
+  return res.data.data;
 };

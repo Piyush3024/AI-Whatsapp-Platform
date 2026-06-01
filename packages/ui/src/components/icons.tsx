@@ -52,6 +52,7 @@ import {
   IconSend,
   IconReceiptRupee,
   IconShieldCheck,
+  IconList,
   type IconProps,
 } from "@tabler/icons-react";
 
@@ -93,6 +94,7 @@ export const Icons = {
   copy: IconCopy,
   externalLink: IconExternalLink,
   send: IconSend,
+  list: IconList,
 
   // Navigation arrows
   chevronDown: IconChevronDown,

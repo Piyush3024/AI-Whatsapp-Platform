@@ -38,6 +38,8 @@ export const QUERY_KEYS = {
     all: ["bookings"] as const,
     list: (params: unknown) => ["bookings", "list", params] as const,
     detail: (id: string) => ["bookings", "detail", id] as const,
+    calendar: (params?: Record<string, unknown>) =>
+      ["bookings", "calendar", params] as const,
   },
 
   /**

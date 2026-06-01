@@ -19,6 +19,7 @@ export const ROUTES = {
   // Bookings
   bookings: {
     list: "/bookings",
+    calendar: "/bookings/calendar",
     detail: (id: string) => `/bookings/${id}`,
     create: "/bookings/create",
   },
