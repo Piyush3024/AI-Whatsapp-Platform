@@ -25,8 +25,6 @@ export async function processNotificationJob(
 
   const customerDisplay = customerName ?? customerPhone;
 
-  // ── Step 1: Find all OWNER + ADMIN members to notify in-app ──────────────
-  // Also include assigned staff if present
   const membersToNotify = await withTenantContext(tenantId, async (tx) => {
     return tx.tenantMember.findMany({
       where: {
@@ -41,7 +39,6 @@ export async function processNotificationJob(
 
   const userIds = new Set(membersToNotify.map((m) => m.userId));
 
-  // If conversation is assigned to a staff member, notify them too
   if (assignedStaffId) {
     const staffRecord = await withTenantContext(tenantId, async (tx) => {
       return tx.staff.findFirst({
@@ -55,7 +52,6 @@ export async function processNotificationJob(
     }
   }
 
-  // ── Step 2: Create in-app notifications for all relevant users ────────────
   if (userIds.size > 0) {
     const notifications = Array.from(userIds).map((userId) => ({
       tenantId,
@@ -71,7 +67,6 @@ export async function processNotificationJob(
       },
     }));
 
-    // Use base prisma (no tenant context needed for bulk create)
     await prisma.notification.createMany({ data: notifications });
 
     log.info(
@@ -80,7 +75,6 @@ export async function processNotificationJob(
     );
   }
 
-  // ── Step 3: Send WhatsApp message to assigned staff phone ─────────────────
   if (assignedStaffId) {
     const staffWithPhone = await withTenantContext(tenantId, async (tx) => {
       return tx.staff.findFirst({
@@ -90,7 +84,6 @@ export async function processNotificationJob(
     });
 
     if (staffWithPhone?.phone) {
-      // Find the tenant's default active WhatsApp number to send from
       const whatsappNumber = await withTenantContext(tenantId, async (tx) => {
         return tx.whatsAppNumber.findFirst({
           where: {
@@ -110,7 +103,6 @@ export async function processNotificationJob(
           `Customer *${customerDisplay}* (${customerPhone}) needs your assistance.\n\n` +
           `Please check the dashboard to continue the conversation.`;
 
-        // Create a system message record first
         const systemMessage = await withTenantContext(tenantId, async (tx) => {
           return tx.message.create({
             data: {

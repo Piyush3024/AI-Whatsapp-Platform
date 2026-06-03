@@ -18,8 +18,6 @@ export interface UploadedFile {
   size: number;
 }
 
-// Use a separate property name to avoid clashing with @fastify/multipart's
-// augmented `file` method on FastifyRequest.
 interface RequestWithMultipart extends FastifyRequest {
   body: Record<string, unknown>;
   uploadedFile?: UploadedFile | null;

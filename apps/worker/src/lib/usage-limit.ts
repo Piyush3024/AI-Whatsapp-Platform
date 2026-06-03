@@ -6,11 +6,6 @@ interface PlanLimits {
   [key: string]: unknown;
 }
 
-/**
- * Returns true if the tenant has exceeded their daily outbound message limit.
- * Used by the whatsapp-outbound processor before sending to Meta API.
- * Does NOT throw — returns a boolean so the processor decides what to do.
- */
 export async function isMessageLimitExceeded(
   tenantId: string,
 ): Promise<boolean> {
@@ -52,8 +47,6 @@ export async function isMessageLimitExceeded(
 
     return exceeded;
   } catch (err) {
-    // Fail open — if we can't check the limit, allow the message through
-    // to avoid blocking legitimate messages due to DB issues
     logger.error(
       { err, tenantId },
       "Failed to check message limit — failing open",

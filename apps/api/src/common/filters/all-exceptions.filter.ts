@@ -8,16 +8,12 @@ import {
 } from '@nestjs/common';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
-/**
- * Error response ka standard shape — poori app mein consistent rahega.
- * Frontend wale isko rely kar sakte hain.
- */
 interface ErrorResponse {
   statusCode: number;
   errorCode: string;
   message: string;
-  errors?: string[]; // Validation errors ke liye (400 only)
-  errorId: string; // Support ke liye unique ID — logs mein milega
+  errors?: string[];
+  errorId: string;
   timestamp: string;
   path: string;
 }
@@ -32,24 +28,6 @@ function isHttpExceptionResponseBody(
   return typeof value === 'object' && value !== null;
 }
 
-/**
- * AllExceptionsFilter — Global Exception Filter
- *
- * Saare unhandled exceptions yahan aate hain — NestJS ka last resort.
- * Do kaam karta hai:
- *  1. Error ko structured JSON response mein convert karta hai.
- *  2. Error ko Pino logger se log karta hai (errorId ke saath).
- *
- * Security rules:
- *  - Production mein stack trace kabhi nahi bhejte client ko.
- *  - 500 errors mein internal message hide karte hain — sirf generic message.
- *  - Validation errors (400) mein field-level detail dete hain — safe hai.
- *
- * errorId pattern:
- *  - Har error ko ek unique UUID milta hai.
- *  - Ye ID logs mein bhi hota hai.
- *  - User support ticket mein ye ID de sakta hai — hum instantly dhundh sakte hain.
- */
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger(AllExceptionsFilter.name);
@@ -69,12 +47,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let message: string;
     let errors: string[] | undefined;
 
-    // ── HttpException (NestJS known errors) ────────────────────────────────
     if (exception instanceof HttpException) {
       statusCode = exception.getStatus();
       const exceptionResponse = exception.getResponse();
 
-      // Validation errors (class-validator se aate hain) — array of messages
       if (
         statusCode === Number(HttpStatus.BAD_REQUEST) &&
         isHttpExceptionResponseBody(exceptionResponse) &&
@@ -96,14 +72,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
           message = exception.message;
         }
       }
-    }
-    // ── Unknown / unhandled errors ──────────────────────────────────────────
-    else {
+    } else {
       statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
       errorCode = 'INTERNAL_SERVER_ERROR';
 
-      // Production mein internal error details KABHI nahi bhejte.
-      // Development mein helpful message dikhate hain.
       message = isProduction
         ? 'An unexpected error occurred. Please try again later.'
         : exception instanceof Error
@@ -111,9 +83,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
           : String(exception);
     }
 
-    // ── Logging ─────────────────────────────────────────────────────────────
-    // 5xx = real errors — hamesha log karo stack trace ke saath.
-    // 4xx = client errors — warn level pe log karo.
     const logContext = {
       errorId,
       statusCode,
@@ -135,7 +104,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
       );
     }
 
-    // ── Response bhejo ──────────────────────────────────────────────────────
     const errorBody: ErrorResponse = {
       statusCode,
       errorCode,
@@ -149,10 +117,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     response.status(statusCode).send(errorBody);
   }
 
-  /**
-   * HTTP status code se meaningful error code banata hai.
-   * Frontend in codes pe switch kar sakta hai localized messages ke liye.
-   */
   private _getErrorCode(statusCode: number): string {
     const codes: Record<number, string> = {
       400: 'BAD_REQUEST',
