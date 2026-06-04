@@ -128,4 +128,8 @@ export interface HumanHandoffNotifyJob {
   assignedStaffId: string | null;
 }
 
+export interface QualityScoreSyncJob {
+  sweep: true;
+}
+
 export type RemindersQueuePayload = ReminderJobPayload | { sweep?: boolean };

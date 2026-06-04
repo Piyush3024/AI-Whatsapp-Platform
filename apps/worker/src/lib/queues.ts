@@ -9,6 +9,7 @@ import type {
   HumanHandoffNotifyJob,
   RemindersQueuePayload,
   FollowUpJob,
+  QualityScoreSyncJob,
 } from "../types/job-payloads.js";
 
 const producerRedis = new Redis(env.REDIS_URL, {
@@ -126,6 +127,19 @@ export const notificationsQueue = new Queue<HumanHandoffNotifyJob>(
   },
 );
 
+export const qualityScoreQueue = new Queue<QualityScoreSyncJob>(
+  QUEUE_NAMES.QUALITY_SCORE,
+  {
+    connection: producerRedis,
+    defaultJobOptions: {
+      attempts: 3,
+      backoff: { type: "exponential", delay: 5_000 },
+      removeOnComplete: { age: 24 * 3600 },
+      removeOnFail: { age: 7 * 24 * 3600 },
+    },
+  },
+);
+
 export async function closeQueues(): Promise<void> {
   await aiReplyQueue.close();
   await outboundQueue.close();
@@ -134,5 +148,6 @@ export async function closeQueues(): Promise<void> {
   await embeddingsQueue.close();
   await followUpsQueue.close();
   await notificationsQueue.close();
+  await qualityScoreQueue.close();
   await producerRedis.quit();
 }

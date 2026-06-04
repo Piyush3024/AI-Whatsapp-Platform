@@ -10,15 +10,18 @@ import type {
   EmbeddingJob,
   FollowUpJob,
   HumanHandoffNotifyJob,
+  QualityScoreSyncJob,
 } from "./types/job-payloads.js";
 import { processOutboundMessage } from "./processors/whatsapp-outbound.processor.js";
 import { processNotificationJob } from "./processors/notification.processor.js";
+import { processQualityScoreJob } from "./processors/quality-score.processor.js";
 import type { OutboundMessageJob } from "./types/job-payloads.js";
 import {
   closeQueues,
   analyticsQueue,
   embeddingsQueue,
   // notificationsQueue,
+  qualityScoreQueue,
 } from "./lib/queues.js";
 import { Worker } from "bullmq";
 import { redisConnection, checkRedisHealth, closeRedis } from "./lib/redis.js";
@@ -133,6 +136,15 @@ function createWorkers(): Worker[] {
     },
   );
 
+  const qualityScoreWorker = new Worker<QualityScoreSyncJob>(
+    QUEUE_NAMES.QUALITY_SCORE,
+    processQualityScoreJob,
+    {
+      connection: redisConnection,
+      concurrency: 1,
+    },
+  );
+
   created.push(
     inboundWorker,
     aiReplyWorker,
@@ -142,6 +154,7 @@ function createWorkers(): Worker[] {
     embeddingsWorker,
     analyticsWorker,
     notificationsWorker,
+    qualityScoreWorker,
   );
 
   return created;
@@ -194,6 +207,18 @@ await analyticsQueue.add(
   },
 );
 logger.info("Analytics aggregation sweeper registered");
+
+await qualityScoreQueue.add(
+  "sync-quality-scores",
+  { sweep: true },
+  {
+    repeat: { pattern: "0 0 * * *" },
+    jobId: "sweeper-quality-score-sync",
+    removeOnComplete: true,
+    removeOnFail: false,
+  },
+);
+logger.info("Quality score sync daily sweeper registered");
 
 async function gracefulShutdown(signal: string): Promise<void> {
   logger.info(
