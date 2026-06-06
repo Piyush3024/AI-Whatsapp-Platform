@@ -8,6 +8,7 @@ import {
   UseGuards,
   Query,
   BadRequestException,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -26,12 +27,16 @@ import { Public } from '../../common/decorators/public.decorator.js';
 import { CurrentUser } from '../../common/decorators/current-user.decorator.js';
 import type { CurrentUserPayload } from '../../common/decorators/current-user.decorator.js';
 import { ResendVerificationDto } from './dto/resend-verification.dto.js';
+import { TwoFactorService } from './two-factor.service.js';
+import { Verify2faDto } from './dto/verify-2fa.dto.js';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
-
+  constructor(
+    private readonly authService: AuthService,
+    private readonly twoFactorService: TwoFactorService,
+  ) {}
   // ── Register ─────────────────────────────────────────────────────────────
 
   @Public()
@@ -190,5 +195,62 @@ export class AuthController {
       message:
         'If your email is registered and unverified, a new verification link has been sent.',
     };
+  }
+
+  // ── 2FA Setup ─────────────────────────────────────────────────────────────
+
+  @Post('2fa/setup')
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth('access-token')
+  @Throttle({ strict: { limit: 5, ttl: 60_000 } })
+  @ApiOperation({
+    summary: 'Initiate 2FA setup — returns QR code and secret',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'QR code data URL and otpauth URI returned',
+  })
+  async setup2fa(@CurrentUser() user: CurrentUserPayload) {
+    return this.twoFactorService.setup(user.userId);
+  }
+
+  // ── 2FA Enable ────────────────────────────────────────────────────────────
+
+  @Post('2fa/enable')
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth('access-token')
+  @Throttle({ strict: { limit: 5, ttl: 60_000 } })
+  @ApiOperation({
+    summary: 'Enable 2FA — verify TOTP token after scanning QR code',
+  })
+  @ApiResponse({ status: 200, description: '2FA enabled successfully' })
+  @ApiResponse({ status: 401, description: 'Invalid TOTP code' })
+  async enable2fa(
+    @CurrentUser() user: CurrentUserPayload,
+    @Body(new ValidationPipe({ transform: true, whitelist: true }))
+    dto: Verify2faDto,
+  ) {
+    await this.twoFactorService.enable(user.userId, dto.token);
+    return { message: '2FA has been enabled successfully.' };
+  }
+
+  // ── 2FA Disable ───────────────────────────────────────────────────────────
+
+  @Post('2fa/disable')
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth('access-token')
+  @Throttle({ strict: { limit: 5, ttl: 60_000 } })
+  @ApiOperation({
+    summary: 'Disable 2FA — requires valid TOTP token for confirmation',
+  })
+  @ApiResponse({ status: 200, description: '2FA disabled successfully' })
+  @ApiResponse({ status: 401, description: 'Invalid TOTP code' })
+  async disable2fa(
+    @CurrentUser() user: CurrentUserPayload,
+    @Body(new ValidationPipe({ transform: true, whitelist: true }))
+    dto: Verify2faDto,
+  ) {
+    await this.twoFactorService.disable(user.userId, dto.token);
+    return { message: '2FA has been disabled successfully.' };
   }
 }

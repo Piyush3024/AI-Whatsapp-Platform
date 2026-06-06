@@ -394,6 +394,7 @@ export class AuthService {
         email: true,
         phone: true,
         emailVerifiedAt: true,
+        twoFactorEnabled: true,
         createdAt: true,
       },
     });
