@@ -25,6 +25,11 @@ export const API_ENDPOINTS = {
     resetPassword: "/auth/reset-password",
     verifyEmail: "/auth/verify-email",
     resendVerification: "/auth/resend-verification",
+    twoFactor: {
+      setup: "/auth/2fa/setup",
+      enable: "/auth/2fa/enable",
+      disable: "/auth/2fa/disable",
+    },
   },
 
   /**

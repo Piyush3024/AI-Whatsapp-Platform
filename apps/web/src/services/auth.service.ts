@@ -6,6 +6,7 @@ import type {
   ForgotPasswordDto,
   ResetPasswordDto,
   ResendVerificationDto,
+  TwoFactorSetupResponse,
 } from "@/types/api.types";
 import { API_ENDPOINTS } from "@/constants/endpoints";
 
@@ -64,6 +65,33 @@ export const resendVerification = async (
   const res = await apiClient.post<{ data: { message: string } }>(
     API_ENDPOINTS.auth.resendVerification,
     dto,
+  );
+  return res.data.data;
+};
+
+export const setup2fa = async (): Promise<TwoFactorSetupResponse> => {
+  const res = await apiClient.post<{ data: TwoFactorSetupResponse }>(
+    API_ENDPOINTS.auth.twoFactor.setup,
+  );
+  return res.data.data;
+};
+
+export const enable2fa = async (
+  token: string,
+): Promise<{ message: string }> => {
+  const res = await apiClient.post<{ data: { message: string } }>(
+    API_ENDPOINTS.auth.twoFactor.enable,
+    { token },
+  );
+  return res.data.data;
+};
+
+export const disable2fa = async (
+  token: string,
+): Promise<{ message: string }> => {
+  const res = await apiClient.post<{ data: { message: string } }>(
+    API_ENDPOINTS.auth.twoFactor.disable,
+    { token },
   );
   return res.data.data;
 };

@@ -34,6 +34,7 @@ export interface User {
   tenantId: string;
   createdAt: string;
   emailVerifiedAt: string | null;
+  twoFactorEnabled: boolean;
 }
 
 export interface AuthTokens {
@@ -65,4 +66,10 @@ export interface ResetPasswordDto {
 
 export interface ResendVerificationDto {
   email: string;
+}
+
+export interface TwoFactorSetupResponse {
+  otpauthUrl: string;
+  qrCodeDataUrl: string;
+  secret: string;
 }

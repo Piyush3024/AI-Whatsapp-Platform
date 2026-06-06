@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { GeneralSettings } from "./_components/general-settings";
 import { LocationsSettings } from "./_components/locations-settings";
 import { MembersSettings } from "./_components/members-settings";
+import { TwoFactorSettings } from "./_components/two-factor-settings";
 
 export const metadata: Metadata = {
   title: "Settings",
@@ -20,6 +21,7 @@ export default function SettingsPage() {
       <GeneralSettings />
       <LocationsSettings />
       <MembersSettings />
+      <TwoFactorSettings />
     </div>
   );
 }
