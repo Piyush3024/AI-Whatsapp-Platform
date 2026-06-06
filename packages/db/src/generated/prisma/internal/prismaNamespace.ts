@@ -3370,6 +3370,8 @@ export const UserScalarFieldEnum = {
   updatedAt: "updatedAt",
   deletedAt: "deletedAt",
   emailVerifiedAt: "emailVerifiedAt",
+  twoFactorSecret: "twoFactorSecret",
+  twoFactorEnabled: "twoFactorEnabled",
 } as const;
 
 export type UserScalarFieldEnum =
@@ -4057,6 +4059,14 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<
 >;
 
 /**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<
+  $PrismaModel,
+  "Boolean"
+>;
+
+/**
  * Reference to a field of type 'UserRole'
  */
 export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<
@@ -4102,14 +4112,6 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<
   $PrismaModel,
   "Int[]"
->;
-
-/**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<
-  $PrismaModel,
-  "Boolean"
 >;
 
 /**

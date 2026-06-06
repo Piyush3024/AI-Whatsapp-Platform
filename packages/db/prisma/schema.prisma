@@ -222,6 +222,8 @@ model User {
   updatedAt       DateTime  @updatedAt @db.Timestamptz(6)
   deletedAt       DateTime? @db.Timestamptz(6)
   emailVerifiedAt DateTime? @db.Timestamptz(6)
+  twoFactorSecret  String?
+twoFactorEnabled Boolean   @default(false)
 
   // Relations
   tenantMemberships       TenantMember[]

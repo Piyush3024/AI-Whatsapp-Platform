@@ -133,6 +133,8 @@ export const UserScalarFieldEnum = {
   updatedAt: "updatedAt",
   deletedAt: "deletedAt",
   emailVerifiedAt: "emailVerifiedAt",
+  twoFactorSecret: "twoFactorSecret",
+  twoFactorEnabled: "twoFactorEnabled",
 } as const;
 
 export type UserScalarFieldEnum =
