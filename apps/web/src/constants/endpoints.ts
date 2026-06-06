@@ -64,6 +64,7 @@ export const API_ENDPOINTS = {
     delete: (id: string) => `/customers/${id}`,
     conversations: (id: string) => `/customers/${id}/conversations`,
     export: "/customers/export",
+    import: "/customers/import",
   },
 
   /**

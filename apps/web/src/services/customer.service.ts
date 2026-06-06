@@ -8,6 +8,7 @@ import type {
   CreateCustomerDto,
   UpdateCustomerDto,
   CustomerQuery,
+  ImportResult,
 } from "@/types/customer.types";
 
 export async function getCustomers(params?: {
@@ -72,4 +73,18 @@ export const exportCustomersCsv = async (
     responseType: "text",
   });
   return res.data;
+};
+
+export const importCustomersCsv = async (file: File): Promise<ImportResult> => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await apiClient.post<{ data: ImportResult }>(
+    API_ENDPOINTS.customers.import,
+    formData,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    },
+  );
+  return res.data.data;
 };

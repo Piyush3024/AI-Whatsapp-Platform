@@ -7,6 +7,7 @@ import { CustomerList } from "./customer-list";
 import { CustomerForm } from "./customer-form";
 import type { CustomerQuery } from "@/types/customer.types";
 import { useExportCustomers } from "../hooks/use-export-customers";
+import { CustomerImportDialog } from "./customer-import-dialog";
 
 const DEFAULT_FILTERS: CustomerQuery = {
   page: 1,
@@ -16,6 +17,7 @@ const DEFAULT_FILTERS: CustomerQuery = {
 export function CustomersPageContent() {
   const [filters, setFilters] = useState<CustomerQuery>(DEFAULT_FILTERS);
   const [formOpen, setFormOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const { exportCsv, isExporting } = useExportCustomers();
 
   return (
@@ -31,6 +33,15 @@ export function CustomersPageContent() {
           <Button
             variant="outline"
             size="sm"
+            onClick={() => setImportOpen(true)}
+            className="cursor-pointer"
+          >
+            <Icons.upload className="size-4 mr-2" />
+            Import CSV
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => exportCsv(filters)}
             disabled={isExporting}
             className="cursor-pointer"
@@ -42,6 +53,7 @@ export function CustomersPageContent() {
             )}
             {isExporting ? "Exporting…" : "Export CSV"}
           </Button>
+
           <Button onClick={() => setFormOpen(true)}>
             <Icons.add className="size-4 mr-2" />
             Add Customer
@@ -52,6 +64,8 @@ export function CustomersPageContent() {
       <CustomerList filters={filters} onFilterChange={setFilters} />
 
       <CustomerForm open={formOpen} onOpenChange={setFormOpen} />
+
+      <CustomerImportDialog open={importOpen} onOpenChange={setImportOpen} />
     </div>
   );
 }

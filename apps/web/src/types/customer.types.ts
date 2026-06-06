@@ -73,3 +73,9 @@ export interface UpdateCustomerDto {
   tags?: string[];
   optInStatus?: CustomerOptInStatus;
 }
+
+export interface ImportResult {
+  created: number;
+  skipped: number;
+  errors: Array<{ row: number; reason: string }>;
+}
