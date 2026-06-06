@@ -12,6 +12,8 @@ import {
   ParseUUIDPipe,
   ValidationPipe,
   Res,
+  UseInterceptors,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -21,6 +23,10 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
+import { FastifyFileInterceptor } from '../../common/interceptors/fastify-file.interceptor.js';
+import { UploadedFastifyFile } from '../../common/decorators/uploaded-fastify-file.decorator.js';
+import type { UploadedFile } from '../../common/interceptors/fastify-file.interceptor.js';
+import { ApiConsumes } from '@nestjs/swagger';
 import type { FastifyReply } from 'fastify';
 import { Throttle, SkipThrottle } from '@nestjs/throttler';
 import { CustomersService } from './customers.service.js';
@@ -126,6 +132,36 @@ export class CustomersController {
       .header('Content-Type', 'text/csv; charset=utf-8')
       .header('Content-Disposition', `attachment; filename="${filename}"`)
       .send(csv);
+  }
+
+  @Post('import')
+  @HttpCode(HttpStatus.OK)
+  @Roles(UserRole.ADMIN, UserRole.OWNER)
+  @UseInterceptors(new FastifyFileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Import customers from CSV file' })
+  @ApiResponse({
+    status: 200,
+    description: 'Import result with created/skipped counts',
+  })
+  async importCsv(@UploadedFastifyFile() file: UploadedFile | null) {
+    if (!file) {
+      throw new BadRequestException('CSV file is required.');
+    }
+
+    const ext = file.originalname?.split('.').pop()?.toLowerCase();
+    if (ext !== 'csv') {
+      throw new BadRequestException(
+        'Only CSV files are supported. Please upload a .csv file.',
+      );
+    }
+
+    // 5MB max for CSV
+    if (file.size > 5 * 1024 * 1024) {
+      throw new BadRequestException('File too large. Maximum size is 5MB.');
+    }
+
+    return this.customersService.importFromCsv(file.buffer);
   }
 
   @Get(':id')

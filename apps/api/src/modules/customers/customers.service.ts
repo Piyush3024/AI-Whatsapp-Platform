@@ -481,4 +481,151 @@ export class CustomersService {
 
     return [headers.join(','), ...rows].join('\n');
   }
+
+  async importFromCsv(buffer: Buffer): Promise<{
+    created: number;
+    skipped: number;
+    errors: Array<{ row: number; reason: string }>;
+  }> {
+    const tenantId = this.prisma.getTenantId();
+
+    const csvText = buffer.toString('utf-8');
+    const lines = csvText
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean);
+
+    if (lines.length < 2) {
+      throw new BadRequestException('CSV file is empty or has no data rows.');
+    }
+
+    const headers = lines[0]
+      .split(',')
+      .map((h) => h.replace(/^"|"$/g, '').trim().toLowerCase());
+
+    const phoneIdx = headers.indexOf('phone');
+    if (phoneIdx === -1) {
+      throw new BadRequestException(
+        'CSV must have a "phone" column. Download the template for the correct format.',
+      );
+    }
+
+    const nameIdx = headers.indexOf('name');
+    const emailIdx = headers.indexOf('email');
+    const notesIdx = headers.indexOf('notes');
+    const tagsIdx = headers.indexOf('tags');
+
+    let created = 0;
+    let skipped = 0;
+    const errors: Array<{ row: number; reason: string }> = [];
+
+    const dataLines = lines.slice(1, 1001);
+
+    for (let i = 0; i < dataLines.length; i++) {
+      const rowNumber = i + 2;
+      const line = dataLines[i];
+
+      const cols = this._parseCsvRow(line);
+
+      const rawPhone = cols[phoneIdx]?.trim();
+
+      if (!rawPhone) {
+        errors.push({ row: rowNumber, reason: 'Phone number is required.' });
+        skipped++;
+        continue;
+      }
+
+      let phone: string;
+      try {
+        phone = this.normalizePhone(rawPhone);
+      } catch {
+        errors.push({
+          row: rowNumber,
+          reason: `Invalid phone number: "${rawPhone}". Use E.164 format (e.g. +9779801234567).`,
+        });
+        skipped++;
+        continue;
+      }
+
+      const name = nameIdx !== -1 ? cols[nameIdx]?.trim() || null : null;
+      const email = emailIdx !== -1 ? cols[emailIdx]?.trim() || null : null;
+      const notes = notesIdx !== -1 ? cols[notesIdx]?.trim() || null : null;
+      const tags =
+        tagsIdx !== -1
+          ? cols[tagsIdx]?.trim()
+            ? cols[tagsIdx]
+                .split(';')
+                .map((t) => t.trim().toLowerCase())
+                .filter(Boolean)
+            : []
+          : [];
+
+      try {
+        const existing = await this.prisma.db.customer.findFirst({
+          where: { tenantId, phone },
+          select: { id: true },
+        });
+
+        if (existing) {
+          skipped++;
+          continue;
+        }
+
+        await this.prisma.db.customer.create({
+          data: {
+            tenantId,
+            phone,
+            name,
+            email,
+            notes,
+            tags,
+            optInStatus: 'PENDING',
+          },
+        });
+
+        created++;
+      } catch {
+        errors.push({
+          row: rowNumber,
+          reason:
+            'Failed to create customer. Please check the data and try again.',
+        });
+        skipped++;
+      }
+    }
+
+    this.logger.log(
+      { tenantId, created, skipped, errorCount: errors.length },
+      'Customer CSV import complete',
+    );
+
+    return { created, skipped, errors };
+  }
+
+  private _parseCsvRow(line: string): string[] {
+    const cols: string[] = [];
+    let current = '';
+    let insideQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+
+      if (char === '"') {
+        if (insideQuotes && line[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else {
+          insideQuotes = !insideQuotes;
+        }
+      } else if (char === ',' && !insideQuotes) {
+        cols.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+
+    cols.push(current.trim());
+    return cols;
+  }
 }
