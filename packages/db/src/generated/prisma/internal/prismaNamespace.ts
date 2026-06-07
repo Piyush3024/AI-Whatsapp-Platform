@@ -3783,6 +3783,7 @@ export const TenantAIPromptScalarFieldEnum = {
   tenantId: "tenantId",
   systemPromptBaseId: "systemPromptBaseId",
   persona: "persona",
+  language: "language",
   systemPrompt: "systemPrompt",
   version: "version",
   isActive: "isActive",

@@ -39,6 +39,7 @@ export type TenantAIPromptMinAggregateOutputType = {
   tenantId: string | null;
   systemPromptBaseId: string | null;
   persona: string | null;
+  language: string | null;
   systemPrompt: string | null;
   version: number | null;
   isActive: boolean | null;
@@ -52,6 +53,7 @@ export type TenantAIPromptMaxAggregateOutputType = {
   tenantId: string | null;
   systemPromptBaseId: string | null;
   persona: string | null;
+  language: string | null;
   systemPrompt: string | null;
   version: number | null;
   isActive: boolean | null;
@@ -65,6 +67,7 @@ export type TenantAIPromptCountAggregateOutputType = {
   tenantId: number;
   systemPromptBaseId: number;
   persona: number;
+  language: number;
   systemPrompt: number;
   version: number;
   isActive: number;
@@ -87,6 +90,7 @@ export type TenantAIPromptMinAggregateInputType = {
   tenantId?: true;
   systemPromptBaseId?: true;
   persona?: true;
+  language?: true;
   systemPrompt?: true;
   version?: true;
   isActive?: true;
@@ -100,6 +104,7 @@ export type TenantAIPromptMaxAggregateInputType = {
   tenantId?: true;
   systemPromptBaseId?: true;
   persona?: true;
+  language?: true;
   systemPrompt?: true;
   version?: true;
   isActive?: true;
@@ -113,6 +118,7 @@ export type TenantAIPromptCountAggregateInputType = {
   tenantId?: true;
   systemPromptBaseId?: true;
   persona?: true;
+  language?: true;
   systemPrompt?: true;
   version?: true;
   isActive?: true;
@@ -224,6 +230,7 @@ export type TenantAIPromptGroupByOutputType = {
   tenantId: string;
   systemPromptBaseId: string | null;
   persona: string;
+  language: string;
   systemPrompt: string;
   version: number;
   isActive: boolean;
@@ -262,6 +269,7 @@ export type TenantAIPromptWhereInput = {
     | string
     | null;
   persona?: Prisma.StringFilter<"TenantAIPrompt"> | string;
+  language?: Prisma.StringFilter<"TenantAIPrompt"> | string;
   systemPrompt?: Prisma.StringFilter<"TenantAIPrompt"> | string;
   version?: Prisma.IntFilter<"TenantAIPrompt"> | number;
   isActive?: Prisma.BoolFilter<"TenantAIPrompt"> | boolean;
@@ -287,6 +295,7 @@ export type TenantAIPromptOrderByWithRelationInput = {
   tenantId?: Prisma.SortOrder;
   systemPromptBaseId?: Prisma.SortOrderInput | Prisma.SortOrder;
   persona?: Prisma.SortOrder;
+  language?: Prisma.SortOrder;
   systemPrompt?: Prisma.SortOrder;
   version?: Prisma.SortOrder;
   isActive?: Prisma.SortOrder;
@@ -309,6 +318,7 @@ export type TenantAIPromptWhereUniqueInput = Prisma.AtLeast<
       | string
       | null;
     persona?: Prisma.StringFilter<"TenantAIPrompt"> | string;
+    language?: Prisma.StringFilter<"TenantAIPrompt"> | string;
     systemPrompt?: Prisma.StringFilter<"TenantAIPrompt"> | string;
     version?: Prisma.IntFilter<"TenantAIPrompt"> | number;
     isActive?: Prisma.BoolFilter<"TenantAIPrompt"> | boolean;
@@ -336,6 +346,7 @@ export type TenantAIPromptOrderByWithAggregationInput = {
   tenantId?: Prisma.SortOrder;
   systemPromptBaseId?: Prisma.SortOrderInput | Prisma.SortOrder;
   persona?: Prisma.SortOrder;
+  language?: Prisma.SortOrder;
   systemPrompt?: Prisma.SortOrder;
   version?: Prisma.SortOrder;
   isActive?: Prisma.SortOrder;
@@ -364,6 +375,7 @@ export type TenantAIPromptScalarWhereWithAggregatesInput = {
     | string
     | null;
   persona?: Prisma.StringWithAggregatesFilter<"TenantAIPrompt"> | string;
+  language?: Prisma.StringWithAggregatesFilter<"TenantAIPrompt"> | string;
   systemPrompt?: Prisma.StringWithAggregatesFilter<"TenantAIPrompt"> | string;
   version?: Prisma.IntWithAggregatesFilter<"TenantAIPrompt"> | number;
   isActive?: Prisma.BoolWithAggregatesFilter<"TenantAIPrompt"> | boolean;
@@ -385,6 +397,7 @@ export type TenantAIPromptScalarWhereWithAggregatesInput = {
 export type TenantAIPromptCreateInput = {
   id?: string;
   persona: string;
+  language?: string;
   systemPrompt: string;
   version?: number;
   isActive?: boolean;
@@ -400,6 +413,7 @@ export type TenantAIPromptUncheckedCreateInput = {
   tenantId: string;
   systemPromptBaseId?: string | null;
   persona: string;
+  language?: string;
   systemPrompt: string;
   version?: number;
   isActive?: boolean;
@@ -411,6 +425,7 @@ export type TenantAIPromptUncheckedCreateInput = {
 export type TenantAIPromptUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   persona?: Prisma.StringFieldUpdateOperationsInput | string;
+  language?: Prisma.StringFieldUpdateOperationsInput | string;
   systemPrompt?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -433,6 +448,7 @@ export type TenantAIPromptUncheckedUpdateInput = {
     | string
     | null;
   persona?: Prisma.StringFieldUpdateOperationsInput | string;
+  language?: Prisma.StringFieldUpdateOperationsInput | string;
   systemPrompt?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -450,6 +466,7 @@ export type TenantAIPromptCreateManyInput = {
   tenantId: string;
   systemPromptBaseId?: string | null;
   persona: string;
+  language?: string;
   systemPrompt: string;
   version?: number;
   isActive?: boolean;
@@ -461,6 +478,7 @@ export type TenantAIPromptCreateManyInput = {
 export type TenantAIPromptUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   persona?: Prisma.StringFieldUpdateOperationsInput | string;
+  language?: Prisma.StringFieldUpdateOperationsInput | string;
   systemPrompt?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -481,6 +499,7 @@ export type TenantAIPromptUncheckedUpdateManyInput = {
     | string
     | null;
   persona?: Prisma.StringFieldUpdateOperationsInput | string;
+  language?: Prisma.StringFieldUpdateOperationsInput | string;
   systemPrompt?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -508,6 +527,7 @@ export type TenantAIPromptCountOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder;
   systemPromptBaseId?: Prisma.SortOrder;
   persona?: Prisma.SortOrder;
+  language?: Prisma.SortOrder;
   systemPrompt?: Prisma.SortOrder;
   version?: Prisma.SortOrder;
   isActive?: Prisma.SortOrder;
@@ -525,6 +545,7 @@ export type TenantAIPromptMaxOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder;
   systemPromptBaseId?: Prisma.SortOrder;
   persona?: Prisma.SortOrder;
+  language?: Prisma.SortOrder;
   systemPrompt?: Prisma.SortOrder;
   version?: Prisma.SortOrder;
   isActive?: Prisma.SortOrder;
@@ -538,6 +559,7 @@ export type TenantAIPromptMinOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder;
   systemPromptBaseId?: Prisma.SortOrder;
   persona?: Prisma.SortOrder;
+  language?: Prisma.SortOrder;
   systemPrompt?: Prisma.SortOrder;
   version?: Prisma.SortOrder;
   isActive?: Prisma.SortOrder;
@@ -775,6 +797,7 @@ export type TenantAIPromptUncheckedUpdateManyWithoutSystemPromptBaseNestedInput 
 export type TenantAIPromptCreateWithoutTenantInput = {
   id?: string;
   persona: string;
+  language?: string;
   systemPrompt: string;
   version?: number;
   isActive?: boolean;
@@ -788,6 +811,7 @@ export type TenantAIPromptUncheckedCreateWithoutTenantInput = {
   id?: string;
   systemPromptBaseId?: string | null;
   persona: string;
+  language?: string;
   systemPrompt: string;
   version?: number;
   isActive?: boolean;
@@ -854,6 +878,7 @@ export type TenantAIPromptScalarWhereInput = {
     | string
     | null;
   persona?: Prisma.StringFilter<"TenantAIPrompt"> | string;
+  language?: Prisma.StringFilter<"TenantAIPrompt"> | string;
   systemPrompt?: Prisma.StringFilter<"TenantAIPrompt"> | string;
   version?: Prisma.IntFilter<"TenantAIPrompt"> | number;
   isActive?: Prisma.BoolFilter<"TenantAIPrompt"> | boolean;
@@ -869,6 +894,7 @@ export type TenantAIPromptScalarWhereInput = {
 export type TenantAIPromptCreateWithoutSystemPromptBaseInput = {
   id?: string;
   persona: string;
+  language?: string;
   systemPrompt: string;
   version?: number;
   isActive?: boolean;
@@ -882,6 +908,7 @@ export type TenantAIPromptUncheckedCreateWithoutSystemPromptBaseInput = {
   id?: string;
   tenantId: string;
   persona: string;
+  language?: string;
   systemPrompt: string;
   version?: number;
   isActive?: boolean;
@@ -937,6 +964,7 @@ export type TenantAIPromptCreateManyTenantInput = {
   id?: string;
   systemPromptBaseId?: string | null;
   persona: string;
+  language?: string;
   systemPrompt: string;
   version?: number;
   isActive?: boolean;
@@ -948,6 +976,7 @@ export type TenantAIPromptCreateManyTenantInput = {
 export type TenantAIPromptUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   persona?: Prisma.StringFieldUpdateOperationsInput | string;
+  language?: Prisma.StringFieldUpdateOperationsInput | string;
   systemPrompt?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -968,6 +997,7 @@ export type TenantAIPromptUncheckedUpdateWithoutTenantInput = {
     | string
     | null;
   persona?: Prisma.StringFieldUpdateOperationsInput | string;
+  language?: Prisma.StringFieldUpdateOperationsInput | string;
   systemPrompt?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -987,6 +1017,7 @@ export type TenantAIPromptUncheckedUpdateManyWithoutTenantInput = {
     | string
     | null;
   persona?: Prisma.StringFieldUpdateOperationsInput | string;
+  language?: Prisma.StringFieldUpdateOperationsInput | string;
   systemPrompt?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -1003,6 +1034,7 @@ export type TenantAIPromptCreateManySystemPromptBaseInput = {
   id?: string;
   tenantId: string;
   persona: string;
+  language?: string;
   systemPrompt: string;
   version?: number;
   isActive?: boolean;
@@ -1014,6 +1046,7 @@ export type TenantAIPromptCreateManySystemPromptBaseInput = {
 export type TenantAIPromptUpdateWithoutSystemPromptBaseInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   persona?: Prisma.StringFieldUpdateOperationsInput | string;
+  language?: Prisma.StringFieldUpdateOperationsInput | string;
   systemPrompt?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -1031,6 +1064,7 @@ export type TenantAIPromptUncheckedUpdateWithoutSystemPromptBaseInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
   persona?: Prisma.StringFieldUpdateOperationsInput | string;
+  language?: Prisma.StringFieldUpdateOperationsInput | string;
   systemPrompt?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -1047,6 +1081,7 @@ export type TenantAIPromptUncheckedUpdateManyWithoutSystemPromptBaseInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string;
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string;
   persona?: Prisma.StringFieldUpdateOperationsInput | string;
+  language?: Prisma.StringFieldUpdateOperationsInput | string;
   systemPrompt?: Prisma.StringFieldUpdateOperationsInput | string;
   version?: Prisma.IntFieldUpdateOperationsInput | number;
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
@@ -1068,6 +1103,7 @@ export type TenantAIPromptSelect<
     tenantId?: boolean;
     systemPromptBaseId?: boolean;
     persona?: boolean;
+    language?: boolean;
     systemPrompt?: boolean;
     version?: boolean;
     isActive?: boolean;
@@ -1091,6 +1127,7 @@ export type TenantAIPromptSelectCreateManyAndReturn<
     tenantId?: boolean;
     systemPromptBaseId?: boolean;
     persona?: boolean;
+    language?: boolean;
     systemPrompt?: boolean;
     version?: boolean;
     isActive?: boolean;
@@ -1114,6 +1151,7 @@ export type TenantAIPromptSelectUpdateManyAndReturn<
     tenantId?: boolean;
     systemPromptBaseId?: boolean;
     persona?: boolean;
+    language?: boolean;
     systemPrompt?: boolean;
     version?: boolean;
     isActive?: boolean;
@@ -1133,6 +1171,7 @@ export type TenantAIPromptSelectScalar = {
   tenantId?: boolean;
   systemPromptBaseId?: boolean;
   persona?: boolean;
+  language?: boolean;
   systemPrompt?: boolean;
   version?: boolean;
   isActive?: boolean;
@@ -1149,6 +1188,7 @@ export type TenantAIPromptOmit<
   | "tenantId"
   | "systemPromptBaseId"
   | "persona"
+  | "language"
   | "systemPrompt"
   | "version"
   | "isActive"
@@ -1200,6 +1240,7 @@ export type $TenantAIPromptPayload<
       tenantId: string;
       systemPromptBaseId: string | null;
       persona: string;
+      language: string;
       systemPrompt: string;
       version: number;
       isActive: boolean;
@@ -1846,6 +1887,7 @@ export interface TenantAIPromptFieldRefs {
   readonly tenantId: Prisma.FieldRef<"TenantAIPrompt", "String">;
   readonly systemPromptBaseId: Prisma.FieldRef<"TenantAIPrompt", "String">;
   readonly persona: Prisma.FieldRef<"TenantAIPrompt", "String">;
+  readonly language: Prisma.FieldRef<"TenantAIPrompt", "String">;
   readonly systemPrompt: Prisma.FieldRef<"TenantAIPrompt", "String">;
   readonly version: Prisma.FieldRef<"TenantAIPrompt", "Int">;
   readonly isActive: Prisma.FieldRef<"TenantAIPrompt", "Boolean">;

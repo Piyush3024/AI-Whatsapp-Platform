@@ -781,6 +781,7 @@ model TenantAIPrompt {
   tenantId           String    @db.Uuid
   systemPromptBaseId String?   @db.Uuid
   persona            String
+  language           String @default("auto")
   systemPrompt       String
   version            Int       @default(1)
   isActive           Boolean   @default(true)
@@ -794,6 +795,7 @@ model TenantAIPrompt {
 
   @@index([tenantId])
   @@index([tenantId, isActive])
+  @@index([tenantId, language]) 
   @@map("tenant_ai_prompts")
 }
 
