@@ -29,6 +29,7 @@ export const API_ENDPOINTS = {
       setup: "/auth/2fa/setup",
       enable: "/auth/2fa/enable",
       disable: "/auth/2fa/disable",
+      verifyLogin: "/auth/2fa/verify-login",
     },
   },
 

@@ -107,7 +107,7 @@ export function TwoFactorSettings() {
           <Button
             onClick={() => {
               setShowSetup(true);
-              startSetup();
+              startSetup(false);
             }}
             disabled={isStarting}
             className="cursor-pointer"
@@ -187,6 +187,22 @@ export function TwoFactorSettings() {
                       <Icons.spinner className="size-4 animate-spin" />
                     ) : (
                       "Verify & Enable"
+                    )}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => startSetup(true)}
+                    disabled={isStarting}
+                    className="cursor-pointer"
+                  >
+                    {isStarting ? (
+                      <>
+                        <Icons.spinner className="mr-2 size-4 animate-spin" />
+                        Regenerating…
+                      </>
+                    ) : (
+                      "Regenerate QR"
                     )}
                   </Button>
                   <Button

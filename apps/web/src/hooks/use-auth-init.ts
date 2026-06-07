@@ -8,12 +8,8 @@ import { useAuthStore } from "@/stores/auth.store";
 import { getCookie, setCookie, eraseCookie } from "@/lib/cookies";
 import type { User } from "@/types/api.types";
 
-/**
- * Runs once on app mount. Tries to restore the session by calling /auth/refresh
- * with the refresh token stored in a client-side cookie.
- * - If successful: restores user + accessToken in store, rotates cookie.
- * - If failed: clears store + cookie, redirects to /login only if on a protected route.
- */
+const AUTH_ONLY_PATHS = new Set(["/login", "/register", "/login/2fa"]);
+
 export function useAuthInit() {
   const { setAuth, clearAuth, setInitialized } = useAuthStore();
   const router = useRouter();
@@ -26,7 +22,6 @@ export function useAuthInit() {
       const refreshToken = getCookie("refresh_token");
 
       if (!refreshToken) {
-        // No cookie at all — not logged in
         if (!cancelled) {
           clearAuth();
           setInitialized();
@@ -53,10 +48,9 @@ export function useAuthInit() {
             user,
           } = response.data.data;
           setAuth(user, accessToken, newRefreshToken);
-          // Rotate the cookie with the fresh refresh token
           setCookie("refresh_token", newRefreshToken, 7);
 
-          if (pathname === "/login" || pathname === "/register") {
+          if (pathname && AUTH_ONLY_PATHS.has(pathname)) {
             setTimeout(() => router.push("/dashboard"), 0);
           }
         }

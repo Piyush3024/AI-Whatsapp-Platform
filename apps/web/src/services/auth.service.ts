@@ -2,6 +2,7 @@ import apiClient from "@/lib/api-client";
 import type {
   AuthTokens,
   LoginDto,
+  LoginResponse,
   RegisterDto,
   ForgotPasswordDto,
   ResetPasswordDto,
@@ -10,10 +11,21 @@ import type {
 } from "@/types/api.types";
 import { API_ENDPOINTS } from "@/constants/endpoints";
 
-export const login = async (dto: LoginDto): Promise<AuthTokens> => {
-  const res = await apiClient.post<{ data: AuthTokens }>(
+export const login = async (dto: LoginDto): Promise<LoginResponse> => {
+  const res = await apiClient.post<{ data: LoginResponse }>(
     API_ENDPOINTS.auth.login,
     dto,
+  );
+  return res.data.data;
+};
+
+export const verifyTwoFactorLogin = async (
+  twoFactorToken: string,
+  token: string,
+): Promise<AuthTokens> => {
+  const res = await apiClient.post<{ data: AuthTokens }>(
+    API_ENDPOINTS.auth.twoFactor.verifyLogin,
+    { twoFactorToken, token },
   );
   return res.data.data;
 };
@@ -69,10 +81,13 @@ export const resendVerification = async (
   return res.data.data;
 };
 
-export const setup2fa = async (): Promise<TwoFactorSetupResponse> => {
-  const res = await apiClient.post<{ data: TwoFactorSetupResponse }>(
-    API_ENDPOINTS.auth.twoFactor.setup,
-  );
+export const setup2fa = async (
+  regenerate?: boolean,
+): Promise<TwoFactorSetupResponse> => {
+  const url = regenerate
+    ? `${API_ENDPOINTS.auth.twoFactor.setup}?regenerate=true`
+    : API_ENDPOINTS.auth.twoFactor.setup;
+  const res = await apiClient.post<{ data: TwoFactorSetupResponse }>(url);
   return res.data.data;
 };
 

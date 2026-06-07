@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { setup2fa, enable2fa, disable2fa } from "@/services/auth.service";
 import type { TwoFactorSetupResponse } from "@/types/api.types";
+import { useAuthStore } from "@/stores/auth.store";
 
 export function useSetup2fa() {
   const [setupData, setSetupData] = useState<TwoFactorSetupResponse | null>(
@@ -25,9 +26,12 @@ export function useSetup2fa() {
 }
 
 export function useEnable2fa(onSuccess?: () => void) {
+  const updateUser = useAuthStore((s) => s.updateUser);
+
   return useMutation({
     mutationFn: enable2fa,
     onSuccess: () => {
+      updateUser({ twoFactorEnabled: true });
       toast.success("2FA has been enabled successfully.");
       onSuccess?.();
     },
@@ -38,9 +42,12 @@ export function useEnable2fa(onSuccess?: () => void) {
 }
 
 export function useDisable2fa(onSuccess?: () => void) {
+  const updateUser = useAuthStore((s) => s.updateUser);
+
   return useMutation({
     mutationFn: disable2fa,
     onSuccess: () => {
+      updateUser({ twoFactorEnabled: false });
       toast.success("2FA has been disabled.");
       onSuccess?.();
     },

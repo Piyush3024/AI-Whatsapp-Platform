@@ -43,6 +43,13 @@ export interface AuthTokens {
   user: User;
 }
 
+export interface TwoFactorChallenge {
+  requiresTwoFactor: true;
+  twoFactorToken: string;
+}
+
+export type LoginResponse = AuthTokens | TwoFactorChallenge;
+
 export interface LoginDto {
   email: string;
   password: string;
