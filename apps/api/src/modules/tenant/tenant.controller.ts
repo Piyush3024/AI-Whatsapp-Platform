@@ -13,6 +13,7 @@ import {
   Query,
   ParseIntPipe,
   DefaultValuePipe,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { TenantService } from './tenant.service.js';
@@ -25,6 +26,8 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator.js';
 import { Roles } from '../../common/decorators/roles.decorator.js';
 import type { CurrentUserPayload } from '../../common/decorators/current-user.decorator.js';
 import { UserRole } from '@whatsapp-ai/db/generated/prisma';
+import { UpsertAiPromptDto } from './dto/upsert-ai-prompt.dto.js';
+import { ApiParam } from '@nestjs/swagger';
 
 @ApiTags('tenant')
 @ApiBearerAuth('access-token')
@@ -172,5 +175,40 @@ export class TenantController {
       from,
       to,
     });
+  }
+
+  @Get('ai-prompts')
+  @ApiOperation({ summary: 'List all AI prompts for this tenant' })
+  getAiPrompts(@CurrentUser() user: CurrentUserPayload) {
+    return this.tenantService.getAiPrompts(user.tenantId);
+  }
+
+  @Post('ai-prompts')
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @ApiOperation({
+    summary: 'Create or update AI prompt for a language',
+    description:
+      'If a prompt already exists for the given language, it is updated (version incremented). Otherwise a new one is created.',
+  })
+  upsertAiPrompt(
+    @CurrentUser() user: CurrentUserPayload,
+    @Body(new ValidationPipe({ transform: true, whitelist: true }))
+    dto: UpsertAiPromptDto,
+  ) {
+    return this.tenantService.upsertAiPrompt(user.tenantId, dto);
+  }
+
+  @Delete('ai-prompts/:id')
+  @HttpCode(HttpStatus.OK)
+  @Roles(UserRole.OWNER, UserRole.ADMIN)
+  @ApiOperation({
+    summary: 'Delete a language-specific AI prompt (not the default)',
+  })
+  @ApiParam({ name: 'id', description: 'AI Prompt UUID' })
+  deleteAiPrompt(
+    @CurrentUser() user: CurrentUserPayload,
+    @Param('id', ParseUUIDPipe) promptId: string,
+  ) {
+    return this.tenantService.deleteAiPrompt(user.tenantId, promptId);
   }
 }

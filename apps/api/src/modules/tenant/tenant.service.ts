@@ -13,6 +13,7 @@ import type { UpdateMemberRoleDto } from './dto/update-member-role.dto.js';
 import type { CreateLocationDto } from './dto/create-location.dto.js';
 import type { UpdateLocationDto } from './dto/update-location.dto.js';
 import type { SetBusinessHoursDto } from './dto/set-business-hours.dto.js';
+import type { UpsertAiPromptDto } from './dto/upsert-ai-prompt.dto.js';
 
 @Injectable()
 export class TenantService {
@@ -362,5 +363,110 @@ export class TenantService {
         totalPages: Math.ceil(total / limit),
       },
     };
+  }
+
+  async getAiPrompts(tenantId: string) {
+    return this.prisma.db.tenantAIPrompt.findMany({
+      where: { tenantId, deletedAt: null },
+      orderBy: [{ language: 'asc' }, { version: 'desc' }],
+      select: {
+        id: true,
+        persona: true,
+        systemPrompt: true,
+        language: true,
+        isActive: true,
+        version: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
+  async upsertAiPrompt(tenantId: string, dto: UpsertAiPromptDto) {
+    const language = dto.language ?? 'auto';
+
+    const existing = await this.prisma.db.tenantAIPrompt.findFirst({
+      where: { tenantId, language, deletedAt: null },
+      select: { id: true, version: true },
+    });
+
+    if (existing) {
+      const updated = await this.prisma.db.tenantAIPrompt.update({
+        where: { id: existing.id },
+        data: {
+          persona: dto.persona,
+          systemPrompt: dto.systemPrompt,
+          isActive: dto.isActive ?? true,
+          version: { increment: 1 },
+        },
+        select: {
+          id: true,
+          persona: true,
+          systemPrompt: true,
+          language: true,
+          isActive: true,
+          version: true,
+          updatedAt: true,
+        },
+      });
+
+      this.logger.log(
+        `AI prompt updated for tenant: ${tenantId}, language: ${language}`,
+      );
+
+      return updated;
+    }
+
+    const created = await this.prisma.db.tenantAIPrompt.create({
+      data: {
+        tenantId,
+        persona: dto.persona,
+        systemPrompt: dto.systemPrompt,
+        language,
+        isActive: dto.isActive ?? true,
+        version: 1,
+      },
+      select: {
+        id: true,
+        persona: true,
+        systemPrompt: true,
+        language: true,
+        isActive: true,
+        version: true,
+        createdAt: true,
+      },
+    });
+
+    this.logger.log(
+      `AI prompt created for tenant: ${tenantId}, language: ${language}`,
+    );
+
+    return created;
+  }
+
+  async deleteAiPrompt(tenantId: string, promptId: string) {
+    const prompt = await this.prisma.db.tenantAIPrompt.findFirst({
+      where: { id: promptId, tenantId, deletedAt: null },
+      select: { id: true, language: true },
+    });
+
+    if (!prompt) {
+      throw new NotFoundException('AI prompt not found.');
+    }
+
+    if (prompt.language === 'auto') {
+      throw new BadRequestException(
+        'The default (auto) prompt cannot be deleted. Update it instead.',
+      );
+    }
+
+    await this.prisma.db.tenantAIPrompt.update({
+      where: { id: promptId },
+      data: { deletedAt: new Date() },
+    });
+
+    this.logger.log(`AI prompt deleted: ${promptId} for tenant: ${tenantId}`);
+
+    return { message: 'AI prompt deleted successfully.' };
   }
 }
