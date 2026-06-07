@@ -29,6 +29,7 @@ import type { CurrentUserPayload } from '../../common/decorators/current-user.de
 import { ResendVerificationDto } from './dto/resend-verification.dto.js';
 import { TwoFactorService } from './two-factor.service.js';
 import { Verify2faDto } from './dto/verify-2fa.dto.js';
+import { VerifyTwoFactorLoginDto } from './dto/verify-two-factor-login.dto.js';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -69,6 +70,26 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Wrong Credentials' })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
+  }
+
+  @Public()
+  @Post('2fa/verify-login')
+  @HttpCode(HttpStatus.OK)
+  @Throttle({ strict: { limit: 10, ttl: 60_000 } })
+  @ApiOperation({
+    summary: '2FA code verify karke session generate karo',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'TOTP code verified successfully — access + refresh tokens milenge',
+  })
+  @ApiResponse({ status: 401, description: 'Invalid code or token' })
+  verifyTwoFactorLogin(
+    @Body(new ValidationPipe({ transform: true, whitelist: true }))
+    dto: VerifyTwoFactorLoginDto,
+  ) {
+    return this.authService.verifyTwoFactorLogin(dto.twoFactorToken, dto.token);
   }
 
   // ── Refresh ───────────────────────────────────────────────────────────────
@@ -210,8 +231,12 @@ export class AuthController {
     status: 200,
     description: 'QR code data URL and otpauth URI returned',
   })
-  async setup2fa(@CurrentUser() user: CurrentUserPayload) {
-    return this.twoFactorService.setup(user.userId);
+  async setup2fa(
+    @CurrentUser() user: CurrentUserPayload,
+    @Query('regenerate') regenerate?: string,
+  ) {
+    const shouldRegenerate = regenerate === 'true';
+    return this.twoFactorService.setup(user.userId, shouldRegenerate);
   }
 
   // ── 2FA Enable ────────────────────────────────────────────────────────────

@@ -31,6 +31,7 @@ import { InvitationModule } from './modules/invitation/invitation.module.js';
 import { AnalyticsModule } from './modules/analytics/analytics.module.js';
 import { ConversationsModule } from './modules/conversations/conversations.module.js';
 import { NotificationsModule } from './modules/notifications/notifications.module.js';
+import { RedisModule } from './redis/redis.module.js';
 
 @Module({
   imports: [
@@ -119,6 +120,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
         ),
       }),
     }),
+    RedisModule,
     PrismaModule,
     ClsModule.forRoot({
       global: true,

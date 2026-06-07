@@ -280,6 +280,7 @@ export class InvitationService {
         email: true,
         createdAt: true,
         emailVerifiedAt: true,
+        twoFactorEnabled: true,
       },
     });
 
@@ -294,6 +295,7 @@ export class InvitationService {
         createdAt:
           userRecord?.createdAt.toISOString() ?? new Date().toISOString(),
         emailVerifiedAt: userRecord?.emailVerifiedAt?.toISOString() ?? null,
+        twoFactorEnabled: userRecord?.twoFactorEnabled ?? false,
       },
     };
   }

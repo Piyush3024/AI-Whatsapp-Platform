@@ -15,6 +15,7 @@ import type { RegisterDto } from './dto/register.dto.js';
 import type { LoginDto } from './dto/login.dto.js';
 import type { JwtPayload } from './strategies/jwt.strategy.js';
 import { UserRole } from '@whatsapp-ai/db/generated/prisma';
+import { TwoFactorService } from './two-factor.service.js';
 
 export interface AuthTokens {
   accessToken: string;
@@ -28,9 +29,22 @@ export interface AuthTokens {
     tenantId: string;
     createdAt: string;
     emailVerifiedAt: string | null;
+    twoFactorEnabled: boolean;
   };
 }
+
+export interface TwoFactorChallenge {
+  requiresTwoFactor: true;
+  twoFactorToken: string;
+}
+
+interface TwoFactorPendingPayload extends JwtPayload {
+  type: '2fa-pending';
+}
+
 const BCRYPT_ROUNDS = 12;
+
+const TWO_FACTOR_PENDING_EXPIRES_SECONDS = 5 * 60;
 
 @Injectable()
 export class AuthService {
@@ -41,6 +55,7 @@ export class AuthService {
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
     private readonly mail: MailService,
+    private readonly twoFactorService: TwoFactorService,
   ) {}
 
   async register(dto: RegisterDto): Promise<AuthTokens> {
@@ -110,19 +125,14 @@ export class AuthService {
 
     return {
       ...tokens,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
+      user: this._buildUserShape(user, {
         role: UserRole.OWNER,
         tenantId: tenant.id,
-        createdAt: user.createdAt.toISOString(),
-        emailVerifiedAt: null,
-      },
+      }),
     };
   }
 
-  async login(dto: LoginDto): Promise<AuthTokens> {
+  async login(dto: LoginDto): Promise<AuthTokens | TwoFactorChallenge> {
     const user = await this.prisma.db.user.findUnique({
       where: { email: dto.email.toLowerCase() },
     });
@@ -148,6 +158,22 @@ export class AuthService {
       );
     }
 
+    if (user.twoFactorEnabled) {
+      this.logger.log(`2FA challenge initiated for user: ${user.id}`);
+      const pendingPayload: TwoFactorPendingPayload = {
+        sub: user.id,
+        tenantId: member.tenantId,
+        role: member.role,
+        email: user.email,
+        type: '2fa-pending',
+      };
+      const twoFactorToken = await this.jwt.signAsync(pendingPayload, {
+        secret: this.config.get<string>('jwt.secret'),
+        expiresIn: TWO_FACTOR_PENDING_EXPIRES_SECONDS,
+      });
+      return { requiresTwoFactor: true, twoFactorToken };
+    }
+
     this.logger.log(`User logged in: ${user.id}`, 'AuthService');
 
     const tokens = await this._generateAndStoreTokens({
@@ -159,15 +185,10 @@ export class AuthService {
 
     return {
       ...tokens,
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
+      user: this._buildUserShape(user, {
         role: member.role,
         tenantId: member.tenantId,
-        createdAt: user.createdAt.toISOString(),
-        emailVerifiedAt: user.emailVerifiedAt?.toISOString() ?? null,
-      },
+      }),
     };
   }
 
@@ -199,15 +220,13 @@ export class AuthService {
 
     return {
       ...tokens,
-      user: {
-        id: userId,
-        email,
-        name: userRecord?.name ?? '',
-        role: role as UserRole,
-        tenantId,
-        createdAt: userRecord?.createdAt.toISOString() ?? '',
-        emailVerifiedAt: userRecord?.emailVerifiedAt?.toISOString() ?? null,
-      },
+      user: this._buildUserShape(
+        userRecord ?? { id: userId, email, name: '' },
+        {
+          role: role as UserRole,
+          tenantId,
+        },
+      ),
     };
   }
 
@@ -385,6 +404,52 @@ export class AuthService {
     );
   }
 
+  async verifyTwoFactorLogin(
+    twoFactorToken: string,
+    totpCode: string,
+  ): Promise<AuthTokens> {
+    let pending: TwoFactorPendingPayload;
+    try {
+      pending = await this.jwt.verifyAsync<TwoFactorPendingPayload>(
+        twoFactorToken,
+        { secret: this.config.get<string>('jwt.secret') },
+      );
+    } catch {
+      throw new UnauthorizedException('Invalid or expired 2FA token.');
+    }
+
+    if (pending.type !== '2fa-pending') {
+      throw new UnauthorizedException('Invalid 2FA token type.');
+    }
+
+    const isCodeValid = await this.twoFactorService.verify(
+      pending.sub,
+      totpCode,
+    );
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Invalid verification code.');
+    }
+
+    const tokens = await this._generateAndStoreTokens({
+      sub: pending.sub,
+      tenantId: pending.tenantId,
+      role: pending.role,
+      email: pending.email,
+    });
+
+    const userRecord = await this.prisma.db.user.findUnique({
+      where: { id: pending.sub },
+    });
+
+    return {
+      ...tokens,
+      user: this._buildUserShape(
+        userRecord ?? { id: pending.sub, email: pending.email, name: '' },
+        { role: pending.role as UserRole, tenantId: pending.tenantId },
+      ),
+    };
+  }
+
   async me(userId: string, tenantId: string): Promise<object> {
     const user = await this.prisma.db.user.findUnique({
       where: { id: userId },
@@ -413,6 +478,29 @@ export class AuthService {
   }
 
   // ── Private helpers ──────────────────────────────────────────────────────
+
+  private _buildUserShape(
+    user: {
+      id: string;
+      email: string;
+      name: string;
+      createdAt?: Date;
+      emailVerifiedAt?: Date | null;
+      twoFactorEnabled?: boolean;
+    },
+    context: { role: string; tenantId: string },
+  ): AuthTokens['user'] {
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: context.role as UserRole,
+      tenantId: context.tenantId,
+      createdAt: user.createdAt?.toISOString() ?? '',
+      emailVerifiedAt: user.emailVerifiedAt?.toISOString() ?? null,
+      twoFactorEnabled: user.twoFactorEnabled ?? false,
+    };
+  }
 
   private async _generateAndStoreTokens(
     payload: JwtPayload,
