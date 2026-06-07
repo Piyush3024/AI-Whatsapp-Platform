@@ -6,6 +6,7 @@ import { outboundQueue, notificationsQueue } from "../lib/queues.js";
 import type { HumanHandoffNotifyJob } from "../types/job-payloads.js";
 import { generateEmbedding } from "./embeddings.processor.js";
 import { env } from "../config/env.js";
+import { detectLanguage } from "../lib/language-detect.js";
 import type { AiReplyJob, OutboundMessageJob } from "../types/job-payloads.js";
 
 const openai = new OpenAI({ apiKey: env.OPENAI_API_KEY });
@@ -53,26 +54,49 @@ export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
     "Processing AI reply",
   );
 
+  const detectedLanguage = await detectLanguage(inboundContent);
+
+  log.debug({ conversationId, detectedLanguage }, "Customer language detected");
+
   const aiPrompt = await withTenantContext(tenantId, async (tx) => {
+    if (detectedLanguage !== "auto") {
+      const languagePrompt = await tx.tenantAIPrompt.findFirst({
+        where: {
+          tenantId,
+          isActive: true,
+          deletedAt: null,
+          language: detectedLanguage,
+        },
+        orderBy: { version: "desc" },
+        select: { id: true, systemPrompt: true, persona: true, language: true },
+      });
+
+      if (languagePrompt) {
+        return languagePrompt;
+      }
+    }
+
     return tx.tenantAIPrompt.findFirst({
       where: {
         tenantId,
         isActive: true,
         deletedAt: null,
+        language: "auto",
       },
       orderBy: { version: "desc" },
-      select: {
-        id: true,
-        systemPrompt: true,
-        persona: true,
-      },
+      select: { id: true, systemPrompt: true, persona: true, language: true },
     });
   });
 
   if (!aiPrompt) {
     log.warn(
-      { tenantId, conversationId },
-      "No active AI prompt found for tenant — using default",
+      { tenantId, conversationId, detectedLanguage },
+      "No active AI prompt found for tenant — using built-in default",
+    );
+  } else {
+    log.debug(
+      { conversationId, promptLanguage: aiPrompt.language, detectedLanguage },
+      "AI prompt selected",
     );
   }
 
@@ -226,6 +250,8 @@ export async function processAiReply(job: Job<AiReplyJob>): Promise<void> {
           model: CHAT_MODEL,
           ragChunksUsed: ragContext ? RAG_TOP_K : 0,
           inReplyToMetaId: metaMessageId,
+          detectedLanguage,
+          promptLanguage: aiPrompt?.language ?? "default",
         },
       },
       select: { id: true },
