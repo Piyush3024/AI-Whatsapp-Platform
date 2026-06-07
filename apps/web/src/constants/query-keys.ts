@@ -100,6 +100,10 @@ export const QUERY_KEYS = {
     members: ["tenant", "members"] as const,
     locations: ["tenant", "locations"] as const,
     locationHours: (id: string) => ["tenant", "location-hours", id] as const,
+    aiPrompts: {
+      all: ["ai-prompts"] as const,
+      list: ["ai-prompts", "list"] as const,
+    },
   },
 
   /**

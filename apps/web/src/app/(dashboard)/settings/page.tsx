@@ -3,6 +3,7 @@ import { GeneralSettings } from "./_components/general-settings";
 import { LocationsSettings } from "./_components/locations-settings";
 import { MembersSettings } from "./_components/members-settings";
 import { TwoFactorSettings } from "./_components/two-factor-settings";
+import { AiPromptsSettings } from "./_components/ai-prompts-settings";
 
 export const metadata: Metadata = {
   title: "Settings",
@@ -22,6 +23,7 @@ export default function SettingsPage() {
       <LocationsSettings />
       <MembersSettings />
       <TwoFactorSettings />
+      <AiPromptsSettings />
     </div>
   );
 }

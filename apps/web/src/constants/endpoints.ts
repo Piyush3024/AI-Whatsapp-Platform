@@ -136,6 +136,11 @@ export const API_ENDPOINTS = {
     locations: "/tenant/locations",
     location: (id: string) => `/tenant/locations/${id}`,
     locationHours: (id: string) => `/tenant/locations/${id}/hours`,
+    aiPrompts: {
+      list: "/tenant/ai-prompts",
+      upsert: "/tenant/ai-prompts",
+      delete: (id: string) => `/tenant/ai-prompts/${id}`,
+    },
   },
 
   /**
