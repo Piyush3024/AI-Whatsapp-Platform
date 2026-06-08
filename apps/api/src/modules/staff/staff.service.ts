@@ -107,7 +107,7 @@ export class StaffService {
     }
 
     const updated = await this.prisma.db.staff.update({
-      where: { id: staffId },
+      where: { id: staffId, tenantId },
       data: {
         ...(dto.name !== undefined && { name: dto.name }),
         ...(dto.phone !== undefined && { phone: dto.phone }),
@@ -125,7 +125,7 @@ export class StaffService {
   async remove(tenantId: string, staffId: string) {
     await this.findById(tenantId, staffId);
 
-    await this.prisma.db.staff.delete({ where: { id: staffId } });
+    await this.prisma.db.staff.delete({ where: { id: staffId, tenantId } });
 
     this.logger.log(`Staff deleted: ${staffId}`, 'StaffService');
     return { message: 'Staff member successfully removed.' };

@@ -302,7 +302,7 @@ export class BookingsService {
     }
 
     await this.prisma.db.booking.update({
-      where: { id },
+      where: { id, tenantId },
       data: updateData,
     });
 
@@ -338,7 +338,7 @@ export class BookingsService {
 
     await this.prisma.db.$transaction(async (tx) => {
       await tx.booking.update({
-        where: { id },
+        where: { id, tenantId },
         data: { status },
       });
       await tx.auditLog.create({
@@ -378,7 +378,7 @@ export class BookingsService {
       });
     }
 
-    await this.prisma.db.booking.delete({ where: { id } });
+    await this.prisma.db.booking.delete({ where: { id, tenantId } });
 
     this.logger.log(`Booking deleted: ${id}`);
   }

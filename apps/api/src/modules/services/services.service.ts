@@ -93,7 +93,7 @@ export class ServicesService {
     }
 
     const updated = await this.prisma.db.service.update({
-      where: { id: serviceId },
+      where: { id: serviceId, tenantId },
       data: {
         ...(dto.name !== undefined && { name: dto.name }),
         ...(dto.description !== undefined && { description: dto.description }),
@@ -112,8 +112,7 @@ export class ServicesService {
   async remove(tenantId: string, serviceId: string) {
     await this.findById(tenantId, serviceId);
 
-    await this.prisma.db.service.delete({ where: { id: serviceId } });
-
+    await this.prisma.db.service.delete({ where: { id: serviceId, tenantId } });
     this.logger.log(`Service deleted: ${serviceId}`, 'ServicesService');
     return { message: 'Service successfully removed.' };
   }

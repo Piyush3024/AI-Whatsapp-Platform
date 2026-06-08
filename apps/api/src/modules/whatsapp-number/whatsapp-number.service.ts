@@ -19,7 +19,6 @@ import {
   Prisma,
   WhatsAppVerificationStatus,
 } from '@whatsapp-ai/db/generated/prisma';
-
 @Injectable()
 export class WhatsAppNumberService {
   private readonly logger = new Logger(WhatsAppNumberService.name);
@@ -191,7 +190,7 @@ export class WhatsAppNumberService {
     }
 
     const updated = await this.prisma.db.whatsAppNumber.update({
-      where: { id },
+      where: { id, tenantId },
       data: {
         ...(dto.displayName !== undefined && { displayName: dto.displayName }),
         ...(dto.locationId !== undefined && { locationId: dto.locationId }),
@@ -229,7 +228,7 @@ export class WhatsAppNumberService {
     }
 
     await this.prisma.db.whatsAppNumber.delete({
-      where: { id },
+      where: { id, tenantId },
     });
 
     this.logger.log(

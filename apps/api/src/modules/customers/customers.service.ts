@@ -232,7 +232,7 @@ export class CustomersService {
     }
 
     const customer = await this.prisma.db.customer.update({
-      where: { id },
+      where: { id, tenantId },
       data: updateData,
       select: {
         id: true,
@@ -270,7 +270,7 @@ export class CustomersService {
     }
 
     await this.prisma.db.customer.delete({
-      where: { id },
+      where: { id, tenantId },
     });
 
     this.logger.log(`Customer deleted: ${id} for tenant: ${tenantId}`);
