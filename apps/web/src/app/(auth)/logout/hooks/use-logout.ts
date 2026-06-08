@@ -5,7 +5,7 @@ import { logout } from "@/services/auth.service";
 import { eraseCookie } from "@/lib/cookies";
 
 export function useLogout() {
-  const { clearAuth } = useAuthStore();
+  const clearAuth = useAuthStore((s) => s.clearAuth);
   const router = useRouter();
 
   return useMutation({

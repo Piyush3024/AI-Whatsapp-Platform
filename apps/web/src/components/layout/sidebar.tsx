@@ -107,7 +107,8 @@ function SettingsGroup({
   pathname,
   onClick,
 }: SettingsGroupProps) {
-  const { settingsGroupOpen, setSettingsGroupOpen } = useUIStore();
+  const settingsGroupOpen = useUIStore((s) => s.settingsGroupOpen);
+  const setSettingsGroupOpen = useUIStore((s) => s.setSettingsGroupOpen);
 
   const visibleItems = SETTINGS_NAV_GROUP.items.filter(
     (item) =>
@@ -198,7 +199,7 @@ function SettingsGroup({
 // ── User footer ───────────────────────────────────────────────────────────────
 
 function UserFooter({ collapsed }: { collapsed: boolean }) {
-  const { user } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
 
   if (collapsed) {
     return (
@@ -241,8 +242,9 @@ function UserFooter({ collapsed }: { collapsed: boolean }) {
 
 function DesktopSidebar() {
   const pathname = usePathname();
-  const { sidebarCollapsed, toggleSidebarCollapsed } = useUIStore();
-  const { user } = useAuthStore();
+  const sidebarCollapsed = useUIStore((s) => s.sidebarCollapsed);
+  const toggleSidebarCollapsed = useUIStore((s) => s.toggleSidebarCollapsed);
+  const user = useAuthStore((s) => s.user);
   const role = (user?.role ?? "STAFF") as UserRole;
 
   const visibleMain = MAIN_NAV_ITEMS.filter(
@@ -336,8 +338,9 @@ function DesktopSidebar() {
 
 function MobileSidebar() {
   const pathname = usePathname();
-  const { sidebarOpen, setSidebarOpen } = useUIStore();
-  const { user } = useAuthStore();
+  const sidebarOpen = useUIStore((s) => s.sidebarOpen);
+  const setSidebarOpen = useUIStore((s) => s.setSidebarOpen);
+  const user = useAuthStore((s) => s.user);
   const role = (user?.role ?? "STAFF") as UserRole;
 
   const visibleMain = MAIN_NAV_ITEMS.filter(

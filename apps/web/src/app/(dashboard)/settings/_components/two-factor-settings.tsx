@@ -41,7 +41,7 @@ const tokenSchema = z.object({
 type TokenFormValues = z.infer<typeof tokenSchema>;
 
 export function TwoFactorSettings() {
-  const { user } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
   const [showSetup, setShowSetup] = useState(false);
   const [showDisable, setShowDisable] = useState(false);
 

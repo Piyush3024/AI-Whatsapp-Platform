@@ -7,7 +7,7 @@ import { handleApiError } from "@/lib/handle-error";
 import type { RegisterFormValues } from "../schema/register.schema";
 
 export function useRegister() {
-  const { setAuth } = useAuthStore();
+  const setAuth = useAuthStore((s) => s.setAuth);
   const router = useRouter();
 
   return useMutation({

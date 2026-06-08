@@ -27,9 +27,9 @@ function getInitials(name: string): string {
 }
 
 export function Topbar() {
-  const { user } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
   const { mutate: logout, isPending } = useLogout();
-  const { toggleSidebar } = useUIStore();
+  const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const { theme, setTheme } = useTheme();
 
   return (

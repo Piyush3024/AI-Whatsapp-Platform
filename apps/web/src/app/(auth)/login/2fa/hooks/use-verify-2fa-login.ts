@@ -11,7 +11,8 @@ interface VerifyTwoFactorParams {
 }
 
 export function useVerifyTwoFactorLogin() {
-  const { setAuth, clearPendingTwoFactor } = useAuthStore();
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const clearPendingTwoFactor = useAuthStore((s) => s.clearPendingTwoFactor);
   const router = useRouter();
 
   return useMutation({

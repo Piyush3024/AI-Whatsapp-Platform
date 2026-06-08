@@ -7,7 +7,8 @@ import { handleApiError } from "@/lib/handle-error";
 import type { AuthTokens } from "@/types/api.types";
 
 export function useLogin() {
-  const { setAuth, setPendingTwoFactor } = useAuthStore();
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const setPendingTwoFactor = useAuthStore((s) => s.setPendingTwoFactor);
   const router = useRouter();
 
   return useMutation({

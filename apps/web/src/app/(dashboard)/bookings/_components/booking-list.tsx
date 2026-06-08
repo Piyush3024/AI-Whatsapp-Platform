@@ -186,7 +186,7 @@ export function BookingList({ filters, onFilterChange }: BookingListProps) {
       {data && data.meta.totalPages > 1 && (
         <div className="flex flex-wrap items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            Showing {(filters.page ?? 1 - 1) * (filters.limit ?? 20) + 1}–
+            Showing {((filters.page ?? 1) - 1) * (filters.limit ?? 20) + 1}–
             {Math.min(
               (filters.page ?? 1) * (filters.limit ?? 20),
               data.meta.total,

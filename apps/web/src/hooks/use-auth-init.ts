@@ -11,7 +11,9 @@ import type { User } from "@/types/api.types";
 const AUTH_ONLY_PATHS = new Set(["/login", "/register", "/login/2fa"]);
 
 export function useAuthInit() {
-  const { setAuth, clearAuth, setInitialized } = useAuthStore();
+  const setAuth = useAuthStore((s) => s.setAuth);
+  const clearAuth = useAuthStore((s) => s.clearAuth);
+  const setInitialized = useAuthStore((s) => s.setInitialized);
   const router = useRouter();
   const pathname = usePathname();
 

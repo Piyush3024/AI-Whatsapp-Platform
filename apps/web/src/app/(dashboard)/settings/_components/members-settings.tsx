@@ -41,7 +41,7 @@ export function MembersSettings() {
   const { data: members, isLoading } = useMembers();
   const updateRole = useUpdateMemberRole();
   const removeMember = useRemoveMember();
-  const { user } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
   const [changingRole, setChangingRole] = useState<string | null>(null);
 
   return (
