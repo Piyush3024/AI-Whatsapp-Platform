@@ -98,7 +98,7 @@ export class WhatsAppWebhookService {
               status,
             };
 
-            await this.analyticsQueue.add('message-status-update', job, {
+            await this.analyticsQueue.add('status-update', job, {
               attempts: 2,
               backoff: { type: 'exponential', delay: 1_000 },
               removeOnComplete: { age: 3600 },

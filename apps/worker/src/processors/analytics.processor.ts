@@ -146,10 +146,28 @@ async function aggregateTenantUsage(
 }
 
 async function processStatusUpdate(job: Job<StatusUpdateJob>): Promise<void> {
-  const { tenantId } = job.data;
-  const log = createJobLogger("analytics", job.id, tenantId);
+  const log = createJobLogger("analytics", job.id, "resolving");
 
-  const parsed = StatusUpdateJobSchema.safeParse(job.data);
+  const { phoneNumberId } = job.data;
+
+  const whatsappNumber = await prisma.whatsAppNumber.findFirst({
+    where: { phoneNumberId, isActive: true, deletedAt: null },
+    select: { tenantId: true },
+  });
+
+  if (!whatsappNumber) {
+    log.warn(
+      { phoneNumberId },
+      "No WhatsApp number found for phoneNumberId — dropping status update",
+    );
+    return;
+  }
+
+  const tenantId = whatsappNumber.tenantId;
+
+  const dataWithTenant = { ...job.data, tenantId };
+
+  const parsed = StatusUpdateJobSchema.safeParse(dataWithTenant);
   if (!parsed.success) {
     log.error(
       { errors: parsed.error.flatten() },
