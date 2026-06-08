@@ -65,7 +65,7 @@ export async function processInboundMessage(
 
   log.info({ tenantId, whatsappNumberDbId }, "Tenant resolved");
 
-  await withTenantContext(tenantId, async (tx) => {
+  const result = await withTenantContext(tenantId, async (tx) => {
     const customer = await tx.customer.upsert({
       where: {
         tenantId_phone: {
@@ -108,7 +108,7 @@ export async function processInboundMessage(
         timestamp,
         log,
       );
-      return;
+      return null;
     }
 
     const activeConversationCutoff = new Date(
@@ -163,7 +163,7 @@ export async function processInboundMessage(
         { metaMessageId: message.id },
         "Duplicate message detected — skipping ai-reply push",
       );
-      return;
+      return null;
     }
 
     if (!AI_SUPPORTED_TYPES.has(message.type)) {
@@ -171,7 +171,7 @@ export async function processInboundMessage(
         { messageType: message.type, messageId: savedMessage.id },
         "Message type not supported for AI reply — skipping",
       );
-      return;
+      return null;
     }
 
     const inboundContent = extractMessageContent(message);
@@ -181,7 +181,7 @@ export async function processInboundMessage(
         { messageType: message.type },
         "Could not extract text content — skipping AI reply",
       );
-      return;
+      return null;
     }
 
     const aiReplyJob: AiReplyJob = {
@@ -195,8 +195,6 @@ export async function processInboundMessage(
       senderPhone,
     };
 
-    await aiReplyQueue.add("generate-ai-reply", aiReplyJob);
-
     log.info(
       {
         conversationId: conversation.id,
@@ -205,7 +203,22 @@ export async function processInboundMessage(
       },
       "AI reply job enqueued",
     );
+
+    return aiReplyJob;
   });
+
+  if (result) {
+    await aiReplyQueue.add("generate-ai-reply", result);
+
+    log.info(
+      {
+        conversationId: result.conversationId,
+        messageId: result.messageId,
+        contentLength: result.inboundContent.length,
+      },
+      "AI reply job enqueued",
+    );
+  }
 }
 
 async function saveMessage(

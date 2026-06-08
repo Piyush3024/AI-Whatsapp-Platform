@@ -157,8 +157,6 @@ export async function processSingleReminder(
         messageType: "text",
       };
 
-      await outboundQueue.add("send-whatsapp-message", outboundJob);
-
       await tx.scheduledReminder.update({
         where: { id: scheduledReminder.id },
         data: {
@@ -175,11 +173,15 @@ export async function processSingleReminder(
         "Reminder sent successfully",
       );
 
-      return scheduledReminder;
+      return { reminder: scheduledReminder, outboundJob };
     });
 
     if (!result) {
       log.info({ bookingId }, "Reminder job skipped (no action needed)");
+    }
+
+    if (result?.outboundJob) {
+      await outboundQueue.add("send-whatsapp-message", result.outboundJob);
     }
   } catch (error) {
     const errorMessage =
