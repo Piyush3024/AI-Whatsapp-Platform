@@ -2,8 +2,13 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import * as crypto from 'crypto';
 import { PrismaService } from '../../../prisma/prisma.service.js';
 import type { JwtPayload } from './jwt.strategy.js';
+
+interface RequestWithBody {
+  body: { refreshToken?: string };
+}
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
@@ -18,21 +23,37 @@ export class JwtRefreshStrategy extends PassportStrategy(
       jwtFromRequest: ExtractJwt.fromBodyField('refreshToken'),
       ignoreExpiration: false,
       secretOrKey: config.get<string>('jwt.refreshSecret')!,
-
-      passReqToCallback: false,
+      passReqToCallback: true,
     });
   }
 
-  async validate(payload: JwtPayload): Promise<{
+  async validate(
+    req: RequestWithBody,
+    payload: JwtPayload,
+  ): Promise<{
     userId: string;
     tenantId: string;
     role: string;
     email: string;
   }> {
+    const rawToken = req.body?.refreshToken;
+
+    if (!rawToken) {
+      throw new UnauthorizedException(
+        'Refresh token missing. Please login again.',
+      );
+    }
+
+    const tokenHash = crypto
+      .createHash('sha256')
+      .update(rawToken)
+      .digest('hex');
+
     const tokenRecord = await this.prisma.db.refreshToken.findFirst({
       where: {
         userId: payload.sub,
         tenantId: payload.tenantId,
+        token: tokenHash,
         expiresAt: { gt: new Date() },
       },
     });

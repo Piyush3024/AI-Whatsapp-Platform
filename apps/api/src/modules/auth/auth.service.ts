@@ -529,11 +529,16 @@ export class AuthService {
 
     const expiresAt = this._parseExpiry(refreshExpiresIn);
 
+    const tokenHash = crypto
+      .createHash('sha256')
+      .update(refreshToken)
+      .digest('hex');
+
     await this.prisma.db.refreshToken.create({
       data: {
         userId: payload.sub,
         tenantId: payload.tenantId,
-        token: refreshToken,
+        token: tokenHash,
         expiresAt,
       },
     });
