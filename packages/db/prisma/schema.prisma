@@ -560,7 +560,7 @@ model Conversation {
 model Message {
   id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   tenantId       String        @db.Uuid
-  conversationId String        @db.Uuid
+  conversationId String?        @db.Uuid
   messageType    MessageType
   direction      String
   content        String?
@@ -573,7 +573,7 @@ model Message {
 
   // Relations
   tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversation Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([tenantId, conversationId])

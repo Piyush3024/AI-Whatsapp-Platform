@@ -231,7 +231,7 @@ async function saveMessage(
   const saved = await tx.message.create({
     data: {
       tenantId,
-      conversationId: conversationId ?? "",
+      conversationId: conversationId ?? undefined,
       messageType: mapMessageType(message.type),
       direction: "inbound",
       content,

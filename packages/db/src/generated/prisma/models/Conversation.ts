@@ -570,11 +570,6 @@ export type ConversationMinOrderByAggregateInput = {
   deletedAt?: Prisma.SortOrder;
 };
 
-export type ConversationScalarRelationFilter = {
-  is?: Prisma.ConversationWhereInput;
-  isNot?: Prisma.ConversationWhereInput;
-};
-
 export type ConversationNullableScalarRelationFilter = {
   is?: Prisma.ConversationWhereInput | null;
   isNot?: Prisma.ConversationWhereInput | null;
@@ -927,13 +922,15 @@ export type ConversationCreateNestedOneWithoutMessagesInput = {
   connect?: Prisma.ConversationWhereUniqueInput;
 };
 
-export type ConversationUpdateOneRequiredWithoutMessagesNestedInput = {
+export type ConversationUpdateOneWithoutMessagesNestedInput = {
   create?: Prisma.XOR<
     Prisma.ConversationCreateWithoutMessagesInput,
     Prisma.ConversationUncheckedCreateWithoutMessagesInput
   >;
   connectOrCreate?: Prisma.ConversationCreateOrConnectWithoutMessagesInput;
   upsert?: Prisma.ConversationUpsertWithoutMessagesInput;
+  disconnect?: Prisma.ConversationWhereInput | boolean;
+  delete?: Prisma.ConversationWhereInput | boolean;
   connect?: Prisma.ConversationWhereUniqueInput;
   update?: Prisma.XOR<
     Prisma.XOR<
