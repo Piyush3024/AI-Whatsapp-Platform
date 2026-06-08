@@ -77,9 +77,15 @@ export class BookingsService {
         skip,
         take: limit,
         include: {
-          customer: { select: { id: true, name: true, phone: true } },
-          staff: { select: { id: true, name: true } },
-          location: { select: { id: true, name: true } },
+          customer: {
+            select: { id: true, name: true, phone: true },
+          },
+          staff: {
+            select: { id: true, name: true },
+          },
+          location: {
+            select: { id: true, name: true },
+          },
           services: {
             include: {
               service: {
@@ -112,8 +118,12 @@ export class BookingsService {
         customer: {
           select: { id: true, name: true, phone: true, email: true },
         },
-        staff: { select: { id: true, name: true, phone: true } },
-        location: { select: { id: true, name: true, address: true } },
+        staff: {
+          select: { id: true, name: true, phone: true },
+        },
+        location: {
+          select: { id: true, name: true, address: true },
+        },
         services: {
           include: {
             service: {
@@ -470,7 +480,9 @@ export class BookingsService {
       include: {
         customer: { select: { id: true, name: true, phone: true } },
         staff: { select: { id: true, name: true } },
-        location: { select: { id: true, name: true } },
+        location: {
+          select: { id: true, name: true },
+        },
         services: {
           include: {
             service: {
@@ -611,7 +623,9 @@ export class BookingsService {
           select: { id: true, phone: true, name: true, optInStatus: true },
         },
         services: {
-          include: { service: { select: { name: true } } },
+          include: {
+            service: { select: { name: true } },
+          },
         },
       },
     });
@@ -701,12 +715,16 @@ export class BookingsService {
       // Cap at 10,000 rows for safety
       take: 10_000,
       include: {
-        customer: { select: { name: true, phone: true, email: true } },
+        customer: {
+          select: { name: true, phone: true, email: true },
+        },
         staff: { select: { name: true } },
         location: { select: { name: true } },
         services: {
           include: {
-            service: { select: { name: true, price: true } },
+            service: {
+              select: { name: true, price: true },
+            },
           },
         },
       },
