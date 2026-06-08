@@ -253,7 +253,6 @@ model TenantMember {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, userId])
-  @@index([tenantId])
   @@index([userId])
   @@map("tenant_members")
 }
@@ -332,6 +331,7 @@ model Subscription {
 
   @@index([tenantId])
   @@index([stripeCustomerId])
+  @@index([stripeSubscriptionId])
   @@map("subscriptions")
 }
 
@@ -354,6 +354,7 @@ model Invoice {
   lineItems    InvoiceLineItem[]
 
   @@index([tenantId])
+  @@index([stripeInvoiceId])
   @@map("invoices")
 }
 
@@ -524,7 +525,6 @@ model Customer {
   bookings      Booking[]
 
   @@unique([tenantId, phone])
-  @@index([tenantId])
   @@index([tenantId, whatsappId])
   @@map("customers")
 }
@@ -550,7 +550,6 @@ model Conversation {
   messages       Message[]
   bookings       Booking[]
 
-  @@index([tenantId])
   @@index([tenantId, customerId])
   @@index([tenantId, state])
   @@index([tenantId, status])
@@ -575,7 +574,6 @@ model Message {
   tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   conversation Conversation? @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
-  @@index([tenantId])
   @@index([tenantId, conversationId])
   @@index([tenantId, createdAt])
   @@map("messages")
@@ -700,7 +698,6 @@ model Booking {
   services     BookingService[]
   reminders    ScheduledReminder[]
 
-  @@index([tenantId])
   @@index([tenantId, customerId])
   @@index([tenantId, staffId])
   @@index([tenantId, startTime])
@@ -747,7 +744,6 @@ model TenantReminderRule {
   systemRule SystemReminderRule? @relation(fields: [systemRuleId], references: [id])
 
   @@unique([tenantId, type])
-  @@index([tenantId])
   @@map("tenant_reminder_rules")
 }
 
@@ -770,7 +766,6 @@ model ScheduledReminder {
   tenant  Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 
-  @@index([tenantId])
   @@index([tenantId, status])
   @@index([tenantId, scheduledAt])
   @@map("scheduled_reminders")
@@ -793,9 +788,8 @@ model TenantAIPrompt {
   tenant           Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   systemPromptBase SystemAIPromptTemplate? @relation(fields: [systemPromptBaseId], references: [id])
 
-  @@index([tenantId])
   @@index([tenantId, isActive])
-  @@index([tenantId, language]) 
+  @@index([tenantId, language])
   @@map("tenant_ai_prompts")
 }
 
@@ -821,7 +815,6 @@ model KnowledgeBaseDocument {
   tenant Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   chunks KnowledgeBaseChunk[]
 
-  @@index([tenantId])
   @@index([tenantId, status])
   @@map("knowledge_base_documents")
 }
@@ -832,7 +825,9 @@ model KnowledgeBaseChunk {
   documentId String                      @db.Uuid
   content    String // Extracted text (max ~512 tokens)
   chunkIndex Int // Order within document (0-based)
-  embedding  Unsupported("vector(1536)") // pgvector type (1536-dim for text-embedding-3-small)
+  // HNSW index applied via raw migration: migrations/add_hnsw_vector_index/migration.sql
+  // Prevents full-table scans during RAG cosine similarity search
+  embedding  Unsupported("vector(1536)")
   metadata   Json                        @default("{}") // e.g., { page: 1, section: "Pricing" }
   tokenCount Int? // Number of tokens in content (for cost tracking)
   isActive   Boolean                     @default(true) // Soft-delete flag
@@ -843,7 +838,6 @@ model KnowledgeBaseChunk {
   tenant   Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   document KnowledgeBaseDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
-  @@index([tenantId])
   @@index([tenantId, documentId])
   @@index([tenantId, isActive]) // Critical for RAG queries
   @@map("knowledge_base_chunks")
@@ -860,7 +854,6 @@ model UsageEvent {
   // Relations
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  @@index([tenantId])
   @@index([tenantId, type])
   @@index([tenantId, createdAt])
   @@map("usage_events")
@@ -881,7 +874,6 @@ model DailyUsageAggregate {
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, date])
-  @@index([tenantId])
   @@map("daily_usage_aggregates")
 }
 
@@ -900,7 +892,6 @@ model AuditLog {
   // Relations
   tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
 
-  @@index([tenantId])
   @@index([tenantId, action])
   @@index([tenantId, createdAt])
   @@map("audit_logs")
@@ -944,7 +935,6 @@ model NotificationPreference {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, userId, type])
-  @@index([tenantId])
   @@map("notification_preferences")
 }
 
@@ -963,7 +953,6 @@ model Notification {
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([tenantId])
   @@index([userId, readAt])
   @@index([tenantId, createdAt])
   @@map("notifications")
