@@ -9,6 +9,7 @@ import {
   Query,
   BadRequestException,
   ValidationPipe,
+  Res,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -16,6 +17,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import type { FastifyReply } from 'fastify';
 import { Throttle } from '@nestjs/throttler';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service.js';
@@ -49,11 +51,18 @@ export class AuthController {
   })
   @ApiResponse({
     status: 201,
-    description: 'Registration successful — access + refresh tokens milenge',
+    description: 'Registration successful',
   })
-  @ApiResponse({ status: 409, description: 'Email already registered hai' })
-  register(@Body() dto: RegisterDto) {
-    return this.authService.register(dto);
+  @ApiResponse({ status: 409, description: 'Email is already registered' })
+  async register(
+    @Body() dto: RegisterDto,
+    @Res({ passthrough: true }) reply: FastifyReply,
+  ) {
+    const result = await this.authService.register(dto);
+    this._setRefreshCookie(reply, result.refreshToken);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { refreshToken: _refreshToken, ...safeResult } = result;
+    return safeResult;
   }
 
   // ── Login ─────────────────────────────────────────────────────────────────
@@ -62,14 +71,24 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @Throttle({ strict: { limit: 10, ttl: 60_000 } })
-  @ApiOperation({ summary: 'Email + password se login karo' })
+  @ApiOperation({ summary: 'Login with email + password' })
   @ApiResponse({
     status: 200,
-    description: 'Login successful — access + refresh tokens milenge',
+    description: 'Login successful',
   })
   @ApiResponse({ status: 401, description: 'Wrong Credentials' })
-  login(@Body() dto: LoginDto) {
-    return this.authService.login(dto);
+  async login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) reply: FastifyReply,
+  ) {
+    const result = await this.authService.login(dto);
+    if ('requiresTwoFactor' in result) {
+      return result;
+    }
+    this._setRefreshCookie(reply, result.refreshToken);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { refreshToken: _refreshToken, ...safeResult } = result;
+    return safeResult;
   }
 
   @Public()
@@ -77,19 +96,26 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Throttle({ strict: { limit: 10, ttl: 60_000 } })
   @ApiOperation({
-    summary: '2FA code verify karke session generate karo',
+    summary: 'Verify 2FA login and generate session',
   })
   @ApiResponse({
     status: 200,
-    description:
-      'TOTP code verified successfully — access + refresh tokens milenge',
+    description: 'TOTP code verified successfully — access + refresh tokens',
   })
   @ApiResponse({ status: 401, description: 'Invalid code or token' })
-  verifyTwoFactorLogin(
+  async verifyTwoFactorLogin(
     @Body(new ValidationPipe({ transform: true, whitelist: true }))
     dto: VerifyTwoFactorLoginDto,
+    @Res({ passthrough: true }) reply: FastifyReply,
   ) {
-    return this.authService.verifyTwoFactorLogin(dto.twoFactorToken, dto.token);
+    const result = await this.authService.verifyTwoFactorLogin(
+      dto.twoFactorToken,
+      dto.token,
+    );
+    this._setRefreshCookie(reply, result.refreshToken);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { refreshToken: _refreshToken, ...safeResult } = result;
+    return safeResult;
   }
 
   // ── Refresh ───────────────────────────────────────────────────────────────
@@ -99,7 +125,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard('jwt-refresh'))
   @ApiOperation({
-    summary: 'Refresh token se naye access + refresh tokens lo',
+    summary: 'Get new access token + refresh token with refresh token',
   })
   @ApiResponse({
     status: 200,
@@ -107,15 +133,22 @@ export class AuthController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Refresh token invalid ya expired hai',
+    description: 'Refresh token invalid or expired',
   })
-  refresh(@CurrentUser() user: CurrentUserPayload) {
-    return this.authService.refresh(
+  async refresh(
+    @CurrentUser() user: CurrentUserPayload,
+    @Res({ passthrough: true }) reply: FastifyReply,
+  ) {
+    const result = await this.authService.refresh(
       user.userId,
       user.tenantId,
       user.role,
       user.email,
     );
+    this._setRefreshCookie(reply, result.refreshToken);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { refreshToken: _refreshToken, ...safeResult } = result;
+    return safeResult;
   }
 
   // ── Logout ────────────────────────────────────────────────────────────────
@@ -124,11 +157,15 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth('access-token')
   @ApiOperation({
-    summary: 'Logout karo — refresh token invalidate ho jaata hai',
+    summary: 'Logout and invalidate refresh token',
   })
   @ApiResponse({ status: 200, description: 'Logout successful' })
-  async logout(@CurrentUser() user: CurrentUserPayload) {
+  async logout(
+    @CurrentUser() user: CurrentUserPayload,
+    @Res({ passthrough: true }) reply: FastifyReply,
+  ) {
     await this.authService.logout(user.userId, user.tenantId);
+    this._clearRefreshCookie(reply);
     return { message: 'Successfully logged out.' };
   }
 
@@ -136,7 +173,7 @@ export class AuthController {
 
   @Get('me')
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'Current logged-in user ki info lo' })
+  @ApiOperation({ summary: 'Get current logged-in user info' })
   @ApiResponse({ status: 200, description: 'User profile data' })
   me(@CurrentUser() user: CurrentUserPayload) {
     return this.authService.me(user.userId, user.tenantId);
@@ -148,16 +185,15 @@ export class AuthController {
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   @Throttle({ strict: { limit: 3, ttl: 60_000 } })
-  @ApiOperation({ summary: 'Password reset email bhejo' })
+  @ApiOperation({ summary: 'Send password reset email' })
   @ApiResponse({
     status: 200,
-    description: 'Agar email registered hai toh reset link bhej diya jaayega',
+    description: 'If the email is registered, a reset link will be sent',
   })
   async forgotPassword(@Body() dto: ForgotPasswordDto) {
     await this.authService.forgotPassword(dto.email);
     return {
-      message:
-        'Agar yeh email registered hai, toh aapko password reset link mil jayega.',
+      message: 'If the email is registered, a reset link will be sent',
     };
   }
 
@@ -167,15 +203,15 @@ export class AuthController {
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   @Throttle({ strict: { limit: 5, ttl: 60_000 } })
-  @ApiOperation({ summary: 'Token se password reset karo' })
-  @ApiResponse({ status: 200, description: 'Password successfully reset hua' })
+  @ApiOperation({ summary: 'Reset password using token' })
+  @ApiResponse({ status: 200, description: 'Password successfully reset' })
   @ApiResponse({
     status: 400,
-    description: 'Token invalid, expired, ya already used hai',
+    description: 'Token invalid, expired, or already used',
   })
   async resetPassword(@Body() dto: ResetPasswordDto) {
     await this.authService.resetPassword(dto.token, dto.newPassword);
-    return { message: 'Password successfully reset ho gaya. Ab login karo.' };
+    return { message: 'Password successfully reset. Now login' };
   }
 
   // ── Verify Email ──────────────────────────────────────────────────────────
@@ -277,5 +313,26 @@ export class AuthController {
   ) {
     await this.twoFactorService.disable(user.userId, dto.token);
     return { message: '2FA has been disabled successfully.' };
+  }
+
+  private _setRefreshCookie(reply: FastifyReply, refreshToken: string): void {
+    const isProduction = process.env.NODE_ENV === 'production';
+    void reply.setCookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60,
+    });
+  }
+
+  private _clearRefreshCookie(reply: FastifyReply): void {
+    void reply.setCookie('refresh_token', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 0,
+    });
   }
 }

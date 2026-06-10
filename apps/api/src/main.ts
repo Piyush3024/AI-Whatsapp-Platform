@@ -5,6 +5,7 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
+import fastifyCookie from '@fastify/cookie';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import fastifyHelmet from '@fastify/helmet';
 import fastifyCompress from '@fastify/compress';
@@ -59,6 +60,10 @@ async function bootstrap(): Promise<void> {
       fileSize: 10 * 1024 * 1024, // 10MB
       files: 1,
     },
+  });
+
+  await app.register(fastifyCookie, {
+    secret: process.env.COOKIE_SECRET ?? 'fallback-secret-change-in-production',
   });
 
   const allowedOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:3000')

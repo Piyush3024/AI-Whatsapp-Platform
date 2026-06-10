@@ -36,6 +36,7 @@ export interface AuthTokens {
 export interface TwoFactorChallenge {
   requiresTwoFactor: true;
   twoFactorToken: string;
+  // refreshToken: string;
 }
 
 interface TwoFactorPendingPayload extends JwtPayload {
