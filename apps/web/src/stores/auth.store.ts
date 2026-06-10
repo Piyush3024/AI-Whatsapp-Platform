@@ -5,7 +5,7 @@ import type { User } from "@/types/api.types";
 interface AuthState {
   user: User | null;
   accessToken: string | null;
-  refreshToken: string | null;
+  // refreshToken: string | null;
   isInitialized: boolean;
   pendingTwoFactorToken: string | null;
   setAuth: (
@@ -23,16 +23,15 @@ interface AuthState {
 export const useAuthStore = create<AuthState>()((set) => ({
   user: null,
   accessToken: null,
-  refreshToken: null,
+  // refreshToken: null,
   isInitialized: false,
   pendingTwoFactorToken: null,
-  setAuth: (user, accessToken, refreshToken = null) =>
-    set({ user, accessToken, refreshToken }),
+  setAuth: (user, accessToken) => set({ user, accessToken }),
   updateUser: (partial) =>
     set((state) => ({
       user: state.user ? { ...state.user, ...partial } : state.user,
     })),
-  clearAuth: () => set({ user: null, accessToken: null, refreshToken: null }),
+  clearAuth: () => set({ user: null, accessToken: null }),
   setInitialized: () => set({ isInitialized: true }),
   setPendingTwoFactor: (token) => set({ pendingTwoFactorToken: token }),
   clearPendingTwoFactor: () => set({ pendingTwoFactorToken: null }),

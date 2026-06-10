@@ -1,7 +1,6 @@
 import axios, { type AxiosError } from "axios";
 
 import { useAuthStore } from "@/stores/auth.store";
-import { getCookie, setCookie } from "@/lib/cookies";
 
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -75,22 +74,15 @@ apiClient.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      const rt = getCookie("refresh_token");
       const response = await apiClient.post<{
         data: {
           accessToken: string;
-          refreshToken: string;
+          expiresIn: number;
           user: import("@/types/api.types").User;
         };
-      }>("/auth/refresh", { refreshToken: rt });
-
-      const {
-        accessToken,
-        refreshToken: newRefreshToken,
-        user,
-      } = response.data.data;
-      useAuthStore.getState().setAuth(user, accessToken, newRefreshToken);
-      setCookie("refresh_token", newRefreshToken, 7);
+      }>("/auth/refresh");
+      const { accessToken, user } = response.data.data;
+      useAuthStore.getState().setAuth(user, accessToken);
 
       processQueue(null, accessToken);
 
