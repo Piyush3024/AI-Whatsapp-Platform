@@ -3,6 +3,7 @@ import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@repo/ui"],
+  output: "standalone",
 };
 
 export default withSentryConfig(nextConfig, {
