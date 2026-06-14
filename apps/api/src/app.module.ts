@@ -32,9 +32,11 @@ import { AnalyticsModule } from './modules/analytics/analytics.module.js';
 import { ConversationsModule } from './modules/conversations/conversations.module.js';
 import { NotificationsModule } from './modules/notifications/notifications.module.js';
 import { RedisModule } from './redis/redis.module.js';
+import { SentryModule } from '@sentry/nestjs/setup';
 
 @Module({
   imports: [
+    SentryModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,

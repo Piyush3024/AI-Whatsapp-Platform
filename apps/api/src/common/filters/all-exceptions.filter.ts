@@ -7,6 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import type { FastifyReply, FastifyRequest } from 'fastify';
+import * as Sentry from '@sentry/nestjs';
 
 interface ErrorResponse {
   statusCode: number;
@@ -96,6 +97,15 @@ export class AllExceptionsFilter implements ExceptionFilter {
         exception instanceof Error ? exception.stack : String(exception),
         'AllExceptionsFilter',
       );
+
+      Sentry.captureException(exception, {
+        extra: {
+          errorId,
+          path,
+          method: request.method,
+          statusCode,
+        },
+      });
     } else {
       this.logger.warn(
         `[${errorId}] ${statusCode} ${path} — ${message}`,

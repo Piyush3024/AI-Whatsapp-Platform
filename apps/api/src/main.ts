@@ -1,3 +1,4 @@
+import '../instrument.js';
 import { Logger } from 'nestjs-pino';
 import { NestFactory } from '@nestjs/core';
 import { VersioningType, ValidationPipe } from '@nestjs/common';
