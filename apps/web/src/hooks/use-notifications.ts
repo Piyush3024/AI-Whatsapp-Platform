@@ -7,6 +7,8 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/constants/query-keys";
+import { useEffect } from "react";
+import { getSocket } from "@/lib/socket";
 import { useIsAuthReady } from "@/hooks/use-auth-ready";
 import {
   getNotifications,
@@ -17,13 +19,31 @@ import {
 
 export function useUnreadCount() {
   const isReady = useIsAuthReady();
+  const queryClient = useQueryClient();
 
-  return useQuery({
+  const query = useQuery({
     queryKey: QUERY_KEYS.notifications.unreadCount,
     queryFn: isReady ? getUnreadCount : skipToken,
-    staleTime: 1000 * 15,
-    refetchInterval: 1000 * 30, // Poll every 30s for badge count
+    staleTime: 1000 * 60, // 1 min — socket keeps it fresh
   });
+
+  useEffect(() => {
+    if (!isReady) return;
+
+    const socket = getSocket();
+
+    const handleNotificationUpdate = ({ count }: { count: number }) => {
+      queryClient.setQueryData(QUERY_KEYS.notifications.unreadCount, { count });
+    };
+
+    socket.on("notification:unread", handleNotificationUpdate);
+
+    return () => {
+      socket.off("notification:unread", handleNotificationUpdate);
+    };
+  }, [isReady, queryClient]);
+
+  return query;
 }
 
 export function useNotifications(params?: { unreadOnly?: boolean }) {

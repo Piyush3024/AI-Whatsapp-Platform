@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "nextjs-toploader/app";
 import { useAuthStore } from "@/stores/auth.store";
 import { logout } from "@/services/auth.service";
+import { disconnectSocket } from "@/lib/socket";
 
 export function useLogout() {
   const clearAuth = useAuthStore((s) => s.clearAuth);
@@ -16,6 +17,7 @@ export function useLogout() {
     onError: () => {
       // Even if API fails — clear local state and cookie
       clearAuth();
+      disconnectSocket();
       router.push("/login");
     },
   });

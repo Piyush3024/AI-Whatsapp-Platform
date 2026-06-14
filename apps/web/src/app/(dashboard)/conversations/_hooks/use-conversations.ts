@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import {
   useQuery,
   skipToken,
@@ -9,6 +10,7 @@ import {
 import { toast } from "sonner";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import { useIsAuthReady } from "@/hooks/use-auth-ready";
+import { getSocket } from "@/lib/socket";
 import {
   getConversations,
   getConversation,
@@ -21,37 +23,117 @@ import type { ConversationStatus } from "@/types/conversation.types";
 
 export function useConversations(params?: ConversationQueryParams) {
   const isReady = useIsAuthReady();
+  const queryClient = useQueryClient();
 
-  return useQuery({
+  const query = useQuery({
     queryKey: QUERY_KEYS.conversations.list(
       (params ?? {}) as Record<string, unknown>,
     ),
     queryFn: isReady ? () => getConversations(params) : skipToken,
-    staleTime: 1000 * 5, // 5 seconds — matches polling interval
-    refetchInterval: 1000 * 5, // Poll every 5 seconds
+    staleTime: 1000 * 30,
   });
+
+  useEffect(() => {
+    if (!isReady) return;
+
+    const socket = getSocket();
+
+    const handleConversationUpdated = ({
+      conversationId,
+    }: {
+      conversationId: string;
+    }) => {
+      void queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.conversations.list(),
+      });
+      void queryClient.invalidateQueries({
+        queryKey: QUERY_KEYS.conversations.detail(conversationId),
+      });
+    };
+
+    socket.on("conversation:updated", handleConversationUpdated);
+
+    return () => {
+      socket.off("conversation:updated", handleConversationUpdated);
+    };
+  }, [isReady, queryClient]);
+
+  return query;
 }
 
 export function useConversation(id: string) {
   const isReady = useIsAuthReady();
+  const queryClient = useQueryClient();
 
-  return useQuery({
+  const query = useQuery({
     queryKey: QUERY_KEYS.conversations.detail(id),
     queryFn: isReady ? () => getConversation(id) : skipToken,
-    staleTime: 1000 * 5,
-    refetchInterval: 1000 * 5,
+    staleTime: 1000 * 30,
   });
+
+  useEffect(() => {
+    if (!isReady) return;
+
+    const socket = getSocket();
+
+    socket.emit("join:conversation", { conversationId: id });
+
+    const handleUpdated = ({ conversationId }: { conversationId: string }) => {
+      if (conversationId === id) {
+        void queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.conversations.detail(id),
+        });
+      }
+    };
+
+    socket.on("conversation:updated", handleUpdated);
+
+    return () => {
+      socket.emit("leave:conversation", { conversationId: id });
+      socket.off("conversation:updated", handleUpdated);
+    };
+  }, [id, isReady, queryClient]);
+
+  return query;
 }
 
 export function useMessages(conversationId: string) {
   const isReady = useIsAuthReady();
+  const queryClient = useQueryClient();
 
-  return useQuery({
+  const query = useQuery({
     queryKey: QUERY_KEYS.conversations.messages(conversationId),
     queryFn: isReady ? () => getMessages(conversationId) : skipToken,
-    staleTime: 1000 * 5,
-    refetchInterval: 1000 * 5,
+    staleTime: 1000 * 30,
   });
+
+  useEffect(() => {
+    if (!isReady) return;
+
+    const socket = getSocket();
+
+    const handleNewMessage = ({
+      conversationId: incomingId,
+    }: {
+      conversationId: string;
+    }) => {
+      if (incomingId === conversationId) {
+        void queryClient.invalidateQueries({
+          queryKey: QUERY_KEYS.conversations.messages(conversationId),
+        });
+      }
+    };
+
+    socket.on("message:new", handleNewMessage);
+    socket.on("conversation:updated", handleNewMessage);
+
+    return () => {
+      socket.off("message:new", handleNewMessage);
+      socket.off("conversation:updated", handleNewMessage);
+    };
+  }, [conversationId, isReady, queryClient]);
+
+  return query;
 }
 
 export function useSendMessage(conversationId: string) {
