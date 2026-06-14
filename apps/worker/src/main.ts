@@ -16,6 +16,8 @@ import { processOutboundMessage } from "./processors/whatsapp-outbound.processor
 import { processNotificationJob } from "./processors/notification.processor.js";
 import { processQualityScoreJob } from "./processors/quality-score.processor.js";
 import type { OutboundMessageJob } from "./types/job-payloads.js";
+import { closeSocketPublisher } from "./lib/socket-publisher.js";
+
 import {
   closeQueues,
   analyticsQueue,
@@ -230,6 +232,7 @@ async function gracefulShutdown(signal: string): Promise<void> {
     logger.info("Closing all workers...");
     await Promise.all(workers.map((w) => w.close()));
     logger.info("All workers closed");
+    await closeSocketPublisher();
 
     await closeQueues();
 

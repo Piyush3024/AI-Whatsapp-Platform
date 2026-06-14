@@ -3,6 +3,7 @@ import { createJobLogger } from "../lib/logger.js";
 import { withTenantContext, type TenantTxClient } from "../lib/prisma.js";
 import { aiReplyQueue } from "../lib/queues.js";
 import type { InboundMessageJob, AiReplyJob } from "../types/job-payloads.js";
+import { publishSocketEvent } from "../lib/socket-publisher.js";
 
 const AI_SUPPORTED_TYPES = new Set(["text", "interactive", "button"]);
 
@@ -209,6 +210,12 @@ export async function processInboundMessage(
 
   if (result) {
     await aiReplyQueue.add("generate-ai-reply", result);
+
+    await publishSocketEvent({
+      type: "message:new",
+      tenantId,
+      conversationId: result.conversationId,
+    });
 
     log.info(
       {
