@@ -8,6 +8,8 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { UsageLimitService } from '../billing/usage-limit.service.js';
+import { forwardRef, Inject } from '@nestjs/common';
+import { ConversationsGateway } from './conversations.gateway.js';
 import {
   ConversationStatus,
   MessageType,
@@ -79,6 +81,8 @@ export class ConversationsService {
     private readonly usageLimitService: UsageLimitService,
     @InjectQueue('whatsapp-outbound')
     private readonly outboundQueue: Queue,
+    @Inject(forwardRef(() => ConversationsGateway))
+    private readonly gateway: ConversationsGateway,
   ) {}
 
   async findAll(
@@ -356,6 +360,16 @@ export class ConversationsService {
       data: { updatedAt: new Date() },
     });
 
+    // Emit real-time update to connected clients
+    this.gateway.emitNewMessage(tenantId, conversationId, {
+      id: message.id,
+      content: message.content,
+      direction: message.direction,
+      messageType: message.messageType,
+      status: message.status,
+      createdAt: message.createdAt,
+    });
+
     // Enqueue to whatsapp-outbound worker
     await this.outboundQueue.add(
       'send-message',
@@ -395,6 +409,8 @@ export class ConversationsService {
       where: { id, tenantId },
       data: { status: dto.status },
     });
+
+    this.gateway.emitConversationUpdated(tenantId, id);
 
     this.logger.log(
       `Conversation ${id} status updated to ${dto.status} by user ${currentUserId}`,
