@@ -17,7 +17,7 @@ import {
   useNotifications,
   useMarkRead,
   useMarkAllRead,
-} from "@/hooks/use-notifications";
+} from "@/features/notifications/hooks/use-notifications";
 import { ROUTES } from "@/constants/routes";
 
 export function NotificationBell() {
