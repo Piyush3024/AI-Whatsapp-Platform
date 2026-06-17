@@ -1,9 +1,8 @@
 {
   "extends": "@repo/typescript-config/nextjs.json",
-  "compilerOptions": {
+"compilerOptions": {
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
@@ -13,6 +12,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
+    // Catch unused code
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    // Catch missing return paths
+    "noImplicitReturns": true,
+    // Strict optional — undefined is not assignable to optional props
+    // "exactOptionalPropertyTypes": true,
     "plugins": [{ "name": "next" }],
     "paths": {
       "@/*": ["./src/*"],
