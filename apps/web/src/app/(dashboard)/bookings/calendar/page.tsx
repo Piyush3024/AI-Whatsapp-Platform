@@ -1,20 +1,7 @@
 import type { Metadata } from "next";
 import { CalendarLegend } from "./_components/calendar-legend";
 import { CalendarViewToggle } from "./_components/calendar-view-toggle";
-
-import dynamic from "next/dynamic";
-import { Skeleton } from "@repo/ui/components/skeleton";
-
-const BookingsCalendar = dynamic(
-  () =>
-    import("./_components/bookings-calendar").then(
-      (mod) => mod.BookingsCalendar,
-    ),
-  {
-    ssr: false, 
-    loading: () => <Skeleton className="h-[600px] w-full rounded-md" />,
-  },
-);
+import { BookingsCalendar } from "./_components/bookings-calendar-client";
 
 export const metadata: Metadata = {
   title: "Bookings Calendar",
