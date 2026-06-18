@@ -1,6 +1,5 @@
 "use client";
 
-// CSS imports must be at the top of a client component
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "@/styles/big-calendar.css";
 
