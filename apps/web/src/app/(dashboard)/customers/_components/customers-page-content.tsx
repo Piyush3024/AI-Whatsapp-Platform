@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryStates } from "nuqs";
+import { customerFilterParsers } from "../_lib/customer-filters.parsers";
 import { Button } from "@repo/ui/components/button";
 import { Icons } from "@repo/ui/components/icons";
 import { CustomerList } from "./customer-list";
@@ -9,13 +11,16 @@ import type { CustomerQuery } from "@/types/customer.types";
 import { useExportCustomers } from "../hooks/use-export-customers";
 import { CustomerImportDialog } from "./customer-import-dialog";
 
-const DEFAULT_FILTERS: CustomerQuery = {
-  page: 1,
-  limit: 20,
-};
-
 export function CustomersPageContent() {
-  const [filters, setFilters] = useState<CustomerQuery>(DEFAULT_FILTERS);
+  const [filters, setFilters] = useQueryStates(customerFilterParsers);
+
+  const customerQuery: CustomerQuery = {
+    page: filters.page,
+    limit: filters.limit,
+    search: filters.search ?? undefined,
+    status: filters.status ?? undefined,
+    tag: filters.tag ?? undefined,
+  };
   const [formOpen, setFormOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
   const { exportCsv, isExporting } = useExportCustomers();
@@ -42,7 +47,7 @@ export function CustomersPageContent() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => exportCsv(filters)}
+            onClick={() => exportCsv(customerQuery)}
             disabled={isExporting}
             className="cursor-pointer"
           >
@@ -61,7 +66,7 @@ export function CustomersPageContent() {
         </div>
       </div>
 
-      <CustomerList filters={filters} onFilterChange={setFilters} />
+      <CustomerList filters={customerQuery} onFilterChange={(q) => setFilters(q)} />
 
       <CustomerForm open={formOpen} onOpenChange={setFormOpen} />
 

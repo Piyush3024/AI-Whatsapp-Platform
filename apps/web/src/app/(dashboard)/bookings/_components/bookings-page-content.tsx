@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryStates } from "nuqs";
+import { bookingFilterParsers } from "../_lib/booking-filters.parsers";
 import { BookingFilters } from "./booking-filters";
 import { BookingList } from "./booking-list";
 import type { BookingQuery } from "@/types/booking.types";
@@ -10,15 +12,22 @@ import { BookingForm } from "./booking-form";
 import { useExportBookings } from "../hooks/use-export-booking";
 import { CalendarViewToggle } from "../calendar/_components/calendar-view-toggle";
 
-const DEFAULT_FILTERS: BookingQuery = {
-  page: 1,
-  limit: 20,
-};
-
 export function BookingsPageContent() {
-  const [filters, setFilters] = useState<BookingQuery>(DEFAULT_FILTERS);
+  const [filters, setFilters] = useQueryStates(bookingFilterParsers);
   const [formOpen, setFormOpen] = useState(false);
   const { exportCsv, isExporting } = useExportBookings();
+
+  const bookingQuery: BookingQuery = {
+    page: filters.page,
+    limit: filters.limit,
+    status: filters.status ?? undefined,
+    staffId: filters.staffId ?? undefined,
+    customerId: filters.customerId ?? undefined,
+    locationId: filters.locationId ?? undefined,
+    source: filters.source ?? undefined,
+    dateFrom: filters.dateFrom ?? undefined,
+    dateTo: filters.dateTo ?? undefined,
+  };
 
   return (
     <div className="space-y-6">
@@ -34,7 +43,7 @@ export function BookingsPageContent() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => exportCsv(filters)}
+            onClick={() => exportCsv(bookingQuery)}
             disabled={isExporting}
             className="cursor-pointer"
           >
@@ -53,12 +62,24 @@ export function BookingsPageContent() {
       </div>
 
       <BookingFilters
-        filters={filters}
-        onFilterChange={setFilters}
-        onReset={() => setFilters(DEFAULT_FILTERS)}
+        filters={bookingQuery}
+        onFilterChange={(q) => setFilters(q)}
+        onReset={() =>
+          setFilters({
+            page: 1,
+            limit: 20,
+            status: null,
+            staffId: null,
+            customerId: null,
+            locationId: null,
+            source: null,
+            dateFrom: null,
+            dateTo: null,
+          })
+        }
       />
 
-      <BookingList filters={filters} onFilterChange={setFilters} />
+      <BookingList filters={bookingQuery} onFilterChange={(q) => setFilters(q)} />
       <BookingForm open={formOpen} onOpenChange={setFormOpen} />
     </div>
   );
