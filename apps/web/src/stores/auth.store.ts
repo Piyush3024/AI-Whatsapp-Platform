@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 import type { User } from "@/types/api.types";
 
-interface AuthState {
+export interface AuthState {
   user: User | null;
   accessToken: string | null;
   // refreshToken: string | null;
