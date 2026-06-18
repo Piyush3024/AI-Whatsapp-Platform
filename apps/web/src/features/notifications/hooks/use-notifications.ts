@@ -7,8 +7,8 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/constants/query-keys";
-import { useEffect } from "react";
-import { getSocket } from "@/lib/socket";
+import { useCallback } from "react";
+import { useSocketEvent } from "@/lib/use-socket-event";
 import { useIsAuthReady } from "@/hooks/use-auth-ready";
 import {
   getNotifications,
@@ -27,21 +27,14 @@ export function useUnreadCount() {
     staleTime: 1000 * 60, // 1 min — socket keeps it fresh
   });
 
-  useEffect(() => {
-    if (!isReady) return;
-
-    const socket = getSocket();
-
-    const handleNotificationUpdate = ({ count }: { count: number }) => {
+  const handleNotificationUpdate = useCallback(
+    ({ count }: { count: number }) => {
       queryClient.setQueryData(QUERY_KEYS.notifications.unreadCount, { count });
-    };
+    },
+    [queryClient],
+  );
 
-    socket.on("notification:unread", handleNotificationUpdate);
-
-    return () => {
-      socket.off("notification:unread", handleNotificationUpdate);
-    };
-  }, [isReady, queryClient]);
+  useSocketEvent("notification:unread", handleNotificationUpdate, isReady);
 
   return query;
 }
